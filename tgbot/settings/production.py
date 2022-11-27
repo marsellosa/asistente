@@ -9,7 +9,7 @@ SECRET_KEY = config('SECRET_KEY', '0rk8u5wk=gav4dn@mw^p@c22-j^_gcg6s@-=jwxeo6j94
 DEBUG = False
 # DEBUG = os.path.exists('db.sqlite3')
 
-ALLOWED_HOSTS = ['mi-asistente-herbalife.herokuapp.com']
+ALLOWED_HOSTS = ['web-production-d293.up.railway.app']
 
 POSTGRES_DB         = config('POSTGRES_DB', default=None)
 POSTGRES_PASSWORD   = config('POSTGRES_PASSWORD', default=None)
