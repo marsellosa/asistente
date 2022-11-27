@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content-header %}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0 text-dark">Detalle</h1>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'main:inicio' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'recetas:list' %}">Mis Recetas</a></li>
+            <li class="breadcrumb-item active">{{ object.nombre }}</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div><!-- /.content-header -->
+{% endblock content-header %}
+
+{% block main-content %}
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-utensil-spoon"></i>
+            {{ object.nombre }}
+        </h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <dl>
+          <dt>Descripción</dt>
+          <dd>{% if object.descripcion %}{{ object.descripcion }}{% else %}..{% endif %} </dd>
+          <dt>Instrucciones</dt>
+          <dd>{% if object.instrucciones %}{{ object.instrucciones }}{% else %}..{% endif %} </dd>
+        </dl>
+      </div>
+      <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+  </div>
+  <!-- ./col -->
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-utensil-spoon"></i>
+            Ingredientes
+        </h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        {% for ingrediente in object.get_herbal_ingredient_children %}
+          {% include 'apps/recetas/partials/herbal-ingredient-inline.html' with object=ingrediente %}
+        {% empty %}
+
+        {% endfor %}
+        {% for ingrediente in object.get_ingredients_children %}
+          {% include 'apps/recetas/partials/ingredient-inline.html' with object=ingrediente %}
+        {% empty %}
+
+        {% endfor %}
+      </div>
+      <!-- /.card-body -->
+    </div>
+    <!-- /.card -->        
+  </div>
+  <!-- ./col -->
+</div>
+{% endblock main-content %}

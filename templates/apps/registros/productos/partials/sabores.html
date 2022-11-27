@@ -1,0 +1,4 @@
+    <option value selected>------------</option>
+    {% for obj in obj_list %}
+    <option value={{ obj.id }}>{{ obj }}</option>
+    {% empty %}{% endfor %}

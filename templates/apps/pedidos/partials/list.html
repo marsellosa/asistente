@@ -1,0 +1,69 @@
+  <div class="card">
+    <div class="card-header border-transparent">
+      <h3 class="card-title">Pedidos Recientes</h3>
+
+      <div class="card-tools">
+        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+          <i class="fas fa-minus"></i>
+        </button>
+        <button type="button" class="btn btn-tool" data-card-widget="remove">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table m-0">
+          <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Operador</th>
+            <th>Status</th>
+            <th>Total</th>
+            <th>Pagado</th>
+
+          </tr>
+          </thead>
+          <tbody>
+          {% for obj in obj_list %}
+            <tr>
+              <td><a href="{{ obj.get_absolute_url }}">{{ obj.timestamp }}</a></td>
+              <td>{{ obj.operador }}</td>
+              {% if obj.status == 'p' %}
+                <td><span class="badge badge-warning">Pendiente</span></td>
+              {% elif obj.status == 'e' %}
+                <td><span class="badge badge-success">Entregado</span></td>
+              {% elif obj.status == 'c' %}
+                <td><span class="badge badge-danger">Cancelado</span></td>
+              {% elif obj.status == 'v' %}
+                <td><span class="badge badge-info">Vencido</span></td>               
+              {% endif %}
+              <td>{{ obj.get_cart_total }}</td>
+              <td>{{ obj.total_final }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td>...</td>
+              <td>...</td>
+              <td><span class="badge badge-danger">Vacio</span></td>
+              <td>...</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- /.table-responsive -->
+    </div>
+    <!-- /.card-body -->
+    {% if id_operador %}
+      <div class="card-footer clearfix">
+        <a class="btn btn-sm btn-info float-left"
+        hx-post="{% url 'pedidos:hx-crear' id=id_operador %}" 
+        hx-target="#operador-{{ id_operador }}" 
+        >Nuevo Pedido</a>
+        <a href="{% url 'pedidos:lista' %}" class="btn btn-sm btn-secondary float-right">Todos los Pedidos</a>
+      </div>
+    {% endif %}
+    <!-- /.card-footer -->
+  </div>

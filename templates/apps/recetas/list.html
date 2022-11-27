@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content-header %}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0 text-dark">Mis Recetas</h1>
+          
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'main:inicio' %}">Inicio</a></li>
+            <li class="breadcrumb-item active">Mis Recetas</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div><!-- /.content-header -->
+{% endblock content-header %}
+
+{% block main-content %}
+<div class="card">
+  <a class="btn btn-block btn-outline-success" href="{% url 'recetas:create' %}"><i class="fas fa-plus-circle"></i> Agregar Receta</a>
+</div>
+    <!-- Default box -->
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Todas las Recetas</h3>
+    
+    <div class="card-tools">
+        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+            <i class="fas fa-minus"></i></button>
+        {% comment %} <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
+            <i class="fas fa-times"></i></button> {% endcomment %}
+    </div>
+  </div>
+  <div class="card-body p-0">
+    <ul class="products-list product-list-in-card pl-2 pr-2">
+      {% for object in objects_list %}
+          <li class="item">
+          <div class="product-img">
+              <img src="{% static 'AdminLTE/dist/img/default-150x150.png' %}" alt="Product Image" class="img-size-50">
+          </div>
+          <div class="product-info">
+              <a href="{{ object.get_absolute_url }}" class="product-title">{{ object.titulo }}
+              {% if object.get_total_receta %}
+              <span class="badge badge-success float-right">{{ object.get_total_receta }} bs.</span></a>
+              <span class="badge badge-warning float-right">{{ object.get_costo_receta }} bs.</span></a>
+              {% endif %}
+              <span class="product-description">
+              {{ object.descripcion }}
+              </span>
+          </div>
+          </li>
+      <!-- /.item -->
+      {% empty %}
+      <li class="item">
+        <div class="product-info">
+          <a href="{% url 'recetas:create' %}">
+              Agregar Receta
+          <span class="badge badge-danger float-right">
+            $ 0
+          </span>
+          </a>
+          <span class="product-description">
+            No hay recetas registradas aún
+          </span>
+        </div>
+      </li>
+      
+      <!-- /.item -->
+      {% endfor %}
+    </ul>
+  </div>
+  <!-- /.card-body -->
+</div>
+<!-- /.card -->
+{% endblock main-content %}

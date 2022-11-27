@@ -1,0 +1,12 @@
+<form action="{{ user.send_message }}" method="post" hx-post="{{ user.send_message }}" hx-target="#message-form">
+    {% csrf_token %}
+    <div class="input-group">
+        {% for field in form %}
+        {{ field }}
+        {% endfor %}
+        {% comment %} <input type="text" name="message" placeholder="Type Message ..." class="form-control"> {% endcomment %}
+        <span class="input-group-append">
+        <button type="submit" class="btn btn-success">Send</button>
+        </span>
+    </div>
+</form>

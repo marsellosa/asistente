@@ -1,0 +1,28 @@
+
+  <form role="form" action="." method="POST" hx-post="." hx-target="#recipe-container" hx-swap="outerHTML" hx-trigger="{% if form.instance.id %}change delay:500ms, {% endif %}submit">
+      {% csrf_token %}
+      <div class="card-body">
+        {% if message  %}
+          <div class="ribbon-wrapper ribbon-lg">
+            <div class="ribbon bg-success text-lg">
+              {{ message }}
+            </div>
+          </div>
+        {% endif %}
+        
+        {% for field in form %}
+          <div class="form-group {% if field.field.required %}{{ form.required_css_class}}{% endif %}">
+            {{ field.label_tag }} {% if field.field.required %}*{% endif %}
+            {{ field }}
+            {% if field.help_text %}
+              <p class="help"> {{ field.help_text|safe }}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      <!-- /.card-body -->
+
+      <div class="card-footer">
+        <button type="submit" class="btn btn-primary float-right">Guardar</button>
+      </div>
+  </form>

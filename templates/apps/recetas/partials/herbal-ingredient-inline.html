@@ -1,0 +1,19 @@
+{% comment %} <div id="ingredient-herbal-{{ object.id }}" class="col-md-4"> {% endcomment %}
+    <div id="ingredient-herbal-{{ object.id }}" class="card card-success card-outline collapsed-card">
+        <div class="card-header">
+            <h3 class="card-title"> {{ object.cantidad }} {{ object.unidad }} - {{ object }}</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <p>{{ object.descripcion}}</p>
+            
+        </div>
+        <div class="card-footer">
+            <a hx-trigger="click" hx-get="{{ object.get_hx_edit_url }}" hx-target="#ingredient-herbal-{{ object.id }}" hx-swap="outerHTML" class="btn btn-info btn-sm" href=""><i class="fas fa-pencil-alt"></i> Editar</a>
+            <a hx-post="{{ object.get_delete_url }}" hx-confirm="¿Realmente quieres borrar '{{ object.nombre }}'?" hx-trigger="click" hx-target="#ingredient-herbal-{{ object.id }}" hx-swap="outerHTML" class="btn btn-danger btn-sm" href="{{ object.get_delete_url }}"><i class="fas fa-trash"></i> Eliminar</a>
+        </div>
+    </div>
+{% comment %} </div> {% endcomment %}

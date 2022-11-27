@@ -1,0 +1,129 @@
+{% load static %}
+{% url 'main:inicio' as inicio %}
+{% url 'update_bd' as update_bd %}
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+          <img src="{% static 'AdminLTE/dist/img/user2-160x160.jpg' %}" class="img-circle elevation-2" alt="User Image">
+        </div>
+        <div class="info">
+          <a href="#" class="d-block">{% block nombre %}{% endblock nombre %}</a>
+        </div>
+      </div>
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          <li class="nav-item">
+            <a href={% url 'main:inicio' %} class="nav-link {% if request.path == inicio %}active{% endif %}">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Inicio</p>
+            </a>
+          </li>
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link ">
+              <i class="nav-icon fas fa-edit"></i>
+              <p>
+                Pedidos
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'pedidos:crear' %}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Nuevo</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'pedidos:lista' %}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Ver Todos</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link ">
+              <i class="nav-icon fas fa-user"></i>
+              <p>
+                Socios
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Nuevo</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Ver Todos</p>
+                </a>
+              </li>              
+            </ul>
+          </li>
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link ">
+              <i class="nav-icon fas fa-utensils"></i>
+              <p>
+                Recetas
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'recetas:create' %}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Nueva</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'recetas:list' %}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Ver Todas</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link ">
+              <i class="nav-icon fas fa-plus-circle"></i>
+              <p>
+                Extras
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'operadores:list' %}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Operadores</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Otro</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'productos:update_bd' %}" class="nav-link {% if request.path == update_bd %}active{% endif %}">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Actualizar</p>
+            </a>
+          </li>
+          
+        </ul>
+      </nav><!-- /.sidebar-menu -->
+    </div><!-- /.sidebar -->

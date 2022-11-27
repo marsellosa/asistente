@@ -1,0 +1,112 @@
+{% load static %}
+<div class="card-header border-0">
+  <h3 class="card-title">Fecha: {{ parent_obj.updated|date }}</h3>
+  <div class="card-tools">
+    <a href="javascript:void(0)" class="btn btn-tool btn-sm">
+      <i class="fas fa-download"></i>
+    </a>
+    <a href="javascript:void(0)" class="btn btn-tool btn-sm">
+      <i class="fas fa-bars"></i>
+    </a>
+  </div>
+</div>
+<div class="card-body" >
+
+  {% if msg %}
+    {% include 'apps/pedidos/partials/item-deleted.html' %}
+  {% endif %}
+  <div class="card">
+    <div class="card-body p-0">
+      <table class="table table-striped table-valign-middle">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Cant.</th>
+            <th>P.Vol.</th>
+            <th>Precio</th>
+            <th>Eliminar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Totales</strong></td>
+            {% if parent_obj.get_cart_items %}<td>{{ parent_obj.get_cart_items }}</td>{% else %}<td>...</td>{% endif %}
+            {% if parent_obj.get_cart_points %}<td>{{ parent_obj.get_cart_points }}</td>{% else %}<td>...</td>{% endif %}
+            {% if parent_obj.get_cart_total %}<td>{{ parent_obj.get_cart_total }}</td>{% else %}<td>...</td>{% endif %}
+            <td></td>
+          </tr>
+          {% for obj in parent_obj.get_all_items %}
+            <tr id="item-{{obj.id}}">
+              <td>{{ obj.categoria }} - {{ obj.detalles }}</td>
+              <td>{{ obj.cantidad }}</td>
+              <td>{{ obj.get_vol_points }}</td>
+              <td>{{ obj.get_total }}</td>
+              {% if parent_obj.status == 'p' %}
+              <td>
+                <button type="button" class="btn btn-danger btn-xs"
+                  hx-delete="{{ obj.get_delete_url }}"
+                  hx-confirm="¿Realmente quieres eliminar '{{ obj.cantidad }} {{ obj.categoria }} {{ obj.detalles }}'?"
+                  hx-target="#table-and-form">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+              {% else %}
+              <td></td>
+            </tr>
+            {% endif %}
+          {% empty %}  
+          <tr>
+            <td>Sin Datos</td>
+            <td>...</td>
+            <td>...</td>
+            <td>...</td>
+            <td></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if parent_obj.status == 'p' %}
+  <div class="card">
+    <div class="card-body">
+      
+      <form hx-post="." hx-target="#table-and-form">
+        {% csrf_token %}
+          {% for field in form %}
+            <div class="form-group{% if field.field.required %} {{ form.required_css_class}}{% endif %}">
+              {{ field.label_tag }} {% if field.field.required %}*{% endif %}
+              {{ field }}
+              {% if field.help_text %}
+                <p class="help"> {{ field.help_text|safe }}</p>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <div class="form-group">
+              <button id="btn_submit" type="submit" class="btn btn-primary btn-block">Agregar</button>
+          </div>
+      </form>
+    
+    </div>
+  </div>
+  {% endif %}
+  {% if parent_obj.status == 'p' and parent_obj.get_cart_items %}
+  <div class="card-footer">
+    <button 
+      type="submit" 
+      class="btn btn-danger"
+      hx-delete="{{ parent_obj.get_absolute_url }}"
+      hx-confirm="¿Realmente deseas eliminar éste Pedido?">
+      Eliminar Pedido
+    </button>
+    <button 
+      type="submit" 
+      class="btn btn-success float-right"
+      hx-put="{{ parent_obj.get_absolute_url }}"
+      hx-confirm="¿El Pedido ha sido ENTREGADO?">
+      Pedido Entregado
+    </button>
+  </div>
+  {% endif %}
+</div>

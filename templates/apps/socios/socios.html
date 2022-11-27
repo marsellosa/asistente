@@ -1,0 +1,39 @@
+{% load static %}
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Socios Recientes</h3>
+
+      <div class="card-tools">
+        <span class="badge badge-danger">8 New Members</span>
+        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+        </button>
+        <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body p-0">
+      <ul class="users-list clearfix">
+        {% for obj in obj_list %}
+        <li>
+            <img src="{% static 'AdminLTE/dist/img/user8-128x128.jpg' %}" alt="User Image">
+            <a class="users-list-name" href="#">{{ obj }}</a>
+            <span class="users-list-date">{{ obj.timestamp }}</span>
+        </li>
+        {% empty %}
+        <li>
+          <img src="{% static 'AdminLTE/dist/img/user7-128x128.jpg' %}" alt="User Image">
+          <a class="users-list-name" href="#">Jane</a>
+          <span class="users-list-date">12 Jan</span>
+        </li>
+        {% endfor %}
+      </ul>
+      <!-- /.users-list -->
+    </div>
+    <!-- /.card-body -->
+    <div class="card-footer text-center">
+      <a href="#">Lista de Socios</a>
+    </div>
+    <!-- /.card-footer -->
+  </div>

@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+
+{% block content-header %}
+
+<!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Detalle de Montos </h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'main:inicio' %}">Home</a></li>
+              <li class="breadcrumb-item active">Detalle de Montos</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div><!-- /.content-header -->
+
+{% endblock content-header %}
+
+
+{% block main-content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Lista de Montos</h3>
+
+                <div class="card-tools">
+                    <div class="input-group input-group-sm" style="width: 150px;">
+                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                    </div>
+                    </div>
+                </div>
+            </div><!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Monto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for monto in detalle %}
+                        <tr>
+                            <td>{{ monto.inserted_on }}</td>
+                            <td>{{ monto.monto }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td>Sin datos registrados</td>
+                            <td>Sin datos registrados</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table><!-- /.table -->
+            </div><!-- /.card-body -->
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-sm-12 col-md-5">
+                        <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
+                            Showing {{ detalle.paginator.page_range }} to 10 of {{ detalle.paginator.count }} entries
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-7">
+                    {% if detalle.has_other_pages %}
+                        <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
+                            <ul class="pagination">
+                            {% if detalle.has_previous %}
+                                <li class="paginate_button page-item previous" id="example1_previous">
+                                    <a href="?page={{ detalle.previous_page_number }}" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                                </li>
+                            {% else %}
+                                <li class="paginate_button page-item previous disabled" id="example1_previous">
+                                    <a href="#" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                                </li>
+                            {% endif %}
+                            {% for i in detalle.paginator.page_range %}
+                                {% if detalle.number == i %}
+                                    <li class="paginate_button page-item active">
+                                        <a href="#" aria-controls="example1" data-dt-idx="{{i}}" tabindex="0" class="page-link">{{i}}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="paginate_button page-item ">
+                                        <a href="?page={{i}}" aria-controls="example1" data-dt-idx="{{i}}" tabindex="0" class="page-link">{{i}}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if detalle.has_next %}
+                                <li class="paginate_button page-item next" id="example1_next">
+                                    <a href="?page={{ detalle.next_page_number }}" aria-controls="example1" data-dt-idx="{{i}}" tabindex="0" class="page-link">Next</a>
+                                </li>
+                            {% else %}
+                                <li class="paginate_button page-item next disabled" id="example1_next">
+                                    <a href="#" aria-controls="example1" data-dt-idx="{{i}}" tabindex="0" class="page-link">Next</a>
+                                </li>
+                            {% endif %}
+                                
+                            </ul>
+                        </div>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.card -->
+    </div><!-- /.col-12 -->
+</div><!-- /.row -->
+{% endblock main-content %}
+
+{% block main-content-1 %}
+
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">DataTable with default features</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6">
+                                <div class="dataTables_length" id="example1_length">
+                                    <label>Show 
+                                        <select name="example1_length" aria-controls="example1" class="custom-select custom-select-sm form-control form-control-sm">
+                                            <option value="10">10</option>
+                                            <option value="25">25</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select> entries
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-6">
+                                <div id="example1_filter" class="dataTables_filter">
+                                    <label>Search:
+                                        <input type="search" class="form-control form-control-sm" placeholder="" aria-controls="example1">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="example1" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
+                                    <thead>
+                                        <tr role="row">
+                                            <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending" style="width: 165px;">Rendering engine</th>
+                                            <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending" style="width: 219px;">Browser</th>
+                                            <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending" style="width: 202px;">Platform(s)</th>
+                                            <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending" style="width: 141px;">Engine version</th>
+                                            <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending" style="width: 102px;">CSS grade</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr role="row" class="odd">
+                                            <td class="sorting_1">Gecko</td>
+                                            <td>Firefox 1.0</td>
+                                            <td>Win 98+ / OSX.2+</td>
+                                            <td>1.7</td>
+                                            <td>A</td>
+                                        </tr>
+                                        <tr role="row" class="even">
+                                            <td class="sorting_1">Gecko</td>
+                                            <td>Firefox 1.5</td>
+                                            <td>Win 98+ / OSX.2+</td>
+                                            <td>1.8</td>
+                                            <td>A</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th rowspan="1" colspan="1">Rendering engine</th>
+                                            <th rowspan="1" colspan="1">Browser</th>
+                                            <th rowspan="1" colspan="1">Platform(s)</th>
+                                            <th rowspan="1" colspan="1">Engine version</th>
+                                            <th rowspan="1" colspan="1">CSS grade</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-5">
+                                <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
+                                    Showing 1 to 10 of 57 entries
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-7">
+                            {% if detalle.has_other_pages %}
+                                <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
+                                    <ul class="pagination">
+                                    {% if detalle.has_previous %}
+                                        <li class="paginate_button page-item previous" id="example1_previous">
+                                            <a href="#" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="paginate_button page-item previous disabled" id="example1_previous">
+                                            <a href="#" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                                        </li>
+                                    {% endif %}
+                                    {% for i in detalle.paginator.page_range %}
+                                        {% if detalle.number == i %}
+                                            <li class="paginate_button page-item active">
+                                               {{i}}
+                                            </li>
+                                        {% else %}
+                                            <li class="paginate_button page-item ">
+                                                <a href="?page={{i}}" aria-controls="example1" data-dt-idx="{{i}}" tabindex="0" class="page-link">{{i}}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if detalle.has_next %}
+                                        <li class="paginate_button page-item next" id="example1_next">
+                                            <a href="#" aria-controls="example1" data-dt-idx="7" tabindex="0" class="page-link">Next</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="paginate_button page-item next disabled" id="example1_next">
+                                            Next
+                                        </li>
+                                    {% endif %}
+                                        
+                                    </ul>
+                                </div>
+                            {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
+    </div>
+      <!-- /.row -->
+</section>
+
+{% endblock main-content-1 %}

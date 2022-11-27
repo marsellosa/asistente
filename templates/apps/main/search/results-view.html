@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content-header %}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+        <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Resultados</h1>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'main:inicio' %}">Inicio</a></li>
+            <li class="breadcrumb-item active">Resultados</li>
+            </ol>
+        </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div>
+</div>
+{% endblock content-header %}
+
+{% block main-content %}
+<section class="content">
+    <div class="container-fluid">
+        {% include 'apps/main/search/partials/results.html' %}
+    </div>
+</section>
+
+{% endblock main-content %}
