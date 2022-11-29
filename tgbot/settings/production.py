@@ -3,13 +3,13 @@ from .base import *
 from decouple import config
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', '0rk8u5wk=gav4dn@mw^p@c22-j^_gcg6s@-=jwxeo6j94@)pyh')
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 # DEBUG = os.path.exists('db.sqlite3')
 
-ALLOWED_HOSTS = ['web-production-d293.up.railway.app']
+ALLOWED_HOSTS = config('HOSTS')
 
 POSTGRES_DB         = config('POSTGRES_DB', default=None)
 POSTGRES_PASSWORD   = config('POSTGRES_PASSWORD', default=None)
