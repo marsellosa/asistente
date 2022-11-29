@@ -9,7 +9,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = False
 # DEBUG = os.path.exists('db.sqlite3')
 
-ALLOWED_HOSTS = config('HOSTS')
+ALLOWED_HOSTS = ['web-production-d293.up.railway.app']
 
 POSTGRES_DB         = config('POSTGRES_DB', default=None)
 POSTGRES_PASSWORD   = config('POSTGRES_PASSWORD', default=None)
