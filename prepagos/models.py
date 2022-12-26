@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.utils.timezone import now
-from django.db.models import *
+from django.db.models import * #type:ignore
 from socios.models import Socio
 from django.urls import reverse
 
@@ -29,10 +29,10 @@ class Prepago(Model):
     objects     = PrepagoManager()
 
     def get_absolute_url(self):
-        return reverse("prepagos:detail", kwargs={ "id": self.id })
+        return reverse("prepagos:detail", kwargs={ "id": self.pk })
 
     def get_total_pagos(self):
-        return self.pago_set.all()
+        return self.pago_set.all() #type:ignore
 
     def get_acumulado(self):
         return round(sum([pago.monto for pago in self.get_total_pagos()]), 1)

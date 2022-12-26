@@ -15,12 +15,24 @@ class CategoriaQuerySet(QuerySet):
         
         return self.filter(lookups, activo=True)
 
+    def interna(self):
+        return self.filter(tipo='interna', activo=True)
+
+    def externa(self):
+        return self.filter(tipo='externa', activo=True)
+
 class CategoriaManager(Manager):
     def get_queryset(self):
         return CategoriaQuerySet(self.model, using=self._db)
 
     def search(self, query=None):
         return self.get_queryset().search(query=query)
+
+    def interna(self):
+        return self.get_queryset().interna
+
+    def externa(self):
+        return self.get_queryset().externa
 
 class Categoria(Model):
     default_option = 'interna'

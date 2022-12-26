@@ -7,6 +7,7 @@ app_name = 'productos'
 urlpatterns = [
     path('', app_over_view, name='api_products_overview'),
     path('api-list/', products_list, name='api_products_list'),
+    path('api-precios-list/', precios_dist_list, name='api_precios_dist_list'),
     path('api-create/', product_create, name='api_product_create'),
     path('api-search/', search_products, name='api_search_products'),
     path('api-detail/<str:pk>/', product_detail, name='api_products_detail'),

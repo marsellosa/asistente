@@ -33,6 +33,7 @@ def pedido_detail_view(request, id):
                 obj = form.save(commit=False)
                 obj.pedido = parent_obj
                 obj.save()
+            
             form = PedidoItemModelForm()
             template = 'apps/pedidos/partials/table-form.html'
     

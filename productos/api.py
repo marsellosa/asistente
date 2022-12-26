@@ -32,6 +32,12 @@ def products_list(request):
     serializer = CategoriaSerializer(products, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def precios_dist_list(request):
+    precios = PrecioDistribuidor.objects.all()
+    serializer = PreciosDistribuidorSerializer(precios, many=True)
+    return Response(serializer.data)
+
 
 @api_view(['GET'])
 def product_detail(request, pk):

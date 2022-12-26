@@ -1,6 +1,7 @@
 from django import forms
 from django.urls import reverse
 from pedidos.models import *
+from productos.models import Categoria
 
 class PedidoForm(forms.ModelForm):
     
@@ -20,9 +21,13 @@ class PedidoForm(forms.ModelForm):
 
 class PedidoItemModelForm(forms.ModelForm):
     required_css_class = "required-field"
+    ProductosFormSet = forms.modelformset_factory(Categoria, fields=('nombre', 'detalle', 'cantidad'))
+    formset = ProductosFormSet(queryset=Categoria.objects.interna())
+
     class Meta:
         model = PedidoItem
         fields = ['categoria', 'detalles', 'cantidad']
+        
 
     def get_flavor_url(self):
         return reverse('productos:hx-sabores')
@@ -49,9 +54,9 @@ class PedidoItemForm(forms.Form):
 
     f = {}
 
-    categoria = forms.CharField(label='Categoria', max_length=10, required=False)  #CharField(label='Categoria', max_length=100)
-    detalles = forms.ComboField(fields=f)
-    cantidad = forms.CharField(label='Cantidad', max_length=3)
+    categoria = forms.CharField(label='Categoria', max_length=10, required=False)  #type:ignore
+    detalles = forms.ComboField(fields=f) #type:ignore
+    cantidad = forms.CharField(label='Cantidad', max_length=3) #type:ignore
 
     class Meta:
         fields = ['categoria', 'detalles', 'cantidad']
