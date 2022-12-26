@@ -1,7 +1,5 @@
 from django.forms import * #type: ignore
 from comanda.models import Comanda, ComandaItem
-from django.utils.timezone import now, datetime
-from tempus_dominus.widgets import DatePicker
 
 class ComandaItemForm(ModelForm):
 
