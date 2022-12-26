@@ -1,6 +1,7 @@
 from django.forms import * #type: ignore
 from comanda.models import Comanda, ComandaItem
-from django.utils.timezone import now
+from django.utils.timezone import now, datetime
+from tempus_dominus.widgets import DatePicker
 
 class ComandaItemForm(ModelForm):
 
@@ -18,8 +19,16 @@ class ComandaItemForm(ModelForm):
             }
             self.fields[field_name].widget.attrs.update(new_data)
 
+
 class ComandaForm(Form):
-    fecha = DateField(widget=SelectDateWidget(attrs={'class': 'form-control', 'placeholder': now}))
+
+    new_data = {
+        'class' : 'form-control',
+        'type' : 'date',
+    }
+    
+    fecha = DateField(widget=DateInput(attrs=new_data))
+    # fecha = DateField(initial=now, widget=DateInput(attrs=new_data))
     # class Meta:
     #     model = Comanda
     #     fields = ['fecha']
