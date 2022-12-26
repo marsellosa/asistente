@@ -1,6 +1,7 @@
 from django.db.models import * # type: ignore
 from django.conf import settings
 from django.urls import reverse
+from main.models import Settings
 from recetas.models import Receta
 from socios.models import Socio
 from django.utils.timezone import now
@@ -62,13 +63,28 @@ class Comanda(Model):
     @property
     def get_sobre_rojo(self):
         comandaitems = self.comandaitem_set.all() # type: ignore
-        return sum([item.get_costo for item in comandaitems])
+        sobre_rojo = sum([item.get_costo for item in comandaitems])
+        try:
+            porciento = float(Settings.objects.get(nombre='inversion').valor)
+        except:
+            porciento = 10
+        re_inversion = self.porcentaje(sobre_rojo, porciento)
+        return round(sobre_rojo + re_inversion, 1)
 
     @property
     def get_cart_total(self):
         comandaitems = self.comandaitem_set.all() # type: ignore
         total = sum([item.get_total for item in comandaitems])
         return total
+
+    @property
+    def get_mantenimiento(self):
+        try:
+            mant = float(Settings.objects.get(nombre='mantenimiento').valor)
+        except:
+            mant = 10
+    
+        return self.porcentaje(self.get_cart_total, mant)
 
     @property
     def get_cart_items(self):
@@ -84,6 +100,10 @@ class Comanda(Model):
 
     def get_all_items(self):
         return self.comandaitem_set.all() # type: ignore
+
+    def porcentaje(self, total, porciento):
+        return total * porciento / 100
+
 
     def __str__(self):
         return str(self.socio)

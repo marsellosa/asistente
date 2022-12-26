@@ -30,7 +30,7 @@ def hx_add_item_view(request, id_comanda=None, id_receta=None):
                 obj = ComandaItem.objects.get(comanda=comanda, receta__id=receta_id)
                 if obj is not None:
                     cant = request.POST.get('cantidad')
-                    obj.cantidad += int(cant)
+                    obj.cantidad += int(cant) #type: ignore
                     obj.save()
             except:
                 obj = form.save(commit=False)
