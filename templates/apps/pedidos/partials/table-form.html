@@ -37,7 +37,7 @@
           </tr>
           {% for obj in parent_obj.get_all_items %}
             <tr id="item-{{obj.id}}">
-              <td>{{ obj.categoria }} - {{ obj.detalles }}</td>
+              <td>{{ obj.categoria }} <ion-icon name="arrow-dropright"></ion-icon> {{ obj.detalles }}</td>
               <td>{{ obj.cantidad }}</td>
               <td>{{ obj.get_vol_points }}</td>
               <td>{{ obj.get_total }}</td>

@@ -20,11 +20,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
   
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-  <!-- <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script> -->
+  
   <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
   {% comment %} HTMX cdn {% endcomment %}
   <script src="https://unpkg.com/htmx.org@1.7.0"></script>
-  
+ 
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -176,6 +176,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <strong>Copyright © 2014-2023 <a href="{% url 'main:inicio' %}">marsellosa</a>.</strong>
     All rights reserved.
     <div class="float-right d-none d-sm-inline-block">
+      <ion-icon name="heart"></ion-icon>
       <b>Version</b> 3.0.0-rc.1
     </div>
   </footer>
@@ -224,5 +225,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
         event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
     })
 </script>
+<script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
 </body>
 </html>

@@ -2,6 +2,9 @@
 {% if msg %}
   {% include 'apps/pedidos/partials/item-deleted.html' %}
 {% endif %}
+<p>costo: {{ parent_obj.get_sobre_rojo }}</p>
+<p>mante: {{ parent_obj.get_mantenimiento }}</p>
+<p>insum: 1</p>
 <table class="table table-striped table-valign-middle">
   <thead>
     <tr>
@@ -21,7 +24,7 @@
       <td></td>
     </tr>
     {% for obj in parent_obj.get_all_items %}
-    <tr id="receta-{{ obj.id}}">
+    <tr id="receta-{{ obj.id }}">
       <td>{{ obj }}</td>
       <td>{{ obj.cantidad }}</td>
       <td>{{ obj.get_puntos }}</td>
@@ -32,8 +35,6 @@
         hx-target="#comanda-list-and-form">
         <i class="fas fa-trash"></i></button></td>
     </tr>
-    
-    
     {% empty %}
     <tr>
       <td>Sin Datos</td>
@@ -49,21 +50,26 @@
 {% if parent_obj.status == 'p' %}
 <div class="card">
   <div class="card-body">
-    <p>Agregar Receta</p>
     <form hx-post="{{ parent_obj.get_add_receta_url }}" hx-target="#comanda-list-and-form">
       {% csrf_token %}
+      <div class="row align-items-end">
         {% for field in form %}
-          <div class="form-group{% if field.field.required %} {{ form.required_css_class}}{% endif %}">
-            {{ field.label_tag }} {% if field.field.required %}*{% endif %}
+        <div class="col-4 mb-3{% if field.field.required %} {{ form.required_css_class}}{% endif %}">
+          {{ field.label_tag }} {% if field.field.required %}*{% endif %}
+          <div class="input-group">
             {{ field }}
             {% if field.help_text %}
               <p class="help"> {{ field.help_text|safe }}</p>
             {% endif %}
           </div>
-        {% endfor %}
-        <div class="form-group">
-            <button id="btn_submit" type="submit" class="btn btn-primary btn-block">Agregar</button>
         </div>
+        {% endfor %}
+      
+        <div class="form-group col-4 mb-3">
+          <label></label>
+          <button id="btn_submit" type="submit" class="btn btn-primary btn-block">Agregar</button>
+        </div>
+      </div>
     </form>
   
   </div>

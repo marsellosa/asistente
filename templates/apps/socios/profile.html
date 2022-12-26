@@ -74,16 +74,15 @@
         {% include 'apps/comanda/partials/table-form.html' %}
         <div class"card">
           <div class="card-body">
+            
             <form hx-post="{{ parent_obj.get_add_receta_url }}" hx-target="#comanda-list-and-form">
               {% csrf_token %}
                 {% for field in comanda_form %}
-                  <div class="form-group{% if field.field.required %} {{ form.required_css_class}}{% endif %}">
+                 
                     {{ field.label_tag }} {% if field.field.required %}*{% endif %}
+                    
                     {{ field }}
-                    {% if field.help_text %}
-                      <p class="help"> {{ field.help_text|safe }}</p>
-                    {% endif %}
-                  </div>
+      
                 {% endfor %}
             </form>
           </div>
@@ -341,3 +340,6 @@
 
 
 {% endblock main-content %}
+{% block js %}
+
+{% endblock js %}
