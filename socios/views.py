@@ -14,13 +14,9 @@ User = settings.AUTH_USER_MODEL
 
 @staff_member_required
 def socios_list_view(request):
-    template = 'apps/socios/resultados.html'
-    search = request.GET.get('q')
-    context = {}
-    if search:
-        socios = ''
-        # socios = Socio.objects.filter(nombre__icontains=search)
-        context['socios'] = socios if socios else search
+    context, template = {}, 'apps/socios/list.html'
+    socios = Socio.objects.all()
+    context = {'socios' : socios}
 
     return render(request, template, context)
 

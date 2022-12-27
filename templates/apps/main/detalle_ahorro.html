@@ -66,7 +66,7 @@
                 <div class="row">
                     <div class="col-sm-12 col-md-5">
                         <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
-                            Showing {{ detalle.paginator.page_range }} to 10 of {{ detalle.paginator.count }} entries
+                            Mostrando {{ detalle.start_index }} al {{ detalle.end_index }} de {{ detalle.paginator.count }} registros
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-7">
@@ -74,12 +74,11 @@
                         <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
                             <ul class="pagination">
                             {% if detalle.has_previous %}
-                                <li class="paginate_button page-item previous" id="example1_previous">
-                                    <a href="?page={{ detalle.previous_page_number }}" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                                <li class="paginate_button page-item previous" id="example1_first">
+                                    <a href="?page=1" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">Primera</a>
                                 </li>
-                            {% else %}
-                                <li class="paginate_button page-item previous disabled" id="example1_previous">
-                                    <a href="#" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                                <li class="paginate_button page-item previous" id="example1_previous">
+                                    <a href="?page={{ detalle.previous_page_number }}" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">Anterior</a>
                                 </li>
                             {% endif %}
                             {% for i in detalle.paginator.page_range %}
@@ -95,11 +94,10 @@
                             {% endfor %}
                             {% if detalle.has_next %}
                                 <li class="paginate_button page-item next" id="example1_next">
-                                    <a href="?page={{ detalle.next_page_number }}" aria-controls="example1" data-dt-idx="{{i}}" tabindex="0" class="page-link">Next</a>
+                                    <a href="?page={{ detalle.next_page_number }}" aria-controls="example1" data-dt-idx="{{i}}" tabindex="0" class="page-link">Siguiente</a>
                                 </li>
-                            {% else %}
-                                <li class="paginate_button page-item next disabled" id="example1_next">
-                                    <a href="#" aria-controls="example1" data-dt-idx="{{i}}" tabindex="0" class="page-link">Next</a>
+                                <li class="paginate_button page-item next" id="example1_last">
+                                    <a href="?page={{ detalle.paginator.num_pages }}" aria-controls="example1" data-dt-idx="{{i}}" tabindex="0" class="page-link">Ultima</a>
                                 </li>
                             {% endif %}
                                 

@@ -46,10 +46,13 @@ class Socio(Model):
     objects = SocioManager()
 
     def get_absolute_url(self):
-        return reverse("socios:profile", kwargs={"id": self.id})
+        return reverse("socios:profile", kwargs={"id": self.pk})
 
     def get_hx_crud_url(self):
-        return reverse("socios:hx-profile", kwargs={"id": self.id})
+        return reverse("socios:hx-profile", kwargs={"id": self.pk})
+
+    def nombre_completo(self):
+        return f"{self.persona.nombre} {self.persona.apellido}"
     
     # def get_datos_contacto(self):
     #     return self.contacto_set.all()
