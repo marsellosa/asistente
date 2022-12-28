@@ -49,6 +49,7 @@ class PedidoItemModelForm(forms.ModelForm):
             
             }
             )
+        self.fields['categoria'].queryset = Categoria.objects.interna()
 
 class PedidoItemForm(forms.Form):
 

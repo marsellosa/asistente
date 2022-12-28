@@ -37,28 +37,30 @@
         <div class="card-footer">
           <div class="row">
             <div class="col-sm-4 border-right">
-                <div class="description-block">
+              <div class="description-block">
                 <h5 class="description-header">13,200</h5>
                 <span class="description-text">VENTAS</span>
                 </div>
                 <!-- /.description-block -->
             </div>
             <!-- /.col -->
-            <div hx-get="{% url 'operadores:list-socios-by-operador' id=obj.id %}" hx-target="#operador-{{obj.id}}" class="col-sm-4 border-right">
-                <div class="description-block">
-                <h5 class="description-header">300</h5>
-                <span class="description-text">SOCIOS</span>
-                </div>
-                <!-- /.description-block -->
+            <div class="col-sm-4 border-right">
+              <div class="description-block">
+              <a hx-get="{% url 'operadores:list-socios-by-operador' id=obj.id %}" hx-target="#operador-{{obj.id}}" class="btn btn-app bg-success">
+                <span class="badge bg-purple">891</span>
+                <i class="fas fa-users"></i> Socios
+              </a>
+            </div>
             </div>
             <!-- /.col -->
-            <div hx-get="{% url 'operadores:list-by-operador' id=obj.id %}" hx-target="#operador-{{obj.id}}" class="col-sm-4">
-                <div class="description-block">
-                <h5 class="description-header">35</h5>
-                <span class="description-text">PEDIDOS</span>
-                </div>
-                <!-- /.description-block -->
+            <div class="col-sm-4">
+              <div class="description-block">
+              <a hx-get="{% url 'operadores:list-by-operador' id=obj.id %}" hx-target="#operador-{{obj.id}}" class="btn btn-app bg-danger">
+                <span class="badge bg-teal">67</span>
+                <i class="fas fa-inbox"></i> Pedidos
+              </a>  
             </div>
+          </div>
             <!-- /.col -->
           </div>
           <!-- /.row -->

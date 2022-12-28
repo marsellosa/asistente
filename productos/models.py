@@ -16,10 +16,10 @@ class CategoriaQuerySet(QuerySet):
         return self.filter(lookups, activo=True)
 
     def interna(self):
-        return self.filter(tipo='interna', activo=True)
+        return self.filter(tipo='interna', activo=True).order_by('nombre')
 
     def externa(self):
-        return self.filter(tipo='externa', activo=True)
+        return self.filter(tipo='externa', activo=True).order_by('nombre')
 
 class CategoriaManager(Manager):
     def get_queryset(self):
@@ -29,10 +29,10 @@ class CategoriaManager(Manager):
         return self.get_queryset().search(query=query)
 
     def interna(self):
-        return self.get_queryset().interna
+        return self.get_queryset().interna()
 
     def externa(self):
-        return self.get_queryset().externa
+        return self.get_queryset().externa()
 
 class Categoria(Model):
     default_option = 'interna'
@@ -91,7 +91,7 @@ class PrecioDistribuidor(Model):
     edited_on = DateField(auto_now=True)
 
     def __str__(self):
-        return str(self.categoria)
+        return str(self.categoria.nombre)
 
 class PrecioClientePreferente(Model):
     categoria = ForeignKey(Categoria, on_delete=CASCADE)

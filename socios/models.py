@@ -11,7 +11,6 @@ class SocioQuerySet(QuerySet):
             Q(persona__nombre__icontains=query) |
             Q(persona__apellido__icontains=query)
         )
-        print(f"Buscando en socios: {lookups}")
         return self.filter(lookups)
 
     def by_user_id(self, user_id):

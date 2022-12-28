@@ -158,7 +158,7 @@ def send_message(message):
     Activity(user=user, text=message.text).save()
 
     msg, link, image_url = detail(message)
-    print(f"msg: {msg}")
+    # print(f"msg: {msg}")
 
     if image_url is None:
         # Enviamos el mensaje
@@ -178,7 +178,7 @@ def callback_inline(call):
     if call.message:
         
         text, link, image_url = detail(call)
-        print(f"image: {image_url}")
+        # print(f"image: {image_url}")
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text)
         
 def response_msg(producto):
@@ -224,7 +224,7 @@ def detail(message):
             productos = buscar_x_detalles(text)
 
         if len(productos) == 1:
-            print("Aca no entra")
+            # print("Aca no entra")
             producto = productos[0]
             msg = response_msg(producto)
             # print(f"msg: {msg}")
