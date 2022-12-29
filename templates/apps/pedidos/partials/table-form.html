@@ -1,5 +1,6 @@
 {% load static %}
 <div class="card-header border-0">
+  
   <h3 class="card-title">Fecha: {{ parent_obj.updated|date }}</h3>
   <div class="card-tools">
     <a href="javascript:void(0)" class="btn btn-tool btn-sm">
@@ -11,12 +12,26 @@
   </div>
 </div>
 <div class="card-body p-0" >
-
+  
   {% if msg %}
     {% include 'apps/pedidos/partials/item-deleted.html' %}
   {% endif %}
   <div class="card">
     <div class="card-body p-0">
+      {% if parent_obj.status == 'c' %}
+      <div class="ribbon-wrapper ribbon-xl">
+        <div class="ribbon bg-danger">
+          Cancelado
+        </div>
+      </div>
+      {% elif parent_obj.status == 'e' %}
+        <div class="ribbon-wrapper ribbon-xl">
+          <div class="ribbon bg-success">
+            Entregado
+          </div>
+        </div>
+      {% endif %}
+      
       <table class="table table-striped table-valign-middle">
         <thead>
           <tr>

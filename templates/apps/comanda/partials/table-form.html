@@ -1,11 +1,12 @@
 
+<div class="table-responsive">
 {% if msg %}
   {% include 'apps/pedidos/partials/item-deleted.html' %}
 {% endif %}
 <p>costo: {{ parent_obj.get_sobre_rojo }}</p>
 <p>mante: {{ parent_obj.get_mantenimiento }}</p>
 <p>insum: 1</p>
-<table class="table table-striped table-valign-middle">
+<table class="table m-0">
   <thead>
     <tr>
       <th></th>
@@ -13,6 +14,8 @@
       <th>P.Vol.</th>
       <th>Precio</th>
       <th></th>
+      <th>Costo</th>
+      <th>Mante</th>
     </tr>
   </thead>
   <tbody>
@@ -22,6 +25,8 @@
       {% if parent_obj.get_cart_points %}<td>{{ parent_obj.get_cart_points }}</td>{% else %}<td>...</td>{% endif %}
       {% if parent_obj.get_cart_total %}<td>{{ parent_obj.get_cart_total }}</td>{% else %}<td>...</td>{% endif %}
       <td></td>
+      <td>{{ parent_obj.get_sobre_rojo }}</td>
+      <td>{{ parent_obj.get_mantenimiento }}</td>
     </tr>
     {% for obj in parent_obj.get_all_items %}
     <tr id="receta-{{ obj.id }}">
@@ -34,6 +39,8 @@
         hx-confirm="¿Realmente quieres eliminar '{{ obj.cantidad }}.- {{ obj.receta }}'?"
         hx-target="#comanda-list-and-form">
         <i class="fas fa-trash"></i></button></td>
+        <td></td>
+        <td></td>
     </tr>
     {% empty %}
     <tr>
@@ -42,11 +49,13 @@
       <td>...</td>
       <td>...</td>
       <td></td>
+      <td>...</td>
+      <td>...</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
-
+</div>
 {% if parent_obj.status == 'p' %}
 <div class="card">
   <div class="card-body">

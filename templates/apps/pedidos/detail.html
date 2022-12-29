@@ -47,19 +47,7 @@
             <b>Saldo</b> <a class="float-right">1,000</a>
           </li>
         </ul>
-        {% if parent_obj.status == 'c' %}
-        <div class="card bg-gradient-danger collapsed-card">
-          <div class="card-header">
-            <h3 class="card-title">Pedido Cancelado</h3>
-          </div>
-        </div>
-        {% elif parent_obj.status == 'e' %}
-        <div class="card bg-gradient-success collapsed-card">
-          <div class="card-header">
-            <h3 class="card-title">Pedido Entregado</h3>
-          </div>
-        </div>
-        {% endif %}
+        
       </div>
       <!-- /.card-body -->
     </div>
