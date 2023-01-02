@@ -25,6 +25,69 @@
 {% endblock content-header %}
 
 {% block main-content %}
+
+<div class="row">
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="info-box">
+      <span class="info-box-icon bg-info elevation-1"><a href="#"><i class="fas fa-cog"></i></a></span>
+
+      <div class="info-box-content">
+        <span class="info-box-text">Categorias de Productos</span>
+        <span class="info-box-number">
+          {{ productos.count }}
+        </span>
+      </div>
+      <!-- /.info-box-content -->
+    </div>
+    <!-- /.info-box -->
+  </div>
+  <!-- /.col -->
+  
+  <!-- fix for small devices only -->
+  <div class="clearfix hidden-md-up"></div>
+
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="info-box mb-3">
+      <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
+
+      <div class="info-box-content">
+        <span class="info-box-text">Sales</span>
+        <span class="info-box-number">760</span>
+      </div>
+      <!-- /.info-box-content -->
+    </div>
+    <!-- /.info-box -->
+  </div>
+  <!-- /.col -->
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="info-box mb-3">
+      <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+
+      <div class="info-box-content">
+        <span class="info-box-text">New Members</span>
+        <span class="info-box-number">2,000</span>
+      </div>
+      <!-- /.info-box-content -->
+    </div>
+    <!-- /.info-box -->
+  </div>
+  <!-- /.col -->
+
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="info-box mb-3">
+      <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
+
+      <div class="info-box-content">
+        <span class="info-box-text">Likes</span>
+        <span class="info-box-number">41,410</span>
+      </div>
+      <!-- /.info-box-content -->
+    </div>
+    <!-- /.info-box -->
+  </div>
+  <!-- /.col -->
+</div>
+
 <!-- Main content -->
 <div class="row">
   <div class="col-lg-3 col-6">
@@ -36,7 +99,7 @@
         <p>Categorias de Productos</p>
       </div>
       <div class="icon">
-        <i class="ion ion-bag"></i>
+        <i class="fal fa-bag-shopping"></i>
       </div>
       <a href="#" class="small-box-footer">Ver Detalle <i class="fas fa-arrow-circle-right"></i></a>
     </div>
@@ -221,23 +284,39 @@
       <div class="time-label">
         <span class="bg-red">10 Feb. 2014</span>
       </div><!-- /.timeline-label -->
-        <!-- timeline item -->
-        <div>
-          {% for activity in activities %}
-            <i class="fas fa-user bg-green"></i>
-            <div class="timeline-item">
-              <span class="time"><i class="fas fa-clock"></i>hace {{ activity.inserted_on|timesince }}</span>
-              <h3 class="timeline-header no-border"><a href="{% url 'main:bot_user_profile' user_id=activity.user.user_id %}">{{ activity.user.first_name }} 
+      {% for activity in activities %}
+      <!-- timeline item -->
+      <div>
+        <i class="fas fa-user bg-green"></i>
+        <div class="timeline-item">
+          <span class="time"><i class="fas fa-clock"></i> hace {{ activity.inserted_on|timesince }}</span>
+          <h3 class="timeline-header">
+            <a href="{% url 'main:bot_user_profile' user_id=activity.user.user_id %}">
+              {{ activity.user.first_name }} 
               {% if activity.user.last_name %}{{ activity.user.last_name }}{% endif %}
               {% if activity.user.username %}({{ activity.user.username }}){% endif %}
-              </a> escribio "{{ activity.text }}"</h3>
-            </div>
-          {% empty %}{% endfor %}
+            </a> escribió: </h3>
+
+          <div class="timeline-body">
+            {{ activity.text }}
+          </div>
+          <div class="timeline-footer">
+            <a class="btn btn-primary btn-sm">Read more</a>
+            <a class="btn btn-danger btn-sm">Delete</a>
+          </div>
         </div>
-        <!-- END timeline item -->
-        <div>
-          <i class="fas fa-clock bg-gray"></i>
-        </div>
+      </div>
+      <!-- END timeline item -->
+        {% comment %} <i class="fas fa-user bg-green"></i>
+        <div class="timeline-item">
+          <span class="time"><i class="fas fa-clock"></i>hace {{ activity.inserted_on|timesince }}</span>
+          <h3 class="timeline-header no-border"><a href="{% url 'main:bot_user_profile' user_id=activity.user.user_id %}">{{ activity.user.first_name }} 
+          {% if activity.user.last_name %}{{ activity.user.last_name }}{% endif %}
+          {% if activity.user.username %}({{ activity.user.username }}){% endif %}
+          </a> escribio "{{ activity.text }}"</h3>
+        </div> {% endcomment %}
+      {% empty %}{% endfor %}
+
     </div><!-- /.timeline -->
   </div><!-- /.col -->
 </div><!-- /.row -->

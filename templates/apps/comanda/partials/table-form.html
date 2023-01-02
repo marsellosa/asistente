@@ -1,86 +1,128 @@
 
-<div class="table-responsive">
-{% if msg %}
-  {% include 'apps/pedidos/partials/item-deleted.html' %}
-{% endif %}
-<p>costo: {{ parent_obj.get_sobre_rojo }}</p>
-<p>mante: {{ parent_obj.get_mantenimiento }}</p>
-<p>insum: 1</p>
-<table class="table m-0">
-  <thead>
-    <tr>
-      <th></th>
-      <th>Cant.</th>
-      <th>P.Vol.</th>
-      <th>Precio</th>
-      <th></th>
-      <th>Costo</th>
-      <th>Mante</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Totales</strong></td>
-      {% if parent_obj.get_cart_items %}<td>{{ parent_obj.get_cart_items }}</td>{% else %}<td>...</td>{% endif %}
-      {% if parent_obj.get_cart_points %}<td>{{ parent_obj.get_cart_points }}</td>{% else %}<td>...</td>{% endif %}
-      {% if parent_obj.get_cart_total %}<td>{{ parent_obj.get_cart_total }}</td>{% else %}<td>...</td>{% endif %}
-      <td></td>
-      <td>{{ parent_obj.get_sobre_rojo }}</td>
-      <td>{{ parent_obj.get_mantenimiento }}</td>
-    </tr>
-    {% for obj in parent_obj.get_all_items %}
-    <tr id="receta-{{ obj.id }}">
-      <td>{{ obj }}</td>
-      <td>{{ obj.cantidad }}</td>
-      <td>{{ obj.get_puntos }}</td>
-      <td>{{ obj.get_total }}</td>
-      <td><button type="button" class="btn btn-danger btn-xs"
-        hx-delete="{{ obj.get_delete_url }}"
-        hx-confirm="¿Realmente quieres eliminar '{{ obj.cantidad }}.- {{ obj.receta }}'?"
-        hx-target="#comanda-list-and-form">
-        <i class="fas fa-trash"></i></button></td>
-        <td></td>
-        <td></td>
-    </tr>
-    {% empty %}
-    <tr>
-      <td>Sin Datos</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td></td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-</div>
-{% if parent_obj.status == 'p' %}
 <div class="card">
-  <div class="card-body">
-    <form hx-post="{{ parent_obj.get_add_receta_url }}" hx-target="#comanda-list-and-form">
-      {% csrf_token %}
-      <div class="row align-items-end">
-        {% for field in form %}
-        <div class="col-4 mb-3{% if field.field.required %} {{ form.required_css_class}}{% endif %}">
-          {{ field.label_tag }} {% if field.field.required %}*{% endif %}
-          <div class="input-group">
-            {{ field }}
-            {% if field.help_text %}
-              <p class="help"> {{ field.help_text|safe }}</p>
-            {% endif %}
-          </div>
-        </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+    {% if msg %}
+      {% include 'apps/pedidos/partials/item-deleted.html' %}
+    {% endif %}
+    <table class="table m-0">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Cant.</th>
+          <th>P.Vol.</th>
+          <th>Precio</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Totales</strong></td>
+          {% if parent_obj.get_cart_items %}<td>{{ parent_obj.get_cart_items }}</td>{% else %}<td>...</td>{% endif %}
+          {% if parent_obj.get_cart_points %}<td>{{ parent_obj.get_cart_points }}</td>{% else %}<td>...</td>{% endif %}
+          {% if parent_obj.get_cart_total %}<td>{{ parent_obj.get_cart_total }}</td>{% else %}<td>...</td>{% endif %}
+          <td></td>
+        </tr>
+        {% for obj in parent_obj.get_all_items %}
+        <tr id="receta-{{ obj.id }}">
+          <td>{{ obj }}</td>
+          <td>{{ obj.cantidad }}</td>
+          <td>{{ obj.get_puntos }}</td>
+          <td>{{ obj.get_total }}</td>
+          <td>
+            <button type="button" class="btn btn-danger btn-xs"
+              hx-delete="{{ obj.get_delete_url }}"
+              hx-confirm="¿Realmente quieres eliminar '{{ obj.cantidad }}.- {{ obj.receta }}'?"
+              hx-target="#comanda-list-and-form">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td>Sin Datos</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td></td>
+        </tr>
         {% endfor %}
+      </tbody>
+    </table>
+    </div>
+    {% if parent_obj.status == 'p' %}
+    <div class="card">
+      <div class="card-body">
+        <form hx-post="{{ parent_obj.get_add_receta_url }}" hx-target="#comanda-list-and-form">
+          {% csrf_token %}
+          <div class="row align-items-end">
+            {% for field in form %}
+            <div class="col-4 mb-3{% if field.field.required %} {{ form.required_css_class}}{% endif %}">
+              {{ field.label_tag }} {% if field.field.required %}*{% endif %}
+              <div class="input-group">
+                {{ field }}
+                {% if field.help_text %}
+                  <p class="help"> {{ field.help_text|safe }}</p>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          
+            <div class="form-group col-4 mb-3">
+              <label></label>
+              <button id="btn_submit" type="submit" class="btn btn-primary btn-block">Agregar</button>
+            </div>
+          </div>
+        </form>
       
-        <div class="form-group col-4 mb-3">
-          <label></label>
-          <button id="btn_submit" type="submit" class="btn btn-primary btn-block">Agregar</button>
-        </div>
       </div>
-    </form>
-  
+    </div>
+    {% endif %}
+  </div>
+  <div class="card-footer p-0" style="display: block;">
+    <ul class="nav nav-pills flex-column">
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          Vendido
+          <span class="float-right text-info">
+            <i class="fas fa-arrow-right text-sm"></i>
+            {% if parent_obj.get_cart_total %}{{ parent_obj.get_cart_total }}{% else %}...{% endif %}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          Sobre Rojo
+          <span class="float-right text-danger">
+            <i class="fas fa-arrow-left text-sm"></i>
+            {% if parent_obj.get_sobre_rojo %}{{ parent_obj.get_sobre_rojo }}{% else %}...{% endif %}
+          </span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          Mantenimiento
+          <span class="float-right text-info">
+            <i class="fas fa-arrow-left text-sm"></i>
+            {% if parent_obj.get_mantenimiento %}{{ parent_obj.get_mantenimiento }}{% else %}...{% endif %}
+          </span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          Insumos
+          <span class="float-right text-info">
+            <i class="fas fa-arrow-left text-sm"></i> 1 bs.
+          </span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          Sobre Verde
+          <span class="float-right text-success">
+            <i class="fas fa-arrow-up text-sm"></i> 4%
+          </span>
+        </a>
+      </li>
+    </ul>
   </div>
 </div>
-{% endif %}

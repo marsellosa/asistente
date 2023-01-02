@@ -61,6 +61,7 @@ docs/_build/
 # PyBuilder
 target/
 
+*.json
 db.sqlite3
 *.sqlite3
 .idea/

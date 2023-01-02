@@ -70,23 +70,23 @@
         <!-- /.card-tools -->
       </div>
       <!-- /.card-header -->
-      <div class="card-body p-0 mb-3" style="display: none;" id="comanda-list-and-form">
-        {% include 'apps/comanda/partials/table-form.html' %}
+      <div class="card-body p-0" style="display: none;" id="comanda-list-and-form">
+        
         <div class"card">
           <div class="card-body">
-            
+            <!-- Formulario Fecha -->
             <form hx-post="{{ parent_obj.get_add_receta_url }}" hx-target="#comanda-list-and-form">
               {% csrf_token %}
-                {% for field in comanda_form %}
-                 
-                    {{ field.label_tag }} {% if field.field.required %}*{% endif %}
-                    
-                    {{ field }}
-      
-                {% endfor %}
+              {% for field in comanda_form %}
+                {{ field.label_tag }} {% if field.field.required %}*{% endif %}
+                {{ field }}
+              {% endfor %}
             </form>
+            <!-- /.Formulario Fecha -->
+            
           </div>
         </div>
+        {% include 'apps/comanda/partials/table-form.html' %}
       </div>
       <!-- /.card-body -->
       <div class="card-footer">
