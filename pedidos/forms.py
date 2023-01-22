@@ -73,7 +73,7 @@ class PedidoItemForm(forms.Form):
 
         self.fields['categoria'].widget.attrs.update(
             {
-                'hx-get': "sabores/",
+                'hx-get': 'sabores/',
                 'hx-trigger': 'change',
                 'hx-target': '#id_detalles',
             

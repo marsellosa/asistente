@@ -4,6 +4,7 @@ from django.urls import reverse
 from main.models import Settings
 from recetas.models import Receta
 from socios.models import Socio
+from prepagos.models import Prepago
 from django.utils.timezone import now
 
 User = settings.AUTH_USER_MODEL
@@ -44,6 +45,7 @@ class Comanda(Model):
     fecha = DateField(default=now)
     usuario = ForeignKey(User, on_delete=CASCADE)
     socio = ForeignKey(Socio, on_delete=CASCADE)
+    prepago = ManyToManyField(Prepago, blank=True)
     timestamp = DateTimeField(auto_now_add=True)
     updated = DateTimeField(auto_now=True)
     status = CharField(max_length=1, choices=ComandaStatus.choices, default=ComandaStatus.PENDIENTE)

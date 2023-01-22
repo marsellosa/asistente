@@ -15,7 +15,7 @@ class PersonaQuerySet(QuerySet):
             Q(nombre__icontains=query) |
             Q(apellido__icontains=query)
         )
-        print(lookups)
+        # print(lookups)
         return self.filter(lookups)
 
     def mujeres(self):
@@ -44,7 +44,21 @@ class Persona(Model):
     objects = PersonaManager()
 
     def get_absolute_url(self):
-        return reverse("socios:profile", kwargs={"id": self.id})
+        return reverse("socios:profile", kwargs={"id": self.pk})
+
+    def get_nivel_licencia(self):
+        status = {
+            'my': 'Mayorista',
+            'pc': 'Productor Calificado',
+            'ce': 'Constructor del Exito',
+            'cm': 'Consultor Mayor',
+            'ds': 'Distribuidor',
+            'au': 'Oro',
+            'ag': 'Plata',
+            'ae': 'Bronce',
+            'cl': 'Cliente',
+        }
+        return status[str(self.licencia_set.first().status)] #type:ignore
 
     def __str__(self):
         return f"{self.nombre} {self.apellido}"

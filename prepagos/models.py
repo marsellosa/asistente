@@ -15,6 +15,9 @@ class PrepagoManager(Manager):
     def get_queryset(self):
         return PrepagoQuerySet(self.model, using=self._db)
 
+    def by_socio(self, socio):
+        return self.get_queryset().by_socio(socio)
+
 class Prepago(Model):
     socio       = ForeignKey(Socio, on_delete=CASCADE)
     cantidad    = IntegerField(default=10)

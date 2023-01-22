@@ -8,8 +8,6 @@ from productos.models import Categoria, Detalles
 from bot.models import User, Activity
 from bot.forms import MessageForm
 from main.models import Monto
-from recetas.models import Receta
-from persona.models import Persona
 from socios.models import Socio
 
 @staff_member_required
@@ -117,9 +115,14 @@ def search_view(request):
     query = request.GET.get('q')
     qs = Socio.objects.search(query=query)
     context['objects'] = qs
-    
+
     if request.htmx:
         context['objects'] = qs[:5]
         template = 'apps/main/search/partials/results.html'
     
+    return render(request, template, context)
+
+def error_view(request):
+    context, template = {}, '404.html'
+
     return render(request, template, context)

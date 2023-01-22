@@ -1,4 +1,4 @@
-from django.db.models import *
+from django.db.models import * #type:ignore
 from django.urls import reverse
 from socios.models import Socio
 
@@ -16,7 +16,7 @@ class User(Model):
         return reverse('bot:send_message', kwargs={'user_id' : self.user_id })
     
     def get_user_requests(self):
-        qs = self.activity_set.order_by('-inserted_on')[:15]
+        qs = self.activity_set.order_by('-inserted_on')[:15] #type:ignore
         return reversed(list(qs))
     
     def __str__(self):

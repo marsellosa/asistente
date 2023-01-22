@@ -122,7 +122,8 @@ def recipe_update_view(request, id=None):
     return render(request, template, context)
 
 ###################### HTMX ########################
-@login_required
+
+@login_required #type:ignore
 def recipe_detail_hx_view(request, id=None):
     context, template = {}, 'apps/recetas/partials/detail.html'
     if not request.htmx:
@@ -137,7 +138,7 @@ def recipe_detail_hx_view(request, id=None):
 
     return render(request, template, context)
 
-@login_required
+@login_required #type:ignore
 def recipe_ingredient_update_hx_view(request, id=None, parent_id=None):
     context, template = {}, 'apps/recetas/partials/ingredient-form.html'
     if not request.htmx:
@@ -168,7 +169,7 @@ def recipe_ingredient_update_hx_view(request, id=None, parent_id=None):
 
     return render(request, template, context)
 
-@login_required
+@login_required #type:ignore
 def recipe_herbal_ingredient_update_hx_view(request, id=None, parent_id=None):
     context, template = {}, 'apps/recetas/partials/ingredient-form.html'
     if not request.htmx:

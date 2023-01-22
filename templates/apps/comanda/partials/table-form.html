@@ -1,5 +1,5 @@
 
-<div class="card">
+
   <div class="card-body p-0">
     <div class="table-responsive">
     {% if msg %}
@@ -51,6 +51,8 @@
     </table>
     </div>
     {% if parent_obj.status == 'p' %}
+    {% comment %} formulario para agregar nuevas recetas {% endcomment %}
+
     <div class="card">
       <div class="card-body">
         <form hx-post="{{ parent_obj.get_add_receta_url }}" hx-target="#comanda-list-and-form">
@@ -74,7 +76,7 @@
             </div>
           </div>
         </form>
-      
+        
       </div>
     </div>
     {% endif %}
@@ -125,4 +127,4 @@
       </li>
     </ul>
   </div>
-</div>
+

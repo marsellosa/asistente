@@ -109,9 +109,9 @@ class PrecioClientePreferente(Model):
 
 class Sabor(Model):
 
-    categoria = ForeignKey('Categoria', on_delete=SET_NULL, null=True)
     nombre = CharField(max_length=64)
     descripcion = CharField(max_length=255, blank=True, null=True)
+    categoria = ManyToManyField('Categoria', blank=True)
 
     class Meta:
         verbose_name_plural = 'Sabores'
@@ -206,4 +206,29 @@ class Porcion(Model):
         return str(self.categoria)
     
 
+class PalabrasClaveQuerySet(QuerySet):
+    def search(self, query=None):
+        if query is None or query == "":
+            return self.none()
+        lookups = (
+            Q(palabra__icontains=query)
+        )
+        print(lookups)
+        return self.filter(lookups)
 
+class PalabrasClaveManager(Manager):
+    def get_queryset(self):
+        return PalabrasClaveQuerySet(self.model, using=self._db)
+
+    def search(self, query=None):
+        return self.get_queryset().search(query=query)
+
+class PalabrasClave(Model):
+
+    palabra = CharField(max_length=32)
+    categoria = ManyToManyField(Categoria, blank=True)
+
+    objects = PalabrasClaveManager()
+
+    def __str__(self):
+        return str(self.palabra)

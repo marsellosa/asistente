@@ -46,9 +46,9 @@
             <b>#</b> <a class="float-right">Sin datos de Contacto</a>
           </li>
           {% endfor %}
-          {% if socio_obj.persona.licencia %}
+          {% if socio_obj.persona.get_nivel_licencia %}
           <li class="list-group-item">
-            <b>Nivel</b> <a class="float-right">{{ socio_obj.persona.licencia.nivel }}</a>
+            <b>Nivel</b> <a class="float-right">{{ socio_obj.persona.get_nivel_licencia }}</a>
           </li>
           {% endif %}
         </ul>
@@ -70,12 +70,12 @@
         <!-- /.card-tools -->
       </div>
       <!-- /.card-header -->
-      <div class="card-body p-0" style="display: none;" id="comanda-list-and-form">
+      <div class="card-body p-0" style="display: none;" >
         
         <div class"card">
           <div class="card-body">
             <!-- Formulario Fecha -->
-            <form hx-post="{{ parent_obj.get_add_receta_url }}" hx-target="#comanda-list-and-form">
+            <form >
               {% csrf_token %}
               {% for field in comanda_form %}
                 {{ field.label_tag }} {% if field.field.required %}*{% endif %}
@@ -86,12 +86,14 @@
             
           </div>
         </div>
-        {% include 'apps/comanda/partials/table-form.html' %}
+        <div class="card" id="comanda-list-and-form">
+          {% include 'apps/comanda/partials/table-form.html' %}
+        </div>
       </div>
       <!-- /.card-body -->
       <div class="card-footer">
         <div class="form-group">
-            <button id="btn_submit" type="submit" class="btn btn-primary btn-block">Preparar</button>
+            <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#modal-sm">Preparar</button>
         </div>
       </div>
     </div>
@@ -147,7 +149,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for prepago in prepagos_obj %}
+                    {% for prepago in socio_obj.get_prepagos %}
                     <tr>
                       <td><a href="javascript:void(0)">{{ prepago.id }}</a></td>
                       <td>{{ prepago }}</td>
@@ -337,7 +339,38 @@
   </div>
   <!-- /.col -->
 </div>
+<div class="modal fade" id="modal-sm" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Pagar</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulario Fecha -->
+        <form >
+          {% csrf_token %}
+          {% for field in comanda_form %}
+            {{ field.label_tag }} {% if field.field.required %}*{% endif %}
+            {{ field }}
+          {% endfor %}
+        
+        <!-- /.Formulario Fecha -->
+        <div id="total_a_pagar"></div>
+      </div>
 
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-success">Save changes</button>
+      </div>
+    </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
 
 {% endblock main-content %}
 {% block js %}

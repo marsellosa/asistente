@@ -1,6 +1,8 @@
 from django.db.models import * #type: ignore
-from persona.models import Persona
+
 from operadores.models import Operador
+from persona.models import Persona
+# from prepagos.models import Prepago
 from django.urls import reverse
 
 class SocioQuerySet(QuerySet):
@@ -53,8 +55,8 @@ class Socio(Model):
     def nombre_completo(self):
         return f"{self.persona.nombre} {self.persona.apellido}"
     
-    # def get_datos_contacto(self):
-    #     return self.contacto_set.all()
+    def get_prepagos(self):
+        return self.prepago_set.all() #type:ignore
     
     def __str__(self):
         return str(self.persona)

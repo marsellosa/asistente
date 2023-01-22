@@ -213,18 +213,16 @@ def detail(message):
     except:
         productos = []
         # print("Buscando por otras caracteristicas")
-        productos = Categoria.objects.filter(
-            Q(nombre__icontains=text) |
-            Q(descripcion__icontains=text) |
-            Q(palabras_clave__icontains=text),
-            activo=True
-        )
-        
+        productos = Categoria.objects.search(query=text)
+        # print(f"Categorias: {productos}")
+  
         if not productos or productos is None:
-            productos = buscar_x_detalles(text)
+            
+            productos = Categoria.objects.filter(palabrasclave__palabra=text)
+            # productos = buscar_x_detalles(text)
 
         if len(productos) == 1:
-            # print("Aca no entra")
+            # print("tienes un solo producto")
             producto = productos[0]
             msg = response_msg(producto)
             # print(f"msg: {msg}")
