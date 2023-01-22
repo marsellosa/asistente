@@ -218,7 +218,7 @@ def detail(message):
   
         if not productos or productos is None:
             
-            productos = Categoria.objects.filter(palabrasclave__palabra=text)
+            productos = Categoria.objects.filter(palabrasclave__palabra__icontains=text)
             # productos = buscar_x_detalles(text)
 
         if len(productos) == 1:
