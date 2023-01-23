@@ -10,7 +10,8 @@ class CategoriaQuerySet(QuerySet):
         lookups = (
             Q(nombre__icontains=query) |
             Q(descripcion__icontains=query) |
-            Q(palabras_clave__icontains=query)
+            Q(palabras_clave__icontains=query) |
+            Q(palabrasclave__palabra__icontains=query)
         )
         
         return self.filter(lookups, activo=True)

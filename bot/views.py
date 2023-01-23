@@ -199,46 +199,6 @@ def response_msg(producto):
         msg = "No hay Datos"
     return msg
 
-def detail(message):
-    text = message.text
-    # calcula y envia el precio del producto solicitado
-    msg, link, image = None, None, None
-
-    # Procesamos la respuesta al usurio
-    # TODO corregir el codigo de msg para limpiar codigo
-    try:
-        producto = Categoria.objects.get(nombre__iexact=text, activo=True)
-        image = producto.image_url
-        msg = response_msg(producto)
-    except:
-        productos = []
-        # print("Buscando por otras caracteristicas")
-        productos = Categoria.objects.search(query=text)
-        # print(f"Categorias: {productos}")
-  
-        if not productos or productos is None:
-            
-            productos = Categoria.objects.filter(palabrasclave__palabra__icontains=text)
-            # productos = buscar_x_detalles(text)
-
-        if len(productos) == 1:
-            # print("tienes un solo producto")
-            producto = productos[0]
-            msg = response_msg(producto)
-            # print(f"msg: {msg}")
-            image = producto.image_url
-
-        elif len(productos) > 1:
-            msg = "Tal vez buscas:\n"
-            link = InlineKeyboardMarkup()
-            for producto in productos:
-                link.add(InlineKeyboardButton(text=str(producto), callback_data=str(producto)))
-        else:
-            # escoge un mensaje aleatorio
-            msg = respond(message)  
-        
-    return msg, link, image
-
 def buscar_x_detalles(text):
     prods = Detalles.objects.filter(
                 Q(sabor__icontains=text) |
@@ -251,6 +211,49 @@ def buscar_x_detalles(text):
         productos = None
 
     return productos
+
+def detail(message):
+    text = message.text
+    productos = []
+    # calcula y envia el precio del producto solicitado
+    msg, link, image = None, None, None
+
+    # Procesamos la respuesta al usurio
+    # TODO corregir el codigo de msg para limpiar codigo
+    try:
+        producto = Categoria.objects.get(nombre__iexact=text, activo=True)
+        image = producto.image_url
+        msg = response_msg(producto)
+    except:
+        
+        # print("Buscando por otras caracteristicas")
+        productos = Categoria.objects.search(query=text)
+        # print(f"Categorias: {productos}")
+  
+    if not productos or productos is None:
+        
+        # productos = Categoria.objects.filter(palabrasclave__palabra__icontains=text)
+        productos = buscar_x_detalles(text)
+
+    if len(productos) == 1:
+        # print("tienes un solo producto")
+        producto = productos[0]
+        msg = response_msg(producto)
+        # print(f"msg: {msg}")
+        image = producto.image_url
+
+    elif len(productos) > 1:
+        msg = "Tal vez buscas:\n"
+        link = InlineKeyboardMarkup()
+        for producto in productos:
+            link.add(InlineKeyboardButton(text=str(producto), callback_data=str(producto)))
+    else:
+        # escoge un mensaje aleatorio
+        msg = respond(message)  
+        
+    return msg, link, image
+
+
 
 def user_send_message(request, user_id):
     context, template = {}, 'apps/bot/partials/message-form.html'

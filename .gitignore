@@ -3,6 +3,7 @@
 # Byte-compiled / optimized / DLL files
 tgbot/settings/local.py
 local.py
+tests.py
 
 __pycache__/
 *.py[cod]
