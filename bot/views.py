@@ -230,26 +230,28 @@ def detail(message):
         productos = Categoria.objects.search(query=text)
         # print(f"Categorias: {productos}")
   
-    if not productos or productos is None:
+        if not productos or productos is None:
+            
+            # productos = Categoria.objects.filter(palabrasclave__palabra__icontains=text)
+            productos = buscar_x_detalles(text)
+
+            if not productos or productos is None:
+                # escoge un mensaje aleatorio
+                msg = respond(message)
+
+        if len(productos) == 1:
+            # print("tienes un solo producto")
+            producto = productos[0]
+            msg = response_msg(producto)
+            # print(f"msg: {msg}")
+            image = producto.image_url
+
+        if len(productos) > 1:
+            msg = "Tal vez buscas:\n"
+            link = InlineKeyboardMarkup()
+            for producto in productos:
+                link.add(InlineKeyboardButton(text=str(producto), callback_data=str(producto)))
         
-        # productos = Categoria.objects.filter(palabrasclave__palabra__icontains=text)
-        productos = buscar_x_detalles(text)
-
-    if len(productos) == 1:
-        # print("tienes un solo producto")
-        producto = productos[0]
-        msg = response_msg(producto)
-        # print(f"msg: {msg}")
-        image = producto.image_url
-
-    elif len(productos) > 1:
-        msg = "Tal vez buscas:\n"
-        link = InlineKeyboardMarkup()
-        for producto in productos:
-            link.add(InlineKeyboardButton(text=str(producto), callback_data=str(producto)))
-    else:
-        # escoge un mensaje aleatorio
-        msg = respond(message)  
         
     return msg, link, image
 
