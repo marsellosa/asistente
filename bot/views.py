@@ -235,10 +235,6 @@ def detail(message):
             # productos = Categoria.objects.filter(palabrasclave__palabra__icontains=text)
             productos = buscar_x_detalles(text)
 
-            if not productos or productos is None:
-                # escoge un mensaje aleatorio
-                msg = respond(message)
-
         if len(productos) == 1:
             # print("tienes un solo producto")
             producto = productos[0]
@@ -246,11 +242,14 @@ def detail(message):
             # print(f"msg: {msg}")
             image = producto.image_url
 
-        if len(productos) > 1:
+        elif len(productos) > 1:
             msg = "Tal vez buscas:\n"
             link = InlineKeyboardMarkup()
             for producto in productos:
                 link.add(InlineKeyboardButton(text=str(producto), callback_data=str(producto)))
+        else:
+            # escoge un mensaje aleatorio
+            msg = respond(message)
         
         
     return msg, link, image
