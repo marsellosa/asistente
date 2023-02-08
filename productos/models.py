@@ -11,7 +11,8 @@ class CategoriaQuerySet(QuerySet):
             Q(nombre__icontains=query) |
             Q(descripcion__icontains=query) |
             Q(palabras_clave__icontains=query) |
-            Q(palabrasclave__palabra__icontains=query)
+            Q(palabrasclave__palabra__icontains=query) |
+            Q(detalles__sabor__icontains=query)
         )
         
         return self.filter(lookups, activo=True)
@@ -73,6 +74,11 @@ class Categoria(Model):
     def precios_distribuidor(self):
         qs = self.preciodistribuidor_set.filter(activo=True).first() #type: ignore
         # print(f"qs: {qs}")
+        return qs
+    
+    @property
+    def precios_cliente(self):
+        qs = self.precioclientepreferente_set.filter(activo=True).first() #type:ignore
         return qs
 
     def __str__(self):

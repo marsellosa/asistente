@@ -13,6 +13,7 @@ from main.models import Settings
 import json
 
 import telebot
+
 from telebot.types import InlineKeyboardButton, BotCommand, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup
 
 bot = telebot.TeleBot(config('TOKEN')) #type: ignore
@@ -176,15 +177,15 @@ def callback_inline(call):
     call.text = call.data
     # si existe mensaje mandamos una respuesta
     if call.message:
-        
+
+        # print(f"message: {json.dumps(call.message, indent=4, sort_keys=True)}")
         text, link, image_url = detail(call)
-        # print(f"image: {image_url}")
+        # if image_url is None:
+        # Enviamos el mensaje
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text)
-        
+            # bot.edit_message_media(image_url, chat_id=call.message.chat.id, message_id=call.message.message_id)
 def response_msg(producto):
     msg = None
-    
-    # print(f"producto.detalle: {producto.detalle}")
     try:
         msg = str(producto.detalle).format(
             producto.descripcion, 
@@ -195,8 +196,19 @@ def response_msg(producto):
             producto.precios_distribuidor.productor_calificado, 
             producto.precios_distribuidor.mayorista,
             )
+        
     except:
         msg = "No hay Datos"
+    try:
+        msg_one = "\n> Cliente (sugerido):{:>9} Bs\nOro:{:>35}\nPlata:{:>33}\nBronce:{:>29}".format(
+            producto.precios_cliente.cliente,
+            producto.precios_cliente.oro,
+            producto.precios_cliente.plata,
+            producto.precios_cliente.bronce,
+        )
+        msg = msg + msg_one
+    except: 
+        pass
     return msg
 
 def buscar_x_detalles(text):
