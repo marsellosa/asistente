@@ -200,7 +200,7 @@ def response_msg(producto):
     except:
         msg = "No hay Datos"
     try:
-        msg_one = "\n{0:25}{1} Bs.\n{2:36}{3} Bs.\n{4:36}{5} Bs.\n{6:33}{7} Bs.".format(
+        msg_one = "\n{0:25}{1} Bs.\n{2:36}{3} Bs.\n{4:35}{5} Bs.\n{6:33}{7} Bs.".format(
             '> Cliente (sugerido):',
             producto.precios_cliente.cliente,
             'Oro :',
