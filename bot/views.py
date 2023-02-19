@@ -160,7 +160,6 @@ def send_message(message):
 
     msg, link, image_url = detail(message)
     # print(f"msg: {msg}")
-
     if image_url is None:
         # Enviamos el mensaje
         bot.send_message(user.user_id, msg, reply_markup=link)
@@ -174,15 +173,17 @@ def send_m_bot(user, msg):
 def callback_inline(call):
     # le damos atributo text a call
     # para enviarlo a la funcion detail
+    
     call.text = call.data
     # si existe mensaje mandamos una respuesta
     if call.message:
-
+        # print(f"Message: {call.message}")
+        send_message(call)
         # print(f"message: {json.dumps(call.message, indent=4, sort_keys=True)}")
-        text, link, image_url = detail(call)
+        # text, link, image_url = detail(call)
         # if image_url is None:
         # Enviamos el mensaje
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text)
+        # bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text)
             # bot.edit_message_media(image_url, chat_id=call.message.chat.id, message_id=call.message.message_id)
 def response_msg(producto):
     msg = None
@@ -230,6 +231,7 @@ def buscar_x_detalles(text):
 
 def detail(message):
     text = message.text
+    # print(f"TEXT: {text}")
     productos = []
     # calcula y envia el precio del producto solicitado
     msg, link, image = None, None, None
@@ -240,11 +242,12 @@ def detail(message):
         producto = Categoria.objects.get(nombre__iexact=text, activo=True)
         image = producto.image_url
         msg = response_msg(producto)
+        # print(f"Producto: {producto}")
     except:
         
         # print("Buscando por otras caracteristicas")
-        productos = Categoria.objects.search(query=text)
-        # print(f"Categorias: {productos}")
+        productos = Categoria.objects.search(query=text).distinct()
+        # print(f"Productos: {productos}")
   
         if not productos or productos is None:
             
