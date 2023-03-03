@@ -18,6 +18,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 
 # ALLOWED_HOSTS = ['*']
 
+MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
+
 ROOT_URLCONF = 'tgbot.urls'
 # Application definition
 
