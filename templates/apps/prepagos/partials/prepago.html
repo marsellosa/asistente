@@ -3,7 +3,8 @@
       <h3 class="card-title">{{ prepago }} {% if prepago.pagado %}- Pagado{% else %}- ( Saldo: {{ prepago.get_saldo }} ){% endif %}</h3>
 
       <div class="card-tools">
-        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+          {% if show %}<i class="fas fa-minus"></i>{% else %}<i class="fas fa-plus"></i>{% endif %}
         </button>
       </div>
       <!-- /.card-tools -->
@@ -19,25 +20,47 @@
         </tr>
         </thead>
         <tbody>
-        {% for pago in prepago.get_total_pagos %}
-        <tr>
-          <td>{{ pago.fecha|date }}</td>
-          <td>{{pago}} Bs.</td>
-          <td>{{ pago.fecha|date:"l" }}</td>
-        </tr>
-        {% endfor %}
-        {% if not prepago.pagado %}
-        <tr>
-          <form hx-post="{% url 'prepagos:add-pago' prepago_id=prepago.id %}" hx-target="#prepago-{{prepago.id}}" hx-swap="outerHTML">
-            {% csrf_token %}
-            {% for field in pago_form %}
-            <td>{{ field }}</td>
-            {% endfor %}
-            <td><button id="btn_submit" type="submit" class="btn btn-primary">Agregar</button></td>
-          </form>
-        </tr>
-        {% endif %}
+          {% for pago in prepago.get_total_pagos %}
+          <tr>
+            <td>{{ pago.fecha|date }}</td>
+            <td>{{pago}} Bs.</td>
+            <td>{{ pago.fecha|date:"l" }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td>...</td>
+            <td>...</td>
+            <td>...</td>
+          </tr>
+          {% endfor %}
+          
         </tbody>
       </table>
+      {% if not prepago.pagado %}
+
+          <div class="card-body">
+            <form hx-post="{% url 'prepagos:add-pago' prepago_id=prepago.id %}" hx-target="#prepago-{{prepago.id}}" hx-swap="outerHTML">
+              {% csrf_token %}
+              <div class="row align-items-end">
+                {% for field in pago_form %}
+                <div class="col-4 mb-3{% if field.field.required %} {{ form.required_css_class}}{% endif %}">
+                  {{ field.label_tag }} {% if field.field.required %}*{% endif %}
+                  <div class="input-group">
+                    {{ field }}
+                    {% if field.help_text %}
+                      <p class="help"> {{ field.help_text|safe }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+                {% endfor %}
+              
+                <div class="form-group col-4 mb-3">
+                  <label></label>
+                  <button id="btn_submit" type="submit" class="btn btn-primary btn-block">Agregar</button>
+                </div>
+              </div>
+            </form>
+          </div>
+      {% endif %}
     </div>
 </div>

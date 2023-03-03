@@ -40,7 +40,7 @@ class ComandaModelForm(ModelForm):
         model = Comanda
         fields = ['fecha', 'prepago']
 
-    def __init__(self, socio, *args, **kwargs):
+    def __init__(self, socio, comanda, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:
             field_name = str(field)
@@ -53,8 +53,8 @@ class ComandaModelForm(ModelForm):
         self.fields['prepago'].queryset = Prepago.objects.filter(socio=socio, activo=True)
         self.fields['prepago'].widget.attrs.update(
             {
-                'hx-get': reverse('comanda:form'),
-                'hx-trigger': 'select change click',
+                'hx-get': reverse('comanda:hx-add-prepago', kwargs={'id_comanda': comanda.pk}),
+                'hx-trigger': 'change',
                 'hx-target': '#total_a_pagar'
             }
         )

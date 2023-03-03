@@ -56,6 +56,9 @@ class Comanda(Model):
     def get_add_receta_url(self):
         return reverse('comanda:hx-add-receta', kwargs={'id_comanda': self.pk})
 
+    def get_add_prepago_url(self):
+        return reverse('comanda:hx-add-prepago', kwargs={'id_comanda': self.pk})
+
     @property
     def get_total_comanda(self):
         comandaitems = self.comandaitem_set.all() # type: ignore
@@ -134,6 +137,9 @@ class ComandaItem(Model):
         return costo
 
     def get_delete_url(self):
+        return reverse('comanda:hx-delete-receta', kwargs={'id_receta': self.pk, 'id_comanda': self.comanda.pk})
+    
+    def get_patch_url(self):
         return reverse('comanda:hx-delete-receta', kwargs={'id_receta': self.pk, 'id_comanda': self.comanda.pk})
 
     def __str__(self):
