@@ -41,7 +41,7 @@ def socio_profile_view(request, id=None):
         'socio_obj': obj,
         'parent_obj': comanda,
         'prepagos_obj': prepagos,
-        'comanda_form': ComandaModelForm(obj),
+        'comanda_form': ComandaModelForm(obj, comanda),
         'form': ComandaItemForm(),
         'prepago_form': PrepagoForm(),
         'pago_form': PagoForm()
