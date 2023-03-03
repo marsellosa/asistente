@@ -1,6 +1,6 @@
 from django.db.models import * #type:ignore
 from django.urls import reverse
-from socios.models import Socio
+from persona.models import Persona
 
 class User(Model):
     user_id = CharField(max_length=200, unique=True) #user_id
@@ -8,7 +8,7 @@ class User(Model):
     last_name = CharField(max_length=200, null=True, blank=True)
     username = CharField(max_length=200, null=True, blank=True)
     is_bot = BooleanField(default=False)
-    socio = ForeignKey(Socio, on_delete=SET_NULL, null=True, blank=True)
+    persona = ForeignKey(Persona, on_delete=SET_NULL, null=True, blank=True)
     language_code = CharField(max_length=8, null=True, blank=True)
     inserted_on = DateTimeField(auto_now_add=True)
 
