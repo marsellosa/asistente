@@ -33,6 +33,9 @@ def save_new_user(message):
 
     from_user = message.from_user
     admin_id = 779630771
+    # json_dict = bot.get_user_profile_photos(from_user.id)
+    # print(json_dict.photos)
+    # [[print(bot.get_file_url(y.file_id)) for y in x] for x in json_dict.photos]
     
     obj, created = User.objects.update_or_create(
         user_id = from_user.id,
@@ -153,13 +156,16 @@ def start(message):
 @bot.message_handler(content_types=['text'])
 def send_message(message):
 
+    # texto = json.loads(message)
+    json_data = message.from_user
+    print(f"json_data: {json_data}")
     user, created = save_new_user(message)
-
+    
     # Registramos la actividad del usuario
     Activity(user=user, text=message.text).save()
 
     msg, link, image_url = detail(message)
-    # print(f"msg: {msg}")
+    # print(f"msg: {msg}, image_url: {image_url}")
     if image_url is None:
         # Enviamos el mensaje
         bot.send_message(user.user_id, msg, reply_markup=link)
