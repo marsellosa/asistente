@@ -111,22 +111,25 @@ class PedidoItem(Model):
     updated = DateTimeField(auto_now=True)
 
     def get_total(self, nivel='Mayorista'):
+        precio_dist = PrecioDistribuidor.objects.filter(categoria=self.categoria, activo=True).order_by('-inserted_on').first()
+        precio_clip = PrecioClientePreferente.objects.filter(categoria=self.categoria, activo=True).order_by('-inserted_on').first()
+
         if nivel == 'Mayorista':
-            precio = PrecioDistribuidor.objects.get(categoria=self.categoria).mayorista 
+            precio = precio_dist.mayorista # type: ignore
         elif nivel == 'Productor Calificado':
-            precio = PrecioDistribuidor.objects.get(categoria=self.categoria).productor_calificado
+            precio = precio_dist.productor_calificado # type: ignore
         elif nivel == 'Consultor Mayor':
-            precio = PrecioDistribuidor.objects.get(categoria=self.categoria).consultor_mayor
+            precio = precio_dist.consultor_mayor # type: ignore
         elif nivel == 'Distribuidor':
-            precio = PrecioDistribuidor.objects.get(categoria=self.categoria).distribuidor
+            precio = precio_dist.distribuidor # type: ignore
         elif nivel == 'Oro':
-            precio = PrecioClientePreferente.objects.get(categoria=self.categoria).oro
+            precio = precio_clip.oro # type: ignore
         elif nivel == 'Plata':
-            precio = PrecioClientePreferente.objects.get(categoria=self.categoria).plata
+            precio = precio_clip.plata # type: ignore
         elif nivel == 'Bronce':
-            precio = PrecioClientePreferente.objects.get(categoria=self.categoria).bronce
+            precio = precio_clip.bronce # type: ignore
         elif nivel == 'Cliente':
-            precio = PrecioClientePreferente.objects.get(categoria=self.categoria).cliente
+            precio = precio_clip.cliente # type: ignore
 
         total = precio * self.cantidad # type: ignore
 
