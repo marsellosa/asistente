@@ -5,7 +5,7 @@ class UserForm(ModelForm):
 
     class Meta:
         model = User
-        fields = ['user_id', 'first_name', 'last_name', 'username', 'language_code', 'is_bot']
+        fields = ['persona','user_id', 'first_name', 'last_name', 'username', 'language_code', 'is_bot']
 
 
 class MessageForm(Form):

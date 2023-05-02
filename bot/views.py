@@ -10,6 +10,7 @@ from .models import User, Activity
 from .chat import respond, welcome
 from productos.models import Categoria, Detalles
 from main.models import Settings
+from pedidos.models import Pedido
 import json
 
 import telebot
@@ -159,6 +160,7 @@ def send_message(message):
     # texto = json.loads(message)
     json_data = message.from_user
     print(f"json_data: {json_data}")
+    
     user, created = save_new_user(message)
     
     # Registramos la actividad del usuario
@@ -279,13 +281,11 @@ def detail(message):
         
     return msg, link, image
 
-
-
 def user_send_message(request, user_id):
     context, template = {}, 'apps/bot/partials/message-form.html'
     
     if not request.htmx:
-        return Http404
+        return Http404('404.html')
     try:
         bot_user = User.objects.get(user_id=user_id)
     except:
@@ -302,5 +302,27 @@ def user_send_message(request, user_id):
         new_message = request.POST.get('message')
         bot.send_message(user_id, text=new_message)
         context['form'] = MessageForm() #type: ignore
+
+    return render(request, template, context)
+
+def enviar_detalle_pedido(request, user_id, pedido_id):
+    context, template = {}, 'apps/pedidos/partials/send_order.html'
+    detail = ''
+    try:
+        pedido = Pedido.objects.get(pedido_id=pedido_id)
+    except:
+        pedido = None
+
+    if pedido is None:
+        return HttpResponse('Not Found')
+    
+    for item in pedido.get_all_items():
+        detail += f"{item.categoria} {item.detalles} x{item.cantidad}\n"
+    detail += f"\nCantidad: {pedido.get_cart_items}\nPuntos: {pedido.get_cart_points}\nTotal: {pedido.get_cart_total} Bs."
+    bot.send_message(user_id, text=detail)
+    context = {
+        'user_id' : user_id,
+        'parent_obj' : pedido
+    }
 
     return render(request, template, context)
