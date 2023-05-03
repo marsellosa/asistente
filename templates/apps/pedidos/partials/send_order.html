@@ -1,7 +1,6 @@
 <a href="javascript:void(0)" 
     class="btn btn-tool btn-sm"
     hx-get = {% url 'bot:send_pedido' user_id=user_id pedido_id=parent_obj.pedido_id %}
-    hx-swap = outerHTML
-    >
+    hx-swap = outerHTML>
     <i class="fas fa-comment-dollar"></i>
 </a>

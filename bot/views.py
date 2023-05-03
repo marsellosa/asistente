@@ -159,7 +159,7 @@ def send_message(message):
 
     # texto = json.loads(message)
     json_data = message.from_user
-    print(f"json_data: {json_data}")
+    # print(f"json_data: {json_data}")
     
     user, created = save_new_user(message)
     
@@ -285,7 +285,7 @@ def user_send_message(request, user_id):
     context, template = {}, 'apps/bot/partials/message-form.html'
     
     if not request.htmx:
-        return Http404('404.html')
+        return Http404
     try:
         bot_user = User.objects.get(user_id=user_id)
     except:
@@ -308,6 +308,8 @@ def user_send_message(request, user_id):
 def enviar_detalle_pedido(request, user_id, pedido_id):
     context, template = {}, 'apps/pedidos/partials/send_order.html'
     detail = ''
+    if not request.htmx:
+        return Http404
     try:
         pedido = Pedido.objects.get(pedido_id=pedido_id)
     except:

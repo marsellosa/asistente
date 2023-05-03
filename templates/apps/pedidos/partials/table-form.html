@@ -3,9 +3,9 @@
   
   <h3 class="card-title">Fecha: {{ parent_obj.updated|date }}</h3>
   <div class="card-tools">
-    <a href="javascript:void(0)" class="btn btn-tool btn-sm">
-      <i class="fas fa-download"></i>
-    </a>
+    {% if allow %}
+    {% include 'apps/pedidos/partials/send_order.html' %}
+    {% endif %}
     <a href="javascript:void(0)" class="btn btn-tool btn-sm">
       <i class="fas fa-bars"></i>
     </a>
