@@ -18,6 +18,14 @@ def lista_pedidos(request):
 def pedido_detail_view(request, id):
     context, template = {}, 'apps/pedidos/detail.html'
     parent_obj = Pedido.objects.get(id=id)
+    items = parent_obj.get_all_items()
+    try:
+        bot_user_id = parent_obj.operador.licencia.persona.user_set.get().user_id
+    except:
+        bot_user_id = None
+
+    allow = True if items and bot_user_id is not None else False
+
     form = PedidoItemModelForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
@@ -51,7 +59,9 @@ def pedido_detail_view(request, id):
         headers = {"HX-Redirect": parent_obj.get_absolute_url()}
         return HttpResponse("Deleted", headers=headers)
     context = {
-        'parent_obj': parent_obj, 
+        'parent_obj': parent_obj,
+        'allow': allow,
+        'user_id': bot_user_id,
         'form': form
         }
     return render(request, template, context)
