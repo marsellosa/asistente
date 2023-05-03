@@ -321,10 +321,11 @@ def enviar_detalle_pedido(request, user_id, pedido_id):
     for item in pedido.get_all_items():
         detail += f"{item.categoria} {item.detalles} x{item.cantidad}\n"
     detail += f"\nCantidad: {pedido.get_cart_items}\nPuntos: {pedido.get_cart_points}\nTotal: {pedido.get_cart_total} Bs."
-    bot.send_message(user_id, text=detail)
+    sended = bot.send_message(user_id, text=detail)
     context = {
         'user_id' : user_id,
-        'parent_obj' : pedido
+        'parent_obj' : pedido,
+        'sended' : sended
     }
 
     return render(request, template, context)
