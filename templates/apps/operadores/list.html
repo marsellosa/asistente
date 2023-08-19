@@ -21,55 +21,29 @@
 {% endblock content-header %}
 
 {% block main-content %}
-<div class='row'>
-  {% for obj in obj_list %}
-  <div class="col-md-4">
-    <!-- Widget: user widget style 1 -->
-    <div class="card card-widget widget-user">
-    <!-- Add the bg color to the header using any of the bg-* classes -->
-        <div class="widget-user-header bg-info">
-            <h2 class="widget-user-username">{{ obj }}</h3>
-            <h5 class="widget-user-desc">{{ obj.get_nivel_licencia }}</h5>
-        </div>
-        <div class="widget-user-image">
-            <img class="img-circle elevation-2" src="{% static 'AdminLTE/dist/img/user1-128x128.jpg' %}" alt="User Avatar">
-        </div>
-        <div class="card-footer">
-          <div class="row">
-            <div class="col-sm-4 border-right">
-              <div class="description-block">
-                <h5 class="description-header">13,200</h5>
-                <span class="description-text">VENTAS</span>
-                </div>
-                <!-- /.description-block -->
-            </div>
-            <!-- /.col -->
-            <div class="col-sm-4 border-right">
-              <div class="description-block">
-              <a hx-get="{% url 'operadores:list-socios-by-operador' id=obj.id %}" hx-target="#operador-{{obj.id}}" class="btn btn-app bg-success">
-                <span class="badge bg-purple">891</span>
-                <i class="fas fa-users"></i> Socios
-              </a>
-            </div>
-            </div>
-            <!-- /.col -->
-            <div class="col-sm-4">
-              <div class="description-block">
-              <a hx-get="{% url 'operadores:list-by-operador' id=obj.id %}" hx-target="#operador-{{obj.id}}" class="btn btn-app bg-danger">
-                <span class="badge bg-teal">67</span>
-                <i class="fas fa-inbox"></i> Pedidos
-              </a>  
-            </div>
-          </div>
-            <!-- /.col -->
-          </div>
-          <!-- /.row -->
-        </div>
+
+<div class="card card-solid">
+    <div class="card-body pb-0">
+      <div class="row">
+        {% include 'apps/operadores/partials/card.html' %}
+      </div>
     </div>
-    <!-- /.widget-user -->
+    <!-- /.card-body -->
+    <div class="card-footer">
+      <nav aria-label="Contacts Page Navigation">
+        <ul class="pagination justify-content-center m-0">
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">4</a></li>
+          <li class="page-item"><a class="page-link" href="#">5</a></li>
+          <li class="page-item"><a class="page-link" href="#">6</a></li>
+          <li class="page-item"><a class="page-link" href="#">7</a></li>
+          <li class="page-item"><a class="page-link" href="#">8</a></li>
+        </ul>
+      </nav>
+    </div>
+    <!-- /.card-footer -->
   </div>
-  <div id="operador-{{ obj.id }}" class="col-md-8"></div>
-  {% endfor %}
-</div>
 
 {% endblock main-content %}

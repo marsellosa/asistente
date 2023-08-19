@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content-header %}
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0 text-dark">Operadores</h1>
+          
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'main:inicio' %}">Inicio</a></li>
+            <li class="breadcrumb-item active">Operadores</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div><!-- /.content-header -->
+{% endblock content-header %}
+
+{% block main-content %}
+<div class='row'>
+  {% for obj in obj_list %}
+  <div class="col-md-4">
+    <!-- Widget: user widget style 1 -->
+    <div class="card card-widget widget-user">
+    <!-- Add the bg color to the header using any of the bg-* classes -->
+        <div class="widget-user-header bg-info">
+            <h2 class="widget-user-username">{{ obj }}</h3>
+            <h5 class="widget-user-desc">{{ obj.get_nivel_licencia }}</h5>
+        </div>
+        <div class="widget-user-image">
+            <img class="img-circle elevation-2" src="{% static 'AdminLTE/dist/img/user1-128x128.jpg' %}" alt="User Avatar">
+        </div>
+        <div class="card-footer">
+          <div class="row">
+            <div class="col-sm-4 border-right">
+              <div class="description-block">
+                <h5 class="description-header">13,200</h5>
+                <span class="description-text">VENTAS</span>
+                </div>
+                <!-- /.description-block -->
+            </div>
+            <!-- /.col -->
+            <div class="col-sm-4 border-right">
+              <div class="description-block">
+              <a hx-get="{% url 'operadores:list-socios-by-operador' id=obj.id %}" hx-target="#operador-{{obj.id}}" class="btn btn-app bg-success">
+                <span class="badge bg-purple">891</span>
+                <i class="fas fa-users"></i> Socios
+              </a>
+            </div>
+            </div>
+            <!-- /.col -->
+            <div class="col-sm-4">
+              <div class="description-block">
+              <a hx-get="{% url 'operadores:list-by-operador' id=obj.id %}" hx-target="#operador-{{obj.id}}" class="btn btn-app bg-danger">
+                <span class="badge bg-teal">67</span>
+                <i class="fas fa-inbox"></i> Pedidos
+              </a>  
+            </div>
+          </div>
+            <!-- /.col -->
+          </div>
+          <!-- /.row -->
+        </div>
+    </div>
+    <!-- /.widget-user -->
+  </div>
+  <div id="operador-{{ obj.id }}" class="col-md-8"></div>
+  {% endfor %}
+</div>
+
+{% endblock main-content %}

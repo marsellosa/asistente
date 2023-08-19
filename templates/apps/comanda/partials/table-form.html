@@ -1,7 +1,4 @@
-
-
-  <div class="card-body p-0">
-    <div class="table-responsive">
+  <div class="table-responsive">
     {% if msg %}
       {% include 'apps/pedidos/partials/item-deleted.html' %}
     {% endif %}
@@ -18,113 +15,54 @@
       <tbody>
         <tr>
           <td><strong>Totales</strong></td>
-          {% if parent_obj.get_cart_items %}<td>{{ parent_obj.get_cart_items }}</td>{% else %}<td>...</td>{% endif %}
-          {% if parent_obj.get_cart_points %}<td>{{ parent_obj.get_cart_points }}</td>{% else %}<td>...</td>{% endif %}
-          {% if parent_obj.get_cart_total %}<td>{{ parent_obj.get_cart_total }}</td>{% else %}<td>...</td>{% endif %}
+          <td>{% if parent_obj.get_cart_count_items %}{{ parent_obj.get_cart_count_items }}{% else %}0{% endif %}</td>
+          <td>{% if parent_obj.get_cart_points %}{{ parent_obj.get_cart_points }}{% else %}0{% endif %}</td>
+          <td>{% if parent_obj.get_cart_total %}{{ parent_obj.get_cart_total }}{% else %}0{% endif %}</td>
           <td></td>
         </tr>
         {% for obj in parent_obj.get_all_items %}
-        <tr id="receta-{{ obj.id }}">
-          <td>{{ obj }}</td>
-          <td>{{ obj.cantidad }}</td>
-          <td>{{ obj.get_puntos }}</td>
-          <td>{{ obj.get_total }}</td>
-          <td>
-            <button type="button" class="btn btn-danger btn-xs"
-              hx-delete="{{ obj.get_delete_url }}"
-              hx-confirm="¿Realmente quieres eliminar '{{ obj.cantidad }}.- {{ obj.receta }}'?"
-              hx-target="#comanda-list-and-form">
-              <i class="fas fa-trash"></i>
-            </button>
-          </td>
-        </tr>
+          {% include 'apps/comanda/partials/comanda-item.html' %}
         {% empty %}
         <tr>
           <td>Sin Datos</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
           <td></td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
-    </div>
-    {% if parent_obj.status == 'p' %}
-    {% comment %} formulario para agregar nuevas recetas {% endcomment %}
-
-    <div class="card">
-      <div class="card-body">
-        <form hx-post="{{ parent_obj.get_add_receta_url }}" hx-target="#comanda-list-and-form">
-          {% csrf_token %}
-          <div class="row align-items-end">
-            {% for field in form %}
-            <div class="col-4 mb-3{% if field.field.required %} {{ form.required_css_class}}{% endif %}">
-              {{ field.label_tag }} {% if field.field.required %}*{% endif %}
-              <div class="input-group">
-                {{ field }}
-                {% if field.help_text %}
-                  <p class="help"> {{ field.help_text|safe }}</p>
-                {% endif %}
-              </div>
-            </div>
-            {% endfor %}
-          
-            <div class="form-group col-4 mb-3">
-              <label></label>
-              <button id="btn_submit" type="submit" class="btn btn-primary btn-block">Agregar</button>
+  </div>
+  {% if parent_obj.status == 'p' %}
+    <!-- Formulario para Agregar items -->
+    <div class="card-body">
+      <form hx-post="{{ parent_obj.get_add_receta_url }}" hx-target="#comanda-list-and-form">
+        {% csrf_token %}
+        <div class="row align-items-end">
+          {% for field in comanda_item_form %}
+          <div class="col-4 mb-3{% if field.field.required %} {{ comanda_item_form.required_css_class}}{% endif %}">
+            {{ field.label_tag }} {% if field.field.required %}*{% endif %}
+            <div class="input-group">
+              {{ field }}
+              {% if field.help_text %}
+                <p class="help"> {{ field.help_text|safe }}</p>
+              {% endif %}
             </div>
           </div>
-        </form>
+          {% endfor %}
         
-      </div>
+          <div class="form-group col-4 mb-3">
+            <label></label>
+            <button id="btn_submit" type="submit" class="btn btn-primary btn-block">Agregar</button>
+          </div>
+        </div>
+      </form>
+      
     </div>
-    {% endif %}
-  </div>
-  <div class="card-footer p-0" style="display: block;">
-    <ul class="nav nav-pills flex-column">
-      <li class="nav-item">
-        <a href="#" class="nav-link">
-          Vendido
-          <span class="float-right text-info">
-            <i class="fas fa-arrow-right text-sm"></i>
-            {% if parent_obj.get_cart_total %}{{ parent_obj.get_cart_total }}{% else %}...{% endif %}</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link">
-          Sobre Rojo
-          <span class="float-right text-danger">
-            <i class="fas fa-arrow-left text-sm"></i>
-            {% if parent_obj.get_sobre_rojo %}{{ parent_obj.get_sobre_rojo }}{% else %}...{% endif %}
-          </span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link">
-          Mantenimiento
-          <span class="float-right text-info">
-            <i class="fas fa-arrow-left text-sm"></i>
-            {% if parent_obj.get_mantenimiento %}{{ parent_obj.get_mantenimiento }}{% else %}...{% endif %}
-          </span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link">
-          Insumos
-          <span class="float-right text-info">
-            <i class="fas fa-arrow-left text-sm"></i> 1 bs.
-          </span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link">
-          Sobre Verde
-          <span class="float-right text-success">
-            <i class="fas fa-arrow-up text-sm"></i> 4%
-          </span>
-        </a>
-      </li>
-    </ul>
-  </div>
+  
+  {% endif %}
+    
+  {% include 'apps/comanda/partials/total.html' %}
 
+  

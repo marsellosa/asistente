@@ -1,0 +1,54 @@
+<tr>
+  <td colspan="3"><strong># Consumos: {{ totales.total }} | Adelantos: {{ totales.efectivo_prepago }}</strong></td>
+  {% comment %} <td><strong> > Totales ></strong></td> {% endcomment %}
+  <td><strong>{{ totales.sobre_rojo }}</strong></td>
+  <td><strong>{{ totales.mayoreo }}</strong></td>
+  <td><strong>{{ totales.insumos }}</strong></td>
+  <td><strong>{{ totales.descuento }}</strong></td>
+  <td><strong>{{ totales.sobre_verde }}</strong></td>
+  <td><strong>{{ totales.efectivo }}</strong></td>
+</tr>
+
+{% for consumo in consumos %}
+<tr data-widget="expandable-table" aria-expanded="false"
+  _="on click toggle the *display of the next <p/>
+    toggle .d-none on the next <tr/>"
+    >
+    {% comment %} <td>{{ consumo.id }}</td> {% endcomment %}
+    <td>{{ consumo.comanda.fecha | date:'D' }}</td>
+    <td>{{ consumo.comanda.fecha | date:'d M Y' }}</td>
+    <td>{{ consumo }}</td>
+    <td>{{ consumo.sobre_rojo }}</td>
+    <td>{{ consumo.mayoreo }}</td>
+    <td>{{ consumo.insumos }}</td>
+    <td>{{ consumo.descuento }}</td>
+    <td>{{ consumo.sobre_verde }}</td>
+    <td>{{ consumo.efectivo }}</td>
+    
+  </tr>
+  <tr class="expandable-body d-none">
+    <td colspan="9">
+      <p style="display: none;">
+        <ul>
+          {% for item in consumo.comanda.comandaitem_set.all %}
+          <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </p>
+    </td>
+  </tr>
+{% empty %}
+<tr>
+    <td>....</td>
+    <td>....</td>
+    <td>....</td>
+    <td>....</td>
+    <td>....</td>
+    <td>....</td>
+    <td>....</td>
+    <td>....</td>
+    <td>....</td>
+  </tr>
+
+{% endfor %}
+

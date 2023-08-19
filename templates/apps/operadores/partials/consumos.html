@@ -1,0 +1,37 @@
+<div class="card-body p-0">
+  <div class="row mb-3">
+    <form hx-post="{% url 'operadores:profile' id=operador.id %}" hx-target="#consumo-results" class="row">
+      {% for field in form %}
+        <div class="col-5">
+          {{ field }}
+        </div>
+      {% endfor %}
+      <div class="col-2">
+        <button type="submit" class="btn btn-default">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </form>
+  </div> 
+
+  <div class="row table-responsive p-0">
+      <table class="table table-hover text-nowrap">
+          <thead>
+              <tr>
+              <th>Día</th>
+              <th>Fecha</th>
+              <th>Socio</th>
+              <th>Rojo</th>
+              <th>Mayoreo</th>
+              <th>Insumos</th>
+              <th>Descuento</th>
+              <th>Verde</th>
+              <th>Efectivo</th>
+              </tr>
+          </thead>
+          <tbody id="consumo-results">
+              {% include 'apps/reportes/partials/results.html' %}
+          </tbody>
+      </table>
+  </div>
+</div>

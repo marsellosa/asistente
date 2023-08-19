@@ -1,0 +1,21 @@
+<tr id="receta-{{ obj.id }}">
+  <td><a href="{{ obj.receta.get_absolute_url }}">{{ obj }}</a></td>
+  <td>{{ obj.cantidad }}</td>
+  <td>{{ obj.get_puntos }}</td>
+  <td>{{ obj.get_total }}</td>
+  <td>
+    <button type="button" class="btn btn-danger btn-xs"
+      hx-delete="{{ obj.get_crud_url }}"
+      hx-confirm="¿Realmente quieres eliminar '{{ obj.cantidad }}.- {{ obj.receta }}'?"
+      hx-target="#comanda-list-and-form"
+      >
+      <i class="fas fa-trash"></i>
+    </button>
+    <button type="button" class="btn btn-info btn-xs"
+      hx-put="{{ obj.get_crud_url }}"
+      hx-target="#receta-{{ obj.id }}"
+      >
+      <i class="fas fa-edit"></i>
+    </button>
+  </td>
+</tr>

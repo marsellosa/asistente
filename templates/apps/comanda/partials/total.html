@@ -1,6 +1,39 @@
-<a href="#" class="nav-link">
-  A Pagar
-  <span class="float-right text-success">
-    <i class="fas fa-arrow-right text-sm"></i> {{ pagar }}
-  </span>
-</a>
+<!-- Prepagos -->
+<div class="card-body" hx-target="this" hx-swap="outerHTML">
+  <!-- checkbox -->
+  <div class="row">
+    <div class="col-5">
+      <div class="form-group">
+        <label class="col-form-label" ><i class="fas fa-check"></i> Prepagos: </label>
+        {% for prepago in parent_obj.get_uniq_prepagos_list %}
+          <div class="form-check" >
+            <input class="form-check-input" type="checkbox" {% if prepago in parent_obj.get_cart_prepagos %}checked=""{% endif %}
+            hx-get="{% url 'comanda:hx-add-prepago' id_comanda=parent_obj.id id_prepago=prepago.id %}" hx-trigger="change" >
+            <label class="form-check-label"> {{ prepago }} bs.  <span id="prepagos-usados" class="badge{% if prepago.pagado %} badge-success{% else %} badge-warning{% endif %} ">
+                {{ prepago.comanda_set.all.count }}/{{ prepago.cantidad }}
+              </span>
+            </label>
+          </div>
+        {% empty %} 
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" disabled="">
+            <label class="form-check-label">No tiene prepagos </label>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-7">
+      <div class="info-box" id="total_a_pagar">
+        <span class="info-box-icon bg-success"><i class="fas fa-dollar-sign"></i></span>
+
+        <div class="info-box-content">
+          <span class="info-box-text">Total a pagar</span>
+          <span class="info-box-number">{{ parent_obj.get_cart_cash }}</span>
+        </div>
+        <!-- /.info-box-content -->
+      </div>
+    </div>
+  </div>
+</div>
+
+

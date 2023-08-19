@@ -1,0 +1,38 @@
+<table class="table table-hover m-0">
+  <thead>
+  <tr>
+    <th>Fecha & Dia</th>
+    <th>Total</th>
+    <th>Descuento</th>
+    <th>Ganancia</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for comanda in comandas %}
+  <tr data-widget="expandable-table" aria-expanded="false"
+      _="on click toggle the *display of the next <p/>
+          toggle .d-none on the next <tr/>"
+  >
+    <td>{{ comanda.fecha | date:'d M Y - D'}}
+      {% if comanda.status == 'p' %}
+        <span class="badge badge-warning">P</span>
+      {% endif %}
+    </td>
+    <td>{{ comanda.consumo.total_consumido }}</td>
+    <td>{{ comanda.consumo.descuento }}</td>
+    <td>{{ comanda.consumo.sobre_verde }}</td>
+  </tr>
+  <tr class="expandable-body d-none">
+    <td colspan="4">
+      <p style="display: none;">
+        <ul>
+          {% for item in comanda.comandaitem_set.all %}
+          <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </p>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>

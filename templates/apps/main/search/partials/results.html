@@ -18,12 +18,15 @@
                   <p class="lead text-success"><a href="{{ object.get_absolute_url }}" class="text-success">{{ object }}</a></p>
               {% empty %}
                 <p class="text-danger">Sin Resultados</p>
-              {% endfor %}
-              {% if request.htmx %}
-                  <a href="/main/search/?q={{ request.GET.q }}">Ver todo</a>
-              {% endif %}
+              {% endfor %} 
             </div>
           <!-- /.card-body -->
+          {% if request.htmx %}
+              <div class="card-footer text-center">
+                <a href="/main/search/?q={{ request.GET.q }}">Ver Todos</a>
+              </div>
+                  
+          {% endif %}
       </div>
     </div>
   </div>

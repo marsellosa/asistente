@@ -1,0 +1,27 @@
+<td colspan="5">
+  <form hx-post="{{ obj.get_edit_url }}" hx-target="#comanda-list-and-form">
+    {% csrf_token %}
+    <div class="row align-items-end">
+      {% for field in comanda_item_form %}
+      <div class="col-4 mb-3{% if field.field.required %} {{ form.required_css_class}}{% endif %}">
+        {{ field.label_tag }} {% if field.field.required %}*{% endif %}
+        <div class="input-group">
+          {{ field }}
+          {% if field.help_text %}
+            <p class="help"> {{ field.help_text|safe }}</p>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      <div class="form-group col-4 mb-3">
+        <label></label>
+        <button type="submit" class="btn btn-success btn-md"><i class="fas fa-check"></i></button>
+        <button type="button" class="btn btn-danger btn-md"
+        hx-get="{{ obj.get_edit_url }}"
+        hx-target="#receta-{{ obj.id }}"
+        hx-swap="outerHTML"
+        ><i class="fas fa-cancel"></i></button>
+      </div>
+    </div>
+  </form> 
+</td>

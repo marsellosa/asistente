@@ -1,0 +1,15 @@
+<div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Nuevo Consumo</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-footer">
+      <div class="form-group">
+          <button type="button" class="btn btn-outline-success btn-flat btn-block"
+          hx-post="{% url 'comanda:hx-create-comanda' id_socio=socio_obj.id %}"
+          hx-target="#nuevo-consumo"
+          >Crear</button>
+      </div>
+    </div>
+</div>
+<!-- /.card -->

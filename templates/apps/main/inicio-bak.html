@@ -1,0 +1,375 @@
+{% extends 'base.html' %}
+{% block nombre %}
+  Marcelo Llosa
+{% endblock nombre %}
+{% block page %}Escritorio{% endblock page %}
+
+{% block content-header %}
+<!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Escritorio</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'main:inicio' %}">Inicio</a></li>
+              <li class="breadcrumb-item active">Escritorio</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div><!-- /.content-header -->
+
+{% endblock content-header %}
+
+{% block main-content %}
+
+<div class="row">
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="info-box">
+      <span class="info-box-icon bg-info elevation-1"><a href="#"><i class="fas fa-cog"></i></a></span>
+
+      <div class="info-box-content">
+        <span class="info-box-text">Categorias de Productos</span>
+        <span class="info-box-number">
+          {{ productos.count }}
+        </span>
+      </div>
+      <!-- /.info-box-content -->
+    </div>
+    <!-- /.info-box -->
+  </div>
+  <!-- /.col -->
+  
+  <!-- fix for small devices only -->
+  <div class="clearfix hidden-md-up"></div>
+
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="info-box mb-3">
+      <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
+
+      <div class="info-box-content">
+        <span class="info-box-text">Sales</span>
+        <span class="info-box-number">760</span>
+      </div>
+      <!-- /.info-box-content -->
+    </div>
+    <!-- /.info-box -->
+  </div>
+  <!-- /.col -->
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="info-box mb-3">
+      <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+
+      <div class="info-box-content">
+        <span class="info-box-text">New Members</span>
+        <span class="info-box-number">2,000</span>
+      </div>
+      <!-- /.info-box-content -->
+    </div>
+    <!-- /.info-box -->
+  </div>
+  <!-- /.col -->
+
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="info-box mb-3">
+      <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
+
+      <div class="info-box-content">
+        <span class="info-box-text">Likes</span>
+        <span class="info-box-number">41,410</span>
+      </div>
+      <!-- /.info-box-content -->
+    </div>
+    <!-- /.info-box -->
+  </div>
+  <!-- /.col -->
+</div>
+
+<!-- Main content -->
+<div class="row">
+  <div class="col-lg-3 col-6">
+    <!-- small box -->
+    <div class="small-box bg-info">
+      <div class="inner">
+        <h3>{{ productos.count }}</h3>
+
+        <p>Categorias de Productos</p>
+      </div>
+      <div class="icon">
+        <i class="fas fa-bag-shopping"></i>
+      </div>
+      <a href="#" class="small-box-footer">Ver Detalle <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div><!-- ./col -->
+  <div class="col-lg-3 col-6">
+    <!-- small box -->
+    <div class="small-box bg-success">
+      <div class="inner">
+        <h3>{{ amount }}<sup style="font-size: 20px">Bs</sup></h3>
+
+        <p>Hoy, y el total son <strong>{{ total }} Bs.</strong></p>
+      </div>
+      <div class="icon">
+        <i class="fas fa-chart-bar"></i>
+      
+      </div>
+      <a href="{% url 'main:detalle_ahorro' %}" class="small-box-footer">Ver Detalle <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div><!-- ./col -->
+  <div class="col-lg-3 col-6">
+    <!-- small box -->
+    <div class="small-box bg-warning">
+      <div class="inner">
+        <h3>{{ users.count }}</h3>
+
+        <p>Bot User Registrations</p>
+      </div>
+      <div class="icon">
+        <i class="ion ion-person-add"></i>
+      </div>
+      <a href="{% url 'main:users_list' %}" class="small-box-footer">Ver Detalle <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div><!-- ./col -->
+  <div class="col-lg-3 col-6">
+    <!-- small box -->
+    <div class="small-box bg-danger">
+      <div class="inner">
+        <h3>65</h3>
+
+        <p>Unique Visitors</p>
+      </div>
+      <div class="icon">
+        <i class="ion ion-pie-graph"></i>
+      </div>
+      <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div><!-- ./col -->
+</div><!-- /.row -->
+<div class="row">
+  <div class="col-lg-6"></div>
+  <div class="col-lg-6">
+    <!-- TO DO list -->
+    <div class="card" style="position: relative; left: 0px; top: 0px;">
+      <div class="card-header ui-sortable-handle" style="cursor: move;">
+        <h3 class="card-title">
+          <i class="ion ion-clipboard mr-1"></i>
+          To Do List
+        </h3>
+
+        <div class="card-tools">
+          <ul class="pagination pagination-sm">
+            <li class="page-item"><a href="#" class="page-link">«</a></li>
+            <li class="page-item"><a href="#" class="page-link">1</a></li>
+            <li class="page-item"><a href="#" class="page-link">2</a></li>
+            <li class="page-item"><a href="#" class="page-link">3</a></li>
+            <li class="page-item"><a href="#" class="page-link">»</a></li>
+          </ul>
+        </div>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <ul id="list-wrapper" class="todo-list ui-sortable" data-widget="todo-list">
+          
+          
+          <li class="">
+            <!-- drag handle -->
+            <span class="handle ui-sortable-handle">
+              <i class="fas fa-ellipsis-v"></i>
+              <i class="fas fa-ellipsis-v"></i>
+            </span>
+            <!-- checkbox -->
+            <div class="icheck-primary d-inline ml-2">
+              <input type="checkbox" value="" name="todo1" id="todoCheck1">
+              <label for="todoCheck1"></label>
+            </div>
+            <!-- todo text -->
+            <span class="text">Design a nice theme</span>
+            <!-- Emphasis label -->
+            <small class="badge badge-danger"><i class="far fa-clock"></i> 2 mins</small>
+            <!-- General tools such as edit or delete-->
+            <div class="tools">
+              <i class="fas fa-edit"></i>
+              <i class="fas fa-trash"></i>
+            </div>
+          </li>
+          <li class="">
+            <span class="handle ui-sortable-handle">
+              <i class="fas fa-ellipsis-v"></i>
+              <i class="fas fa-ellipsis-v"></i>
+            </span>
+            <div class="icheck-primary d-inline ml-2">
+              <input type="checkbox" value="" name="todo3" id="todoCheck3">
+              <label for="todoCheck3"></label>
+            </div>
+            <span class="text">Let theme shine like a star</span>
+            <small class="badge badge-warning"><i class="far fa-clock"></i> 1 day</small>
+            <div class="tools">
+              <i class="fas fa-edit"></i>
+              <i class="fas fa-trash"></i>
+            </div>
+          </li>
+          <li class="">
+            <span class="handle ui-sortable-handle">
+              <i class="fas fa-ellipsis-v"></i>
+              <i class="fas fa-ellipsis-v"></i>
+            </span>
+            <div class="icheck-primary d-inline ml-2">
+              <input type="checkbox" value="" name="todo4" id="todoCheck4">
+              <label for="todoCheck4"></label>
+            </div>
+            <span class="text">Let theme shine like a star</span>
+            <small class="badge badge-success"><i class="far fa-clock"></i> 3 days</small>
+            <div class="tools">
+              <i class="fas fa-edit"></i>
+              <i class="fas fa-trash"></i>
+            </div>
+          </li>
+          <li class="">
+            <span class="handle ui-sortable-handle">
+              <i class="fas fa-ellipsis-v"></i>
+              <i class="fas fa-ellipsis-v"></i>
+            </span>
+            <div class="icheck-primary d-inline ml-2">
+              <input type="checkbox" value="" name="todo5" id="todoCheck5">
+              <label for="todoCheck5"></label>
+            </div>
+            <span class="text">Check your messages and notifications</span>
+            <small class="badge badge-primary"><i class="far fa-clock"></i> 1 week</small>
+            <div class="tools">
+              <i class="fas fa-edit"></i>
+              <i class="fas fa-trash"></i>
+            </div>
+          </li>
+          <li class="">
+            <span class="handle ui-sortable-handle">
+              <i class="fas fa-ellipsis-v"></i>
+              <i class="fas fa-ellipsis-v"></i>
+            </span>
+            <div class="icheck-primary d-inline ml-2">
+              <input type="checkbox" value="" name="todo6" id="todoCheck6">
+              <label for="todoCheck6"></label>
+            </div>
+            <span class="text">Let theme shine like a star</span>
+            <small class="badge badge-secondary"><i class="far fa-clock"></i> 1 month</small>
+            <div class="tools">
+              <i class="fas fa-edit"></i>
+              <i class="fas fa-trash"></i>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer clearfix">
+        <form id="form-wrapper" action="#" method="post">
+          <div class="input-group">
+            <input type="text" name="message" placeholder="Type Message ..." class="form-control">
+            <span class="input-group-append">
+              <button type="submit" class="btn btn-info float-right"><i class="fas fa-plus"></i> Add item</button>
+              <!-- <button type="button" class="btn btn-primary">Send</button> -->
+            </span>
+          </div>
+        </form>
+        
+      </div>
+    </div>
+  </div><!-- /.col-md-6 -->
+</div><!-- /.row -->
+<div class="row">
+  <div class="col-md-12">
+    <!-- The time line -->
+    <div class="timeline">
+      <!-- timeline time label -->
+      <div class="time-label">
+        <span class="bg-red">10 Feb. 2014</span>
+      </div><!-- /.timeline-label -->
+      {% for activity in activities %}
+      <!-- timeline item -->
+      <div>
+        <i class="fas fa-user bg-green"></i>
+        <div class="timeline-item">
+          <span class="time"><i class="fas fa-clock"></i> hace {{ activity.inserted_on|timesince }}</span>
+          <h3 class="timeline-header">
+            <a href="{% url 'main:bot_user_profile' user_id=activity.user.user_id %}">
+              {{ activity.user.first_name }} 
+              {% if activity.user.last_name %}{{ activity.user.last_name }}{% endif %}
+              {% if activity.user.username %}({{ activity.user.username }}){% endif %}
+            </a> escribió: </h3>
+
+          <div class="timeline-body">
+            {{ activity.text }}
+          </div>
+          <div class="timeline-footer">
+            <a class="btn btn-primary btn-sm">Read more</a>
+            <a class="btn btn-danger btn-sm">Delete</a>
+          </div>
+        </div>
+      </div>
+      <!-- END timeline item -->
+        {% comment %} <i class="fas fa-user bg-green"></i>
+        <div class="timeline-item">
+          <span class="time"><i class="fas fa-clock"></i>hace {{ activity.inserted_on|timesince }}</span>
+          <h3 class="timeline-header no-border"><a href="{% url 'main:bot_user_profile' user_id=activity.user.user_id %}">{{ activity.user.first_name }} 
+          {% if activity.user.last_name %}{{ activity.user.last_name }}{% endif %}
+          {% if activity.user.username %}({{ activity.user.username }}){% endif %}
+          </a> escribio "{{ activity.text }}"</h3>
+        </div> {% endcomment %}
+      {% empty %}{% endfor %}
+
+    </div><!-- /.timeline -->
+  </div><!-- /.col -->
+</div><!-- /.row -->
+{% endblock main-content %}
+
+{% block js %}
+
+<script>
+  buildList()
+
+  function buildList(){
+  var wrapper = document.getElementById('list-wrapper')
+  var url = "{% url 'productos:api_products_list' %}"
+  fetch(url)
+  .then((resp) => resp.json())
+  .then(function(data){
+    console.log('Data:', data)
+    var list = data
+    for (var i in list){
+      var item = `
+        <li>
+          <span class="handle ui-sortable-handle">
+            <i class="fas fa-ellipsis-v"></i>
+            <i class="fas fa-ellipsis-v"></i>
+          </span>
+          <div class="icheck-primary d-inline ml-2">
+            <input type="checkbox" value="" name="todo${i}" id="todoCheck${i}">
+            <label for="todoCheck${i}"></label>
+          </div>
+          <span class="text">${list[i].nombre}</span>
+          <small class="badge badge-info"><i class="far fa-clock"></i> ${list[i].edited_on} </small>
+          <div class="tools">
+            <i class="fas fa-edit"></i>
+            <i class="fas fa-trash"></i>
+          </div>
+        </li>
+      `
+      wrapper.innerHTML += item
+    }
+  })
+}
+
+  var form = document.getElementById('form-wrapper')
+  form.addEventListener('submit', function(e){
+    e.preventDefault()
+    console.log('Form Submitted')
+    var url = ''
+  })
+
+
+</script>
+
+
+{% endblock js %}
+

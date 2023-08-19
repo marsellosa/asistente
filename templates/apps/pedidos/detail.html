@@ -66,3 +66,15 @@
 </div>
 <!-- /.row -->
 {% endblock main-content %}
+
+{% block js %}
+<script>
+  function swal(title, text, icon) {
+    Swal.fire({
+      title: title,
+      text: text,
+      icon: icon
+    });
+  }
+</script>
+{% endblock js %}

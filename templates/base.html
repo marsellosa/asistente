@@ -18,13 +18,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- Theme style -->
   <link rel="stylesheet" href="{% static 'AdminLTE/dist/css/adminlte.css' %}"/>
   
+  
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   
   <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
   {% comment %} HTMX cdn {% endcomment %}
   <script src="https://unpkg.com/htmx.org@1.7.0"></script>
- 
+  
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css" integrity="sha256-aUL5sUzmON2yonFVjFCojGULVNIOaPxlH648oUtA/ng=" crossorigin="anonymous">
+  
+  <script src="https://unpkg.com/hyperscript.org@0.9.9"></script>
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -43,10 +48,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <a href="#" class="nav-link">Contact</a>
       </li>
     </ul>
-
+    {% if operador %}
     <!-- SEARCH FORM -->
     {% include 'apps/main/search/search-form.html' %}
-
+    {% endif %}
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <!-- Messages Dropdown Menu -->
@@ -159,6 +164,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <section class="content" id="typeahead-results"></section>
     <div class="content">
       <div class="container-fluid">
+        
         {% block main-content %}{% endblock main-content %}
       </div>
     </div>
@@ -193,30 +199,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- ./wrapper -->
 
 <!-- REQUIRED SCRIPTS -->
-{% comment %} <script src="https://unpkg.com/@trevoreyre/autocomplete-js@2.2.0/dist/autocomplete.min.js"></script>
-<script>
-  new Autocomplete('#autocomplete',{
-    search: input => {
-      const url = `{% url 'socios_list' %}?search=${input}`
-      
-      return new Promise(resolve =>{
-        fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          console.log(data)
-          resolve(data)
-        })
-      })
-    }
-  })
-</script> {% endcomment %}
-<!-- java especifico de cada pagina -->
-{% block js %}{% endblock js %}
+
+
 <!-- jQuery -->
 <script src="{% static 'AdminLTE/plugins/jquery/jquery.min.js' %}"></script>
 <!-- Bootstrap 4 -->
-
-
 <script src="{% static 'AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <!-- AdminLTE App -->
 <script src="{% static 'AdminLTE/dist/js/adminlte.js' %}"></script>
@@ -225,6 +212,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
         event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
     })
 </script>
+
 <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js" integrity="sha256-9AtIfusxXi0j4zXdSxRiZFn0g22OBdlTO4Bdsc2z/tY=" crossorigin="anonymous"></script>
+
+<!-- java especifico de cada pagina -->
+{% block js %}{% endblock js %}
 </body>
 </html>

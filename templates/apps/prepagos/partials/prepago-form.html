@@ -1,0 +1,27 @@
+<form hx-post="{% url 'prepagos:create' id_socio=socio_obj.id %}" hx-target="#prepagos-list-and-form">
+    {% csrf_token %}
+    <div class="row">
+    {% for field in prepago_form %}
+        <div class="col-4 mb-3{% if field.field.required %} {{ form.required_css_class}}{% endif %}">
+        {{ field.label_tag }} {% if field.field.required %}*{% endif %}
+        <div class="input-group">
+            {{ field }}
+            {% if field.help_text %}
+            <p class="help"> {{ field.help_text|safe }}</p>
+            {% endif %}
+            <div class="input-group-append"><span class="input-group-text">$</span></div>
+        </div>
+        </div>
+    {% endfor %}
+    </div>
+    <div class="row align-items-end">
+        <div class="input-group">
+            <div class="col-6">
+            <button hx-get="{% url 'prepagos:create' id_socio=socio_obj.id %}" type="button" class="btn btn-danger btn-block">Cancelar</button>
+            </div>
+            <div class="col-6">
+            <button id="btn_submit" type="submit" class="btn btn-primary btn-block">Agregar</button>
+            </div>
+        </div>
+    </div>
+</form>
