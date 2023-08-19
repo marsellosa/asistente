@@ -1,22 +1,6 @@
 import os
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-
-# # Quick-start development settings - unsuitable for production
-# # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
-
-# # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = '0rk8u5wk=gav4dn@mw^p@c22-j^_gcg6s@-=jwxeo6j94@)pyh'
-
-# # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-
-# ALLOWED_HOSTS = ['*']
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
 
@@ -37,6 +21,8 @@ INSTALLED_APPS = [
     #
     'bot',
     'comanda',
+    'consumos',
+    'home',
     'main',
     'operadores',
     'pedidos',
@@ -44,6 +30,7 @@ INSTALLED_APPS = [
     'prepagos',
     'productos',
     'recetas',
+    'reportes',
     'socios',
     
 ]
@@ -79,18 +66,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'tgbot.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -137,4 +112,4 @@ STATICFILES_DIRS = (
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = '/admin/login/'
+LOGIN_URL = '/login/'

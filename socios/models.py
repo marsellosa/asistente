@@ -1,8 +1,6 @@
 from django.db.models import * #type: ignore
-
 from operadores.models import Operador
 from persona.models import Persona
-# from prepagos.models import Prepago
 from django.urls import reverse
 
 class SocioQuerySet(QuerySet):
@@ -39,7 +37,7 @@ class SocioManager(Manager):
         return self.get_queryset().search(query=query)
 
 class Socio(Model):
-    persona = ForeignKey(Persona, on_delete=CASCADE)
+    persona = OneToOneField(Persona, on_delete=CASCADE)
     referidor = ForeignKey('Socio', on_delete=SET_NULL, blank=True, null=True)
     operador = ForeignKey(Operador, on_delete=SET_NULL, blank=True, null=True)
     timestamp = DateField(auto_now_add=True)
@@ -50,13 +48,16 @@ class Socio(Model):
         return reverse("socios:profile", kwargs={"id": self.pk})
 
     def get_hx_crud_url(self):
-        return reverse("socios:hx-profile", kwargs={"id": self.pk})
+        return reverse("socios:hx-profile", kwargs={"id_socio": self.pk})
 
     def nombre_completo(self):
         return f"{self.persona.nombre} {self.persona.apellido}"
     
     def get_prepagos(self):
         return self.prepago_set.all() #type:ignore
+    
+    def get_asistencia(self):
+        return reverse("socios:hx-asistencia", kwargs={"id_socio": self.pk})
     
     def __str__(self):
         return str(self.persona)

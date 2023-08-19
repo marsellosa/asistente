@@ -3,12 +3,15 @@ from datetime import date
 from django.db.models import Sum
 from django.shortcuts import render, get_object_or_404
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from productos.models import Categoria, Detalles
 from bot.models import User, Activity
 from bot.forms import MessageForm
+from comanda.models import Comanda
 from main.models import Monto
 from socios.models import Socio
+from home.decorators import allowed_users
 
 @staff_member_required
 def bot_user_profile(request, user_id):
@@ -52,33 +55,30 @@ def users_list_view(request):
     return render(request, template, context)
 
 
-@staff_member_required
+@login_required
 def inicio_view(request):
-    page_name = "apps/main/inicio.html"
+    context, template = {}, "apps/main/inicio.html"
     productos = Categoria.objects.all()
     detalles = Detalles.objects.all()
     users = User.objects.all()
     # activities = Activity.objects.values('inserted_on__date').distinct().values('user_id').distinct()
     activities = Activity.objects.all().order_by('-inserted_on')[:25]
-    # print(activities)
+    comandas = Comanda.objects.filter(status='p', usuario=request.user)
+    try:
+        operador = request.user.groups.get(name='operadores')
+    except:
+        operador = None
+    
     context = {
         'productos': productos,
         'detalles' : detalles,
         'users': users,
-        'activities': activities
+        'activities': activities,
+        'comandas' : comandas,
+        'operador' : operador
     }
- 
-    obj, created = Monto.objects.get_or_create(
-        inserted_on = date.today(),
-        defaults = {
-            'monto' : get_amount(True)
-        }
-    )
 
-    context['amount'] = obj.monto
-    context['total'] = Monto.objects.aggregate(Sum('monto'))['monto__sum']
-
-    return render(request, page_name, context)
+    return render(request, template, context)
 
 def get_amount(ok):
     while ok:
@@ -109,7 +109,7 @@ def get_amount(ok):
     
 #     return render(request, template, context)
 
-@staff_member_required
+@allowed_users(allowed_roles=['admin', 'operadores'])
 def search_view(request):
     context, template = {}, 'apps/main/search/results-view.html'
     query = request.GET.get('q')
@@ -122,7 +122,3 @@ def search_view(request):
     
     return render(request, template, context)
 
-def error_view(request):
-    context, template = {}, '404.html'
-
-    return render(request, template, context)

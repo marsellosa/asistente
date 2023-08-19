@@ -7,9 +7,8 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-# DEBUG = os.path.exists('db.sqlite3')
 
-ALLOWED_HOSTS = ['web-production-d293.up.railway.app']
+ALLOWED_HOSTS = ['web-production-d293.up.railway.app', 'miasistenteherbalife.com']
 
 POSTGRES_DB         = config('POSTGRES_DB', default=None)
 POSTGRES_PASSWORD   = config('POSTGRES_PASSWORD', default=None)
@@ -38,13 +37,7 @@ try:
             }
     }
 except:
-    import dj_database_url
-
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=config('DATABASE_URL')
-        )
-    }
+    pass
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 

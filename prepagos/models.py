@@ -21,7 +21,7 @@ class PrepagoManager(Manager):
 class Prepago(Model):
     socio       = ForeignKey(Socio, on_delete=CASCADE)
     cantidad    = IntegerField(default=10)
-    descuento   = IntegerField(default=10)
+    descuento   = FloatField(default=10)
     valor       = FloatField()
     pagado      = BooleanField(default=False)
     activo      = BooleanField(default=True)
@@ -43,7 +43,7 @@ class Prepago(Model):
     def get_saldo(self):
         total = self.valor * self.cantidad
         descuento = total * self.descuento / 100
-        return total - descuento - self.get_acumulado()
+        return round(total - descuento - self.get_acumulado(), 2)
 
     def __str__(self):
         return str(self.valor)

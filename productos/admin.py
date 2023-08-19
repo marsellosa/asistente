@@ -24,6 +24,7 @@ class DetallesAdmin(ModelAdmin):
     readonly_fields = ['cantidad_decimal']
 
 class PorcionAdmin(ModelAdmin):
+    list_display = ['categoria', 'precio', 'cantidad', 'unidad']
     readonly_fields = ['cantidad_decimal']
 
 site.register(Categoria, CategoriaAdmin)

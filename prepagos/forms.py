@@ -1,4 +1,4 @@
-from django.forms import *
+from django.forms import * #type:ignore
 from prepagos.models import Prepago, Pago
 
 class PrepagoForm(ModelForm):
@@ -32,4 +32,4 @@ class PagoForm(ModelForm):
                 'class' : 'form-control',
             }
             self.fields[field_name].widget.attrs.update(new_data)
-
+        self.fields['fecha'].widget.attrs.update({'readonly' : '',})

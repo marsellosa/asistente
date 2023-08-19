@@ -7,9 +7,21 @@ from recetas.forms import RecipeForm, RecetaIngredienteForm, RecetaIngredienteHe
 # CRUD -> Create Read Update Delete
 
 @login_required
+def search_view(request):
+    context, template = {}, 'apps/recetas/partials/search-results.html'
+    query = request.GET.get('q')
+    qs = Receta.objects.search(query=query)
+    if not qs:
+        qs = Receta.objects.all()
+        print(f"No search results found")
+    context['objects_list'] = qs
+
+    return render(request, template, context)
+
+@login_required
 def recipe_list_view(request):
     context, template = {}, 'apps/recetas/list.html'
-    qs = Receta.objects.filter(usuario=request.user)
+    qs = Receta.objects.filter(active=True)
     context['objects_list'] = qs
     return render(request, template, context)
 

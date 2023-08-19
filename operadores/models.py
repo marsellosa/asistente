@@ -1,5 +1,5 @@
-from traceback import print_tb
-from django.db.models import *
+from django.db.models import * #type:ignore
+from django.urls import reverse
 from persona.models import Licencia
 
 class Operador(Model):
@@ -18,6 +18,9 @@ class Operador(Model):
         }
 
         return status[self.licencia.status]
+
+    def get_absolute_url(self):
+        return reverse("operadores:profile", kwargs={"id": self.pk})
 
     def __str__(self):
         return str(self.licencia)

@@ -12,7 +12,7 @@ class ComandaItemAdmin(ModelAdmin):
 
 class ComandaAdmin(ModelAdmin):
     inlines = [ComandaItemInline]
-    list_display = ['socio', 'usuario', 'fecha', 'get_total_comanda', 'get_sobre_rojo']
+    list_display = ['socio', 'usuario', 'fecha', 'get_cart_total', 'get_sobre_rojo']
     readonly_fields = ['timestamp', 'updated']
     raw_id_fields = ['usuario']
     # search_fields = ['socio']

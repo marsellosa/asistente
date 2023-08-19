@@ -6,7 +6,7 @@ from pedidos.models import *
 
 def lista_pedidos(request):
     context, template = {}, 'apps/pedidos/list.html'
-    obj_list = Pedido.objects.all().order_by('-timestamp')
+    obj_list = Pedido.objects.filter(usuario=request.user).order_by('-timestamp')
     if request.htmx:
         obj_list = obj_list[:5]
         template = 'apps/pedidos/partials/list.html'
@@ -15,9 +15,9 @@ def lista_pedidos(request):
 
     return render(request, template, context)
 
-def pedido_detail_view(request, id):
+def pedido_detail_view(request, id_pedido):
     context, template = {}, 'apps/pedidos/detail.html'
-    parent_obj = Pedido.objects.get(id=id)
+    parent_obj = Pedido.objects.get(id=id_pedido)
     items = parent_obj.get_all_items()
     try:
         bot_user_id = parent_obj.operador.licencia.persona.user_set.get().user_id
@@ -32,7 +32,7 @@ def pedido_detail_view(request, id):
             try:
                 categoria_id = request.POST.get('categoria')
                 sabor_id = request.POST.get('detalles')
-                obj = PedidoItem.objects.get(pedido__id=id, categoria__id=categoria_id, detalles__id=sabor_id)
+                obj = PedidoItem.objects.get(pedido__id=id_pedido, categoria__id=categoria_id, detalles__id=sabor_id)
                 if obj:
                     cant = request.POST.get('cantidad')
                     obj.cantidad += int(cant)
@@ -86,14 +86,14 @@ def crear_pedido(request):
         print(f"pedido_item_form: {pedido_item_form}")
     return render(request, template, context)
 
-def crear_pedido_hx(request, id=None):
+def crear_pedido_hx(request, id_operador=None):
     context, template = {}, 'apps/pedidos/partials/list.html'
         
     if not request.htmx:
-        return Http404
+        raise Http404
 
-    if request.method == 'POST' and id is not None:
-        operador = Operador.objects.get(id=id)
+    if request.method == 'POST' and id_operador is not None:
+        operador = Operador.objects.get(id=id_operador)
         form = PedidoForm()
         parent_obj = form.save(commit=False)
         parent_obj.usuario = request.user
@@ -102,8 +102,8 @@ def crear_pedido_hx(request, id=None):
         headers = {"HX-Redirect": parent_obj.get_absolute_url()}
         return HttpResponse("Created", headers=headers)
         
-    obj_list = Pedido.objects.filter(operador=id).order_by('-timestamp')[:5]
-    context = {'obj_list': obj_list, 'id_operador': id}
+    obj_list = Pedido.objects.filter(operador=id_operador).order_by('-timestamp')[:5]
+    context = {'obj_list': obj_list, 'id_operador': id_operador}
         
     return render(request, template, context)
 

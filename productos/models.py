@@ -1,6 +1,6 @@
 
 from django.db.models import * #type: ignore
-from recetas.validators import validar_unidad_de_medida
+from recetas.validators import validar_unidad_de_medida, todo_a_gramos
 from recetas.utils import get_float_for_save
 
 class CategoriaQuerySet(QuerySet):
@@ -12,7 +12,7 @@ class CategoriaQuerySet(QuerySet):
             Q(descripcion__icontains=query) |
             Q(palabras_clave__icontains=query) |
             Q(palabrasclave__palabra__icontains=query) |
-            Q(detalles__sabor__icontains=query)
+            Q(detalles__sabor__icontains=query, detalles__activo=True)
         )
         
         return self.filter(lookups, activo=True)
@@ -171,7 +171,9 @@ class Detalles(Model):
     objects = DetallesManager()
     
     def save(self, *args, **kwargs):
-        self.cantidad_decimal = get_float_for_save(self.cantidad)
+        valor = get_float_for_save(self.cantidad)
+        self.cantidad_decimal, self.unidad = todo_a_gramos(valor, self.unidad)
+        self.cantidad = self.cantidad_decimal
         super().save(*args, **kwargs)
     
     class Meta:
@@ -190,6 +192,7 @@ class Porcion(Model):
     cantidad_decimal = FloatField(blank=True, null=True)
     unidad = CharField(max_length=50, validators=[validar_unidad_de_medida])
     
+    
     def get_costo_porcion(self, nivel='Mayorista'):
         if nivel == 'Mayorista':
             precio = PrecioDistribuidor.objects.filter(categoria=self.categoria).first().mayorista #type: ignore
@@ -201,11 +204,13 @@ class Porcion(Model):
             precio = PrecioDistribuidor.objects.filter(categoria=self.categoria).first().distribuidor #type: ignore
 
         cant_total = Detalles.objects.filter(categoria=self.categoria).first().cantidad_decimal #type: ignore
-        costo = self.cantidad_decimal * precio / cant_total #type: ignore
+        costo = round(self.cantidad_decimal * precio / cant_total, 2) #type: ignore
         return costo
     
     def save(self, *args, **kwargs):
-        self.cantidad_decimal = get_float_for_save(self.cantidad)
+        valor = get_float_for_save(self.cantidad)
+        self.cantidad_decimal, self.unidad = todo_a_gramos(valor, self.unidad)
+        self.cantidad = self.cantidad_decimal
         super().save(*args, **kwargs)
 
  

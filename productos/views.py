@@ -1,4 +1,5 @@
 import csv, io
+from django.http import Http404
 from django.shortcuts import render
 from django.contrib.admin.views.decorators import staff_member_required
 from productos.models import Categoria, Detalles
@@ -39,6 +40,9 @@ def update_db_view(request):
     return render(request, page_name, context)
 
 def hx_sabores_categoria(request, id_categoria=None, id=None):
+    if not request.htmx:
+        raise Http404
+    
     context, template = {}, 'apps/registros/productos/partials/sabores.html'
     id_categoria = request.GET.get('categoria')
     obj_list = Detalles.objects.filter(categoria=id_categoria)

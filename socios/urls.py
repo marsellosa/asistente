@@ -6,5 +6,6 @@ app_name = 'socios'
 urlpatterns = [
     path('', socios_list_view, name='list'),
     path('profile/<int:id>', socio_profile_view, name='profile'),
-    path('hx/profile/<int:id>', hx_socio_crud, name='hx-profile'),
+    path('hx/profile/<str:id_socio>', hx_socio_crud, name='hx-profile'),
+    path('hx/asistencia/<str:id_socio>', hx_asistencia, name='hx-asistencia'),
 ]

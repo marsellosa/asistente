@@ -6,6 +6,7 @@ app_name = 'recetas'
 urlpatterns = [
     path("", recipe_list_view, name='list'),
     path("create/", recipe_create_view, name='create'),
+    path("search/", search_view, name='search'),
     path("hx/<int:parent_id>/ingrediente/<int:id>/", recipe_ingredient_update_hx_view, name='hx-ingredient-detail'),
     path("hx/<int:parent_id>/ingrediente-herbal/<int:id>/", recipe_herbal_ingredient_update_hx_view, name='hx-herbal-ingredient-detail'),
     path("hx/<int:parent_id>/ingrediente/", recipe_ingredient_update_hx_view, name='hx-ingredient-create'),

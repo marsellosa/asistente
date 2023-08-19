@@ -1,4 +1,5 @@
-from django.db.models import *
+from django.contrib.auth.models import User
+from django.db.models import * #type:ignore
 from django.urls import reverse
 from django.utils.timezone import now
 
@@ -33,6 +34,7 @@ class PersonaManager(Manager):
 
 class Persona(Model):
     
+    usuario = ForeignKey(User, on_delete=CASCADE, null=True, blank=True)
     nombre = CharField(max_length=32)
     apellido = CharField(max_length=32)
     genero = CharField(max_length=1, choices=PersonaGenero.choices, default=PersonaGenero.MUJER)
@@ -58,7 +60,11 @@ class Persona(Model):
             'ae': 'Bronce',
             'cl': 'Cliente',
         }
-        return status[str(self.licencia_set.first().status)] #type:ignore
+        try:
+            nivel = status[str(self.licencia_set.first().status)] #type:ignore
+        except:
+            nivel = None
+        return 
 
     def __str__(self):
         return f"{self.nombre} {self.apellido}"

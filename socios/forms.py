@@ -1,4 +1,4 @@
-from django.forms import *
+from django.forms import * #type:ignore
 from socios.models import *
 
 class SocioForm(ModelForm):

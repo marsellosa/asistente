@@ -1,4 +1,4 @@
-from django.forms import *
+from django.forms import * #type: ignore
 
 from recetas.models import Receta, RecetaIngrediente, RecetaIngredienteHerbal
 
@@ -30,7 +30,7 @@ class RecetaIngredienteForm(ModelForm):
     required_css_class = "required-field"
     class Meta:
         model = RecetaIngrediente
-        fields = ['nombre', 'descripcion', 'cantidad', 'unidad']
+        fields = ['ingrediente', 'descripcion', 'cantidad', 'unidad']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

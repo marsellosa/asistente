@@ -1,4 +1,5 @@
 from django.db.models import * # type: ignore
+from itertools import chain
 from django.conf import settings
 from django.urls import reverse
 from main.models import Settings
@@ -54,27 +55,38 @@ class Comanda(Model):
 
     @property
     def get_add_receta_url(self):
-        return reverse('comanda:hx-add-receta', kwargs={'id_comanda': self.pk})
-
-    def get_add_prepago_url(self):
-        return reverse('comanda:hx-add-prepago', kwargs={'id_comanda': self.pk})
+        return reverse('comanda:hx-crud-comanda-item', kwargs={'id_comanda': self.pk, 'id_receta': None})
+    
+    @property
+    def get_uniq_prepagos_list(self):
+        ppagos = list(chain(self.socio.prepago_set.filter(activo=True), self.prepago.all())) #type: ignore
+        prepagos_uniq = []
+        [prepagos_uniq.append(ppago) for ppago in ppagos if ppago not in prepagos_uniq]
+        return prepagos_uniq
 
     @property
-    def get_total_comanda(self):
-        comandaitems = self.comandaitem_set.all() # type: ignore
-        total = sum([item.get_total for item in comandaitems])
+    def get_total_descuento(self):
+        try:
+            total = round(sum([item.descuento_decimal for item in self.get_cart_prepagos]), 2)
+        except:
+            total = 0
+
         return total
+    
+    @property
+    def get_cart_prepagos(self):
+        return self.prepago.all()
     
     @property
     def get_sobre_rojo(self):
         comandaitems = self.comandaitem_set.all() # type: ignore
-        sobre_rojo = sum([item.get_costo for item in comandaitems])
+        costos = sum([item.get_sobre_rojo for item in comandaitems])
         try:
             porciento = float(Settings.objects.get(nombre='inversion').valor)
         except:
             porciento = 10
-        re_inversion = self.porcentaje(sobre_rojo, porciento)
-        return round(sobre_rojo + re_inversion, 1)
+        re_inversion = self.porcentaje(costos, porciento)
+        return round(sum([costos, re_inversion]), 2)
 
     @property
     def get_cart_total(self):
@@ -92,7 +104,17 @@ class Comanda(Model):
         return self.porcentaje(self.get_cart_total, mant)
 
     @property
-    def get_cart_items(self):
+    def get_insumos(self):
+        comandaitems = self.comandaitem_set.all() # type: ignore
+        total = sum([item.get_insumos for item in comandaitems])
+        try:
+            insumos = float(Settings.objects.get(nombre='insumos').valor)
+        except:
+            insumos = 1
+        return sum([total, insumos])
+
+    @property
+    def get_cart_count_items(self):
         comandaitems = self.comandaitem_set.all() # type: ignore
         total = sum([item.cantidad for item in comandaitems])
         return total
@@ -100,8 +122,26 @@ class Comanda(Model):
     @property
     def get_cart_points(self):
         comandaitems = self.comandaitem_set.all() # type: ignore
-        puntos = sum([item.get_puntos for item in comandaitems])
+        puntos = round(sum([item.get_puntos for item in comandaitems]), 2)
         return puntos
+    
+    @property
+    def get_cart_cash(self):
+        efectivo = self.get_cart_total - sum([prepago.valor for prepago in self.prepago.all()])
+        return efectivo
+    
+    @property
+    def get_sobre_verde(self):
+        try:
+            licencia = self.socio.persona.licencia_set.first().operador_set.first() # type: ignore
+        except:
+            licencia = None
+        if self.socio.operador == licencia:
+            s_verde = 0
+        else:
+            costos = sum([self.get_sobre_rojo, self.get_total_descuento, self.get_insumos, self.get_mantenimiento])
+            s_verde = round(self.get_cart_total - costos, 2)
+        return s_verde
 
     def get_all_items(self):
         return self.comandaitem_set.all() # type: ignore
@@ -123,24 +163,50 @@ class ComandaItem(Model):
 
     @property
     def get_puntos(self):
-        puntos = self.cantidad * self.receta.get_cart_points # type: ignore
-        return puntos
+        try:
+            puntos = self.cantidad * self.receta.get_cart_points # type: ignore
+        except:
+            puntos = 0
+        return round(puntos, 2)
     
     @property
     def get_total(self):
-        total = self.cantidad * self.receta.precio_publico # type: ignore
-        return total
+        try:
+            total = self.cantidad * self.receta.precio_publico # type: ignore
+        except:
+            total = 0
+        # print(f"get_total: %s" % total)
+        return round(total, 1)
     
     @property
     def get_costo(self):
-        costo = self.cantidad * self.receta.get_costo_receta # type: ignore
-        return costo
-
-    def get_delete_url(self):
-        return reverse('comanda:hx-delete-receta', kwargs={'id_receta': self.pk, 'id_comanda': self.comanda.pk})
+        try:
+            costo = self.cantidad * self.receta.get_costo_receta # type: ignore
+        except:
+            costo = 0
+        return round(costo, 1)
     
-    def get_patch_url(self):
-        return reverse('comanda:hx-delete-receta', kwargs={'id_receta': self.pk, 'id_comanda': self.comanda.pk})
+    @property
+    def get_insumos(self):
+        try:
+            costo = self.cantidad * self.receta.get_insumos # type: ignore
+        except:
+            costo = 0
+        return round(costo, 1)
+
+    @property
+    def get_sobre_rojo(self):
+        try:
+            sobre_rojo = self.cantidad * self.receta.get_sobre_rojo #type:ignore
+        except:
+            sobre_rojo = 0
+        return round(sobre_rojo, 1)
+    
+    def get_crud_url(self):
+        return reverse('comanda:hx-crud-comanda-item', kwargs={'id_receta': self.pk, 'id_comanda': self.comanda.pk})
+    
+    def get_edit_url(self):
+        return reverse('comanda:hx-edit-item', kwargs={'id_comanda_item': self.pk})
 
     def __str__(self):
         return str(self.receta)

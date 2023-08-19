@@ -71,7 +71,7 @@ class Pedido(Model):
     @property
     def get_cart_total(self):
         pedidoitems = self.pedidoitem_set.all() # type: ignore
-        total = round(sum([item.get_total(self.operador.get_nivel_licencia) for item in pedidoitems]), 1)
+        total = round(sum([item.get_total(self.operador.get_nivel_licencia) for item in pedidoitems]), 2)
         return total
 
     @property
@@ -87,7 +87,7 @@ class Pedido(Model):
         return total
 
     def get_absolute_url(self):
-        return reverse("pedidos:detail", kwargs={"id": self.pk})
+        return reverse("pedidos:detail", kwargs={"id_pedido": self.pk})
 
     # def get_total_comprado(self):
     #     return round(sum([self.get_total_comprado()]), 1)
