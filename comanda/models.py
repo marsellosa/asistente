@@ -107,10 +107,13 @@ class Comanda(Model):
     def get_insumos(self):
         comandaitems = self.comandaitem_set.all() # type: ignore
         total = sum([item.get_insumos for item in comandaitems])
-        try:
-            insumos = float(Settings.objects.get(nombre='insumos').valor)
-        except:
-            insumos = 1
+        insumos = 0
+        if comandaitems:
+            try:
+                insumos = float(Settings.objects.get(nombre='insumos').valor)
+            except:
+                insumos = 1
+
         return sum([total, insumos])
 
     @property

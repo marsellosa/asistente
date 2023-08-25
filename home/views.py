@@ -18,7 +18,6 @@ def login_view(request):
             username = request.POST.get('username'),
             password = request.POST.get('password')
             )
-        # print(f"User: {user}")
         if user is not None:
             login(request, user)
             return redirect('main:inicio')
@@ -32,7 +31,7 @@ def register_view(request):
     form = CreateUserForm()
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
-        print(f"from: {form}")
+        
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('email')

@@ -75,7 +75,10 @@ def list_pedidos_by_operador(request, id_operador=None):
     pedidos = operador.pedido_set.all().order_by('-timestamp') #type: ignore
     if request.htmx:
         pedidos = pedidos[:5]
-    context = {'obj_list': pedidos}
+    context = {
+        'obj_list': pedidos,
+        'id_operador': id_operador
+        }
 
     return render(request, template, context)
 

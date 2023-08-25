@@ -14,8 +14,7 @@ def create_consumo(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=ComandaItem)
 def create_comanda_item(sender, instance, created, **kwargs):
-    if created:
-        update_consumo(instance.comanda)
+    update_consumo(instance.comanda)
 
 @receiver(post_delete, sender=ComandaItem)
 def delete_comanda_item(sender, instance, **kwargs):

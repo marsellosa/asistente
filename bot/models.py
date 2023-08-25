@@ -8,7 +8,7 @@ class User(Model):
     last_name = CharField(max_length=200, null=True, blank=True)
     username = CharField(max_length=200, null=True, blank=True)
     is_bot = BooleanField(default=False)
-    persona = ForeignKey(Persona, on_delete=SET_NULL, null=True, blank=True)
+    persona = OneToOneField(Persona, on_delete=SET_NULL, null=True, blank=True)
     language_code = CharField(max_length=8, null=True, blank=True)
     inserted_on = DateTimeField(auto_now_add=True)
 
