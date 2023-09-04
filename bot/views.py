@@ -126,12 +126,12 @@ def start(message):
 
 @bot.message_handler(content_types=['text'])
 def send_message(message):
-
+    
     json_data = message.from_user
     user, created = save_new_user(message)
-    
+
     # Registramos la actividad del usuario
-    Activity(user=user, text=message.text).save()
+    Activity(bot_user=user, text=message.text).save()
 
     msg, link, image_url = detail(message)
     if image_url is None:
