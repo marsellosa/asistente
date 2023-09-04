@@ -55,7 +55,7 @@
             <!-- /.col -->
             <div class="col-sm-4">
               <div class="description-block">
-                <h5 class="description-header">35</h5>
+                <h5 class="description-header">0</h5>
                 <span class="description-text">PRODUCTS</span>
               </div>
               <!-- /.description-block -->
@@ -113,7 +113,7 @@
         <div class="card-header p-2">
           <ul class="nav nav-pills">
             <li class="nav-item"><btn hx-get="{% url 'consumos:by-id-operador' id_operador=operador.id %}" hx-target="#resultados" class="nav-link active" data-toggle="tab">Reporte</btn></li>
-            <li class="nav-item"><btn hx-get="{% url 'operadores:list-by-operador' id_operador=operador.id %}" hx-target="#resultados" class="nav-link" data-toggle="tab">Pedidos</btn></li>
+            <li class="nav-item"><btn hx-get="{% url 'pedidos:list-by-operador' id_operador=operador.id %}" hx-target="#resultados" class="nav-link" data-toggle="tab">Pedidos</btn></li>
             <li class="nav-item"><btn hx-get="" hx-target="#resultados" class="nav-link" data-toggle="tab">Settings</btn></li>
           </ul>
         </div><!-- /.card-header -->

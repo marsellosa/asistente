@@ -31,7 +31,7 @@
       <p style="display: none;">
         <ul>
           {% for item in consumo.comanda.comandaitem_set.all %}
-          <li>{{ item }}</li>
+          <li>{{ item }} x {{ item.cantidad }}</li>
           {% endfor %}
         </ul>
       </p>

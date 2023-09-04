@@ -87,10 +87,7 @@ class Pedido(Model):
         return total
 
     def get_absolute_url(self):
-        return reverse("pedidos:detail", kwargs={"id_pedido": self.pk})
-
-    # def get_total_comprado(self):
-    #     return round(sum([self.get_total_comprado()]), 1)
+        return reverse("pedidos:detail", kwargs={"id_pedido": self.pedido_id})
 
     def save(self, *args, **kwargs):
         self.pedido_id = datetime.datetime.now().timestamp()
@@ -141,7 +138,7 @@ class PedidoItem(Model):
         return puntos
 
     def get_delete_url(self):
-        return reverse('pedidos:hx-delete-item', kwargs={'pedido_id': self.pedido.pk, 'id': self.pk})
+        return reverse('pedidos:hx-delete-item', kwargs={'item_id': self.pk})
 
     def __str__(self):
         return str(self.pedido)

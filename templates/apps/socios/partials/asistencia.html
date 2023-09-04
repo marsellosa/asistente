@@ -1,7 +1,8 @@
 <table class="table table-hover m-0">
   <thead>
   <tr>
-    <th>Fecha & Dia</th>
+    <th>Dia</th>
+    <th>Fecha</th>
     <th>Total</th>
     <th>Descuento</th>
     <th>Ganancia</th>
@@ -13,11 +14,12 @@
       _="on click toggle the *display of the next <p/>
           toggle .d-none on the next <tr/>"
   >
-    <td>{{ comanda.fecha | date:'d M Y - D'}}
+    <td>{{ comanda.fecha | date:'D'}}
       {% if comanda.status == 'p' %}
         <span class="badge badge-warning">P</span>
       {% endif %}
     </td>
+    <td>{{ comanda.fecha | date:'d M Y'  }}</td>
     <td>{{ comanda.consumo.total_consumido }}</td>
     <td>{{ comanda.consumo.descuento }}</td>
     <td>{{ comanda.consumo.sobre_verde }}</td>
@@ -27,7 +29,7 @@
       <p style="display: none;">
         <ul>
           {% for item in comanda.comandaitem_set.all %}
-          <li>{{ item }}</li>
+          <li>{{ item }} x {{ item.cantidad }}</li>
           {% endfor %}
         </ul>
       </p>

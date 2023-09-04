@@ -14,6 +14,7 @@
           <ul class="ml-4 mb-0 fa-ul text-muted">
             <li class="small"><span class="fa-li"><i class="fas fa-lg fa-building"></i></span> Address: Demo Street 123, Demo City 04312, NJ</li>
             <li class="small"><span class="fa-li"><i class="fas fa-lg fa-phone"></i></span> Phone #: + 800 - 12 12 23 52</li>
+            <li class="small"><span class="fa-li"><i class="fab fa-lg fa-telegram"></i></span> Telegram id: {{ operador.licencia.persona.get_bot_id }}</li>
           </ul>
         </div>
         <div class="col-5 text-center">
@@ -23,9 +24,11 @@
     </div>
     <div class="card-footer">
       <div class="text-right">
+        {% if operador.licencia.persona.get_bot_id %}
         <a href="#" class="btn btn-sm bg-teal">
           <i class="fas fa-comments"></i>
         </a>
+        {% endif %}
         <a href="{{ operador.get_absolute_url }}" class="btn btn-sm btn-primary">
           <i class="fas fa-user"></i> Ver Perfil
         </a>

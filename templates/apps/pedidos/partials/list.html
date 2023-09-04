@@ -1,6 +1,6 @@
 <div class="card-body p-0">
   <div class="table-responsive">
-    <table class="table m-0">
+    <table class="table table-hover text-nowrap m-0">
       <thead>
       <tr>
         <th>Fecha</th>
@@ -13,7 +13,9 @@
       </thead>
       <tbody>
       {% for obj in obj_list %}
-        <tr>
+        <tr data-widget="expandable-table" aria-expanded="false"
+        _="on click toggle the *display of the next <p/>
+          toggle .d-none on the next <tr/>">
           <td><a href="{{ obj.get_absolute_url }}">{{ obj.timestamp }}</a></td>
           <td>{{ obj.operador }}</td>
           {% if obj.status == 'p' %}
@@ -27,6 +29,22 @@
           {% endif %}
           <td>{{ obj.get_cart_total }}</td>
           <td>{{ obj.total_final }}</td>
+        </tr>
+        <tr class="expandable-body d-none">
+          <td colspan="4">
+            <p style="display: none;">
+              <ul>
+                {% for item in obj.get_all_items %}
+                <li>{{ item.categoria }} x {{ item.cantidad }}</li>
+                {% endfor %}
+              </ul>
+            </p>
+          </td>
+          <td>
+            {% if obj.get_all_items %}
+              {% include 'apps/pedidos/partials/send_order.html' %}
+            {% endif %}
+          </td>
         </tr>
       {% empty %}
         <tr>
@@ -46,7 +64,6 @@
   <div class="card-footer clearfix">
     <a class="btn btn-sm btn-info float-left"
     hx-post="{% url 'pedidos:hx-crear' id_operador=id_operador %}" 
-    hx-target="#reporte" 
     >Nuevo Pedido</a>
     <a href="{% url 'pedidos:lista' %}" class="btn btn-sm btn-secondary float-right">Todos los Pedidos</a>
   </div>

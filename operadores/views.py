@@ -33,7 +33,7 @@ def profile_view(request, id=None):
     date = request.GET.get('fechadesde')    
     if not date:
         date = datetime.today()
-    lista = Consumo.objects.by_id_operador(id)
+    lista = Consumo.objects.by_id_operador(id) #type: ignore
     consumos = lista.filter(comanda__fecha=date).order_by('-id')
     efectivo_prepago = Pago.objects.filter(fecha__date=date, usuario__id=id)
     print(f"Efectivo de prepagos: {Pago.objects.filter(fecha__date=date, usuario__id=id)}")
@@ -68,25 +68,12 @@ def profile_view(request, id=None):
     }
     return render(request, template, context)
 
-@allowed_users(['admin', 'operadores'])
-def list_pedidos_by_operador(request, id_operador=None):
-    context, template = {}, 'apps/pedidos/partials/list.html'
-    operador = Operador.objects.get(id=id_operador)
-    pedidos = operador.pedido_set.all().order_by('-timestamp') #type: ignore
-    if request.htmx:
-        pedidos = pedidos[:5]
-    context = {
-        'obj_list': pedidos,
-        'id_operador': id_operador
-        }
-
-    return render(request, template, context)
 
 @allowed_users(['admin', 'operadores'])
 def list_socios_by_operador(request, id=None):
     context, template = {}, 'apps/socios/socios.html'
     try:
-        socios_x_operador = Socio.objects.by_operador_id(operador_id=id).order_by('-timestamp')
+        socios_x_operador = Socio.objects.by_operador_id(operador_id=id).order_by('-timestamp') #type: ignore
     except:
         socios_x_operador = None
     if socios_x_operador is None:

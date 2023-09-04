@@ -40,6 +40,7 @@ class Persona(Model):
     genero = CharField(max_length=1, choices=PersonaGenero.choices, default=PersonaGenero.MUJER)
     fecha_nacimiento = DateField(default=now)
     activo = BooleanField(default=True)
+    profile_pic = ImageField(null=True, blank=True)
     created_on = DateTimeField(auto_now_add=True)
     edited_on = DateTimeField(auto_now=True)
 
@@ -64,7 +65,22 @@ class Persona(Model):
             nivel = status[str(self.licencia_set.first().status)] #type:ignore
         except:
             nivel = None
-        return 
+        return nivel
+    
+    def get_bot_id(self):
+        try:
+            bot_id = self.botuser.user_id #type: ignore
+        except:
+            bot_id = None
+        return bot_id
+    
+    def get_profile_pic_url(self):
+        try:
+            profile_pic = self.profile_pic.url
+        except:
+            profile_pic = '/AdminLTE/dist/img/default-150x150.png'
+        print(f"profile_pic: %s" % profile_pic)
+        return profile_pic
 
     def __str__(self):
         return f"{self.nombre} {self.apellido}"

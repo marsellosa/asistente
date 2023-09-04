@@ -1,8 +1,8 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
+from home.decorators import allowed_users
 from pedidos.forms import *
 from pedidos.models import *
-# from productos.models import Detalles
 
 def lista_pedidos(request):
     context, template = {}, 'apps/pedidos/list.html'
@@ -15,55 +15,37 @@ def lista_pedidos(request):
 
     return render(request, template, context)
 
-def pedido_detail_view(request, id_pedido):
+def pedido_crud_view(request, id_pedido=None, id_operador=None):
     context, template = {}, 'apps/pedidos/detail.html'
-    parent_obj = Pedido.objects.get(id=id_pedido)
-    items = parent_obj.get_all_items()
-    try:
-        bot_user_id = parent_obj.operador.licencia.persona.user_set.get().user_id
-    except:
-        bot_user_id = None
+    if id_pedido:
+        try:
+            pedido = Pedido.objects.get(pedido_id=id_pedido)
+        except:
+            pedido = None
+        if not pedido:
+            raise Http404
 
-    allow = True if items and bot_user_id is not None else False
+        context['parent_obj'] = pedido
+        
+    if request.method == 'POST' and id_operador: 
+        pedido = Pedido.objects.create(
+            usuario = request.user,
+            operador = Operador.objects.get(id=id_operador)
+        )
+        headers = {"HX-Redirect": pedido.get_absolute_url()}
+        return HttpResponse("Created", headers=headers)
 
-    form = PedidoItemModelForm(request.POST or None)
-    if request.method == 'POST':
-        if form.is_valid():
-            try:
-                categoria_id = request.POST.get('categoria')
-                sabor_id = request.POST.get('detalles')
-                obj = PedidoItem.objects.get(pedido__id=id_pedido, categoria__id=categoria_id, detalles__id=sabor_id)
-                if obj:
-                    cant = request.POST.get('cantidad')
-                    obj.cantidad += int(cant)
-                    obj.save()
-            except:
-                obj = form.save(commit=False)
-                obj.pedido = parent_obj
-                obj.save()
-            
-            form = PedidoItemModelForm()
-            template = 'apps/pedidos/partials/table-form.html'
-    
     if request.method == 'PUT':
-        # hx_update_status(parent_obj, PedidoStatus.ENTREGADO)
-        parent_obj.status = PedidoStatus.ENTREGADO
-        parent_obj.save()
-        headers = {"HX-Redirect": parent_obj.get_absolute_url()}
+        pedido = Pedido.objects.get(pedido_id=id_pedido)
+        pedido.status = PedidoStatus.ENTREGADO
+        pedido.save()
+        headers = {"HX-Redirect": pedido.get_absolute_url()}
         return HttpResponse("Updated", headers=headers)
-    
-    if request.method == 'DELETE':
-        # hx_update_status(parent_obj, PedidoStatus.CANCELADO)
-        parent_obj.status = PedidoStatus.CANCELADO
-        parent_obj.save()
-        headers = {"HX-Redirect": parent_obj.get_absolute_url()}
-        return HttpResponse("Deleted", headers=headers)
+
     context = {
-        'parent_obj': parent_obj,
-        'allow': allow,
-        'user_id': bot_user_id,
-        'form': form
-        }
+        'form': PedidoItemModelForm,
+    }
+
     return render(request, template, context)
 
 
@@ -107,24 +89,70 @@ def crear_pedido_hx(request, id_operador=None):
         
     return render(request, template, context)
 
-def hx_delete_item_view(request, pedido_id=None, id=None):
+def pedidoitem_crud_view(request, pedido_id=None, item_id=None):
     context, template = {}, 'apps/pedidos/partials/table-form.html'
-    form = PedidoItemModelForm()
-    parent_obj = Pedido.objects.get(id=pedido_id)
-    context = {
-        'parent_obj': parent_obj,
-        'form': form
-    }
     try:
-        obj = PedidoItem.objects.get(pedido=parent_obj, id=id)
-    except:
-        obj = None
-    if obj is None:
-        if request.htmx:
-            return HttpResponse("Not Found")
-        raise Http404
+        pedido = Pedido.objects.get(pedido_id=pedido_id)
+    except Pedido.DoesNotExist:
+        pedido = PedidoItem.objects.get(id=item_id).pedido
+
+    if request.method == 'POST':
+        form = PedidoItemModelForm(request.POST or None)
+        if form.is_valid():
+            categoria_id = request.POST.get('categoria')
+            detalles_id = request.POST.get('detalles')
+            obj, created = PedidoItem.objects.get_or_create(
+                pedido = Pedido.objects.get(pedido_id=pedido_id),
+                categoria = Categoria.objects.get(id=categoria_id),
+                detalles = Detalles.objects.get(id=detalles_id),
+                defaults={
+                    'cantidad': request.POST.get('cantidad'),
+            })
+            if not created:
+                obj.cantidad += int(request.POST.get('cantidad'))
+                obj.save()
+        
+    
+            # context = {
+            #     'parent_obj': obj.pedido,
+            #     'form': PedidoItemModelForm
+            # }
+
     if request.method == "DELETE":
+        try:
+            obj = PedidoItem.objects.get(id=item_id)
+        except:
+            obj = None
+        if obj is None:
+            if request.htmx:
+                return HttpResponse("Not Found")
+            raise Http404
+        
         context['msg'] = f"Se eliminó: {obj.cantidad} {obj.categoria} de {obj.detalles}"
         obj.delete()
+
+    # allow = True if pedido.get_all_items() and bot_user_id else False
+    context = {
+                'parent_obj': pedido,
+                # 'allow': allow,
+                # 'user_id': bot_user_id,
+                'form': PedidoItemModelForm
+            }
+    
             
+    return render(request, template, context)
+
+@allowed_users(['admin', 'operadores'])
+def list_pedidos_by_operador(request, id_operador=None):
+    context, template = {}, 'apps/pedidos/partials/list.html'
+    operador = Operador.objects.get(id=id_operador)
+    pedidos = operador.pedido_set.all().order_by('-timestamp') #type: ignore
+    if request.htmx:
+        pedidos = pedidos[:5]
+    context = {
+        'obj_list': pedidos,
+        'id_operador': id_operador,
+        'bot_user_id': operador.licencia.persona.get_bot_id, #type: ignore
+        }
+
     return render(request, template, context)

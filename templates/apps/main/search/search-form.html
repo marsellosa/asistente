@@ -10,7 +10,7 @@
         hx-target="#typeahead-results"  
         hx-get="/main/search/" 
         hx-trigger="keyup changed delay:200ms" 
-        hx-include="#search-type"
+        hx-include="[name='type']"
         name="q" 
         value="{{ request.GET.q }}"
         class="form-control form-control-navbar" 
