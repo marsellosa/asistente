@@ -2,7 +2,7 @@ from django.db.models import * #type:ignore
 from django.urls import reverse
 from persona.models import Persona
 
-class User(Model):
+class BotUser(Model):
     user_id = CharField(max_length=200, unique=True) #user_id
     first_name = CharField(max_length=200, null=True, blank=True)
     last_name = CharField(max_length=200, null=True, blank=True)
@@ -24,7 +24,7 @@ class User(Model):
         return f"{self.first_name} {self.last_name}"
 
 class Activity(Model):
-    user = ForeignKey('User', on_delete=CASCADE)
+    bot_user = ForeignKey(BotUser, on_delete=CASCADE)
     text = CharField(max_length=255, blank=True, null=True)
     inserted_on = DateTimeField(auto_now_add=True)
 
@@ -32,5 +32,5 @@ class Activity(Model):
         verbose_name_plural = 'Activities'
 
     def __str__(self):
-        return str(self.user)
+        return str(self.bot_user)
     

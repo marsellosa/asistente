@@ -1,16 +1,16 @@
 from django.contrib import admin
-from .models import User, Activity
-from .forms import UserForm
+from .models import BotUser, Activity
+from .forms import BotUserForm
 
-class UserAdmin(admin.ModelAdmin):
+class BotUserAdmin(admin.ModelAdmin):
     search_fields = ['first_name', 'last_name', 'username']
     list_display = ['user_id', 'first_name', 'last_name', 'username', 'language_code', 'inserted_on']
-    form = UserForm
+    form = BotUserForm
 
 class ActivityAdmin(admin.ModelAdmin):
-    list_display = ['user', 'text', 'inserted_on']
+    list_display = ['bot_user', 'text', 'inserted_on']
 
-admin.site.register(User, UserAdmin)
+admin.site.register(BotUser, BotUserAdmin)
 admin.site.register(Activity, ActivityAdmin)
 
 

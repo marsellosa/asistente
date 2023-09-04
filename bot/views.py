@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from bot.chat import respond, welcome
 from bot.forms import MessageForm
-from bot.models import User, Activity
+from bot.models import BotUser, Activity
 from productos.models import Categoria, Detalles
 from pedidos.models import Pedido
 
@@ -32,7 +32,7 @@ def save_new_user(message):
     from_user = message.from_user
     admin_id = 779630771
        
-    obj, created = User.objects.update_or_create(
+    obj, created = BotUser.objects.update_or_create(
         user_id = from_user.id,
         defaults = {
             'first_name': from_user.first_name,
@@ -238,7 +238,7 @@ def user_send_message(request, user_id):
     if not request.htmx:
         raise Http404
     try:
-        bot_user = User.objects.get(user_id=user_id)
+        bot_user = BotUser.objects.get(user_id=user_id)
     except:
         bot_user = None
 

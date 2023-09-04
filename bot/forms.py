@@ -1,10 +1,10 @@
-from django.forms import *
-from .models import User
+from django.forms import * #type:ignore
+from .models import BotUser
 
-class UserForm(ModelForm):
+class BotUserForm(ModelForm):
 
     class Meta:
-        model = User
+        model = BotUser
         fields = ['persona','user_id', 'first_name', 'last_name', 'username', 'language_code', 'is_bot']
 
 
