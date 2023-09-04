@@ -6,7 +6,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from productos.models import Categoria, Detalles
-from bot.models import User, Activity
+from bot.models import BotUser, Activity
 from bot.forms import MessageForm
 from comanda.models import Comanda
 from main.models import Monto
@@ -16,7 +16,7 @@ from home.decorators import allowed_users
 @staff_member_required
 def bot_user_profile(request, user_id):
     context, template = {}, 'apps/bot/bot_user_profile.html'
-    bot_user = User.objects.get(user_id=user_id)
+    bot_user = BotUser.objects.get(user_id=user_id)
     form = MessageForm()
     if request.method == 'POST':
         form = MessageForm(request.POST or None)
@@ -49,7 +49,7 @@ def detalle_ahorro(request):
 def users_list_view(request):
     template = 'apps/bot/users_list.html'
     context = {
-        'users_list': User.objects.all().order_by('-inserted_on')
+        'users_list': BotUser.objects.all().order_by('-inserted_on')
     }
 
     return render(request, template, context)
@@ -60,7 +60,7 @@ def inicio_view(request):
     context, template = {}, "apps/main/inicio.html"
     productos = Categoria.objects.all()
     detalles = Detalles.objects.all()
-    users = User.objects.all()
+    users = BotUser.objects.all()
     # activities = Activity.objects.values('inserted_on__date').distinct().values('user_id').distinct()
     activities = Activity.objects.all().order_by('-inserted_on')[:25]
     comandas = Comanda.objects.filter(status='p', usuario=request.user)
