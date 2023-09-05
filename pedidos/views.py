@@ -22,7 +22,7 @@ def pedido_crud_view(request, id_pedido=None, id_operador=None):
             pedido = Pedido.objects.get(pedido_id=id_pedido)
         except:
             pedido = None
-        if not pedido:
+        if pedido is None:
             raise Http404
 
         context['parent_obj'] = pedido
@@ -42,9 +42,7 @@ def pedido_crud_view(request, id_pedido=None, id_operador=None):
         headers = {"HX-Redirect": pedido.get_absolute_url()}
         return HttpResponse("Updated", headers=headers)
 
-    context = {
-        'form': PedidoItemModelForm,
-    }
+    context['form'] = PedidoItemModelForm
 
     return render(request, template, context)
 
