@@ -210,7 +210,7 @@ def detail(message):
         msg = response_msg(producto)
         
     except:
-        productos = Categoria.objects.search(query=text).distinct()
+        productos = Categoria.objects.search(query=text).distinct() #type: ignore
   
         if not productos or productos is None:
             productos = buscar_x_detalles(text)
@@ -218,7 +218,7 @@ def detail(message):
         if len(productos) == 1: #type: ignore
             producto = productos[0] #type: ignore
             msg = response_msg(producto)
-            image = producto.image_url
+            image = producto.image_url #type: ignore
 
         elif len(productos) > 1: #type: ignore
             msg = "Tal vez buscas:\n"
@@ -273,9 +273,10 @@ def enviar_detalle_pedido(request, user_id, pedido_id):
         detail += f"{item.categoria} {item.detalles} x{item.cantidad}\n"
     detail += f"\nCantidad: {pedido.get_cart_items}\nPuntos: {pedido.get_cart_points}\nTotal: {pedido.get_cart_total} Bs."
     sended = bot.send_message(user_id, text=detail)
+    print(f"sended: {sended}")
     context = {
-        'user_id' : user_id,
-        'parent_obj' : pedido,
+        'bot_user_id' : user_id,
+        'obj' : pedido,
         'sended' : sended
     }
 

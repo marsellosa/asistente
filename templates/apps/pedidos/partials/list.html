@@ -35,7 +35,7 @@
             <p style="display: none;">
               <ul>
                 {% for item in obj.get_all_items %}
-                <li>{{ item.categoria }} x {{ item.cantidad }}</li>
+                <li>{{ item.categoria }} {{ item.detalles }} x {{ item.cantidad }}</li>
                 {% endfor %}
               </ul>
             </p>
