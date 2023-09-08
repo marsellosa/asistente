@@ -6,7 +6,7 @@ from pedidos.models import *
 
 def lista_pedidos(request):
     context, template = {}, 'apps/pedidos/list.html'
-    obj_list = Pedido.objects.filter(usuario=request.user).order_by('-timestamp')
+    obj_list = Pedido.objects.all().order_by('-timestamp')
     if request.htmx:
         obj_list = obj_list[:5]
         template = 'apps/pedidos/partials/list.html'
@@ -142,11 +142,12 @@ def pedidoitem_crud_view(request, pedido_id=None, item_id=None):
 
 @allowed_users(['admin', 'operadores'])
 def list_pedidos_by_operador(request, id_operador=None):
-    context, template = {}, 'apps/pedidos/partials/list.html'
+    context, template = {}, 'apps/pedidos/list.html'
     operador = Operador.objects.get(id=id_operador)
     pedidos = operador.pedido_set.all().order_by('-timestamp') #type: ignore
     if request.htmx:
         pedidos = pedidos[:5]
+        template = 'apps/pedidos/partials/list.html'
     context = {
         'obj_list': pedidos,
         'id_operador': id_operador,

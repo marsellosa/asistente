@@ -65,7 +65,7 @@
     <a class="btn btn-sm btn-info float-left"
     hx-post="{% url 'pedidos:hx-crear' id_operador=id_operador %}" 
     >Nuevo Pedido</a>
-    <a href="{% url 'pedidos:lista' %}" class="btn btn-sm btn-secondary float-right">Todos los Pedidos</a>
+    <a href="{% url 'pedidos:list-by-operador' id_operador %}" class="btn btn-sm btn-secondary float-right">Todos los Pedidos</a>
   </div>
 {% endif %}
 <!-- /.card-footer -->

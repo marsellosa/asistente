@@ -10,6 +10,6 @@ class PrepagoInline(StackedInline):
 
 class SocioAdmin(ModelAdmin):
     inlines = [PrepagoInline]
-    search_fields = ['persona']
+    search_fields = ['persona__nombre', 'persona__apellido']
 
 site.register(Socio,SocioAdmin)

@@ -12,7 +12,7 @@
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="{% url 'main:inicio' %}">Inicio</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'pedidos:lista' %}">Pedidos</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'pedidos:list-by-operador' parent_obj.operador.pk %}">Pedidos</a></li>
             <li class="breadcrumb-item active">{{ parent_obj.pedido_id }}</li>
           </ol>
         </div><!-- /.col -->

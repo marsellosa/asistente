@@ -21,7 +21,7 @@ class PrecioIngredienteInline(StackedInline):
 
 class RecetaAdmin(ModelAdmin):
     inlines = [RecetaIngredienteInline, RecetaIngredienteHerbalInline]
-    list_display = ['nombre', 'get_costo_receta', 'get_total_receta', 'precio_publico']
+    list_display = ['nombre', 'get_sobre_rojo', 'get_costo_receta', 'get_total_receta', 'precio_publico']
     readonly_fields = ['timestamp', 'updated']
     raw_id_fields = ['usuario']
 
