@@ -58,12 +58,13 @@ def users_list_view(request):
 @login_required
 def inicio_view(request):
     context, template = {}, "apps/main/inicio.html"
+    socios = Socio.objects.all()
     productos = Categoria.objects.all()
     detalles = Detalles.objects.all()
     users = BotUser.objects.all()
     # activities = Activity.objects.values('inserted_on__date').distinct().values('user_id').distinct()
     activities = Activity.objects.all().order_by('-inserted_on')[:25]
-    comandas = Comanda.objects.filter(status='p', usuario=request.user)
+    comandas = Comanda.objects.filter(status='p')
     try:
         operador = request.user.groups.get(name='operadores')
     except:
@@ -75,7 +76,9 @@ def inicio_view(request):
         'users': users,
         'activities': activities,
         'comandas' : comandas,
-        'operador' : operador
+        'operador' : operador,
+        'socios' : socios,
+        'latest' : socios.order_by('-persona__created_on__date')[:8],
     }
 
     return render(request, template, context)
@@ -113,7 +116,7 @@ def get_amount(ok):
 def search_view(request):
     context, template = {}, 'apps/main/search/results-view.html'
     query = request.GET.get('q')
-    qs = Socio.objects.search(query=query)
+    qs = Socio.objects.search(query=query) #type: ignore
     context['objects'] = qs
 
     if request.htmx:

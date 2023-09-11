@@ -38,7 +38,7 @@ def socio_profile_view(request, id=None):
     except:
         comanda = None
     
-    prepagos = obj.prepago_set.filter(pagado=False)
+    prepagos = obj.prepago_set.filter(pagado=False) #type:ignore
 
     context = {
         'socio_obj': obj,
@@ -54,7 +54,7 @@ def socio_profile_view(request, id=None):
 def hx_asistencia(request, id_socio):
     context, template = {}, 'apps/socios/partials/asistencia.html'
     socio = Socio.objects.get(id=id_socio)
-    context['comandas'] = socio.comanda_set.all().order_by('-fecha')[:5]
+    context['comandas'] = socio.comanda_set.all().order_by('-fecha')[:5] #type:ignore
 
     return render(request, template, context)
 

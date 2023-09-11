@@ -106,7 +106,7 @@ def hx_add_prepago_view(request, id_comanda=None, id_prepago=None):
         comanda.prepago.add(prepago)
     comanda.save()
     
-    prepago.activo = False if prepago.comanda_set.all().count() >= prepago.cantidad else True
+    prepago.activo = False if prepago.comanda_set.all().count() >= prepago.cantidad else True #type:ignore
     prepago.save()
     context = {'parent_obj': comanda}
     return render(request, template, context)
