@@ -273,7 +273,7 @@ def enviar_detalle_pedido(request, user_id, pedido_id):
         detail += f"{item.categoria} {item.detalles} x{item.cantidad}\n"
     detail += f"\nCantidad: {pedido.get_cart_items}\nPuntos: {pedido.get_cart_points}\nTotal: {pedido.get_cart_total} Bs."
     sended = bot.send_message(user_id, text=detail)
-    print(f"sended: {sended}")
+    # print(f"sended: {sended}")
     context = {
         'bot_user_id' : user_id,
         'obj' : pedido,

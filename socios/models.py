@@ -54,7 +54,7 @@ class Socio(Model):
         return f"{self.persona.nombre} {self.persona.apellido}"
     
     def get_prepagos(self):
-        return self.prepago_set.all() #type:ignore
+        return self.prepago_set.all().order_by('-created') #type:ignore
     
     def get_asistencia(self):
         return reverse("socios:hx-asistencia", kwargs={"id_socio": self.pk})

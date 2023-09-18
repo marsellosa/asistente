@@ -1,5 +1,6 @@
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, Http404
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from home.decorators import allowed_users
 from pedidos.forms import *
 from pedidos.models import *
@@ -15,17 +16,30 @@ def lista_pedidos(request):
 
     return render(request, template, context)
 
+def crear_pedido_hx(request, id_operador=None):
+    context, template = {}, 'apps/pedidos/partials/list.html'
+        
+    if not request.htmx:
+        raise Http404
+
+    if request.method == 'POST' and id_operador is not None:
+        pedido = Pedido.objects.create(
+            usuario = request.user,
+            operador = Operador.objects.get(id=id_operador)
+        )
+        headers = {"HX-Redirect": pedido.get_absolute_url()}
+        return HttpResponse("Created", headers=headers)
+        
+    obj_list = Pedido.objects.filter(operador=id_operador).order_by('-timestamp')[:5]
+    context = {'obj_list': obj_list, 'id_operador': id_operador}
+        
+    return render(request, template, context)
+
 def pedido_crud_view(request, id_pedido=None, id_operador=None):
     context, template = {}, 'apps/pedidos/detail.html'
-    if id_pedido:
-        try:
-            pedido = Pedido.objects.get(pedido_id=id_pedido)
-        except:
-            pedido = None
-        if pedido is None:
-            raise Http404
+    pedido = get_object_or_404(Pedido, pedido_id=id_pedido)
 
-        context['parent_obj'] = pedido
+    context['parent_obj'] = pedido
         
     if request.method == 'POST' and id_operador: 
         pedido = Pedido.objects.create(
@@ -36,8 +50,15 @@ def pedido_crud_view(request, id_pedido=None, id_operador=None):
         return HttpResponse("Created", headers=headers)
 
     if request.method == 'PUT':
-        pedido = Pedido.objects.get(pedido_id=id_pedido)
+        # pedido = Pedido.objects.get(pedido_id=id_pedido)
         pedido.status = PedidoStatus.ENTREGADO
+        pedido.save()
+        headers = {"HX-Redirect": pedido.get_absolute_url()}
+        return HttpResponse("Updated", headers=headers)
+    
+    if request.method == 'DELETE':
+        # pedido = Pedido.objects.get(pedido_id=id_pedido)
+        pedido.status = PedidoStatus.CANCELADO
         pedido.save()
         headers = {"HX-Redirect": pedido.get_absolute_url()}
         return HttpResponse("Updated", headers=headers)
@@ -66,26 +87,7 @@ def crear_pedido(request):
         print(f"pedido_item_form: {pedido_item_form}")
     return render(request, template, context)
 
-def crear_pedido_hx(request, id_operador=None):
-    context, template = {}, 'apps/pedidos/partials/list.html'
-        
-    if not request.htmx:
-        raise Http404
 
-    if request.method == 'POST' and id_operador is not None:
-        operador = Operador.objects.get(id=id_operador)
-        form = PedidoForm()
-        parent_obj = form.save(commit=False)
-        parent_obj.usuario = request.user
-        parent_obj.operador = operador
-        parent_obj.save()
-        headers = {"HX-Redirect": parent_obj.get_absolute_url()}
-        return HttpResponse("Created", headers=headers)
-        
-    obj_list = Pedido.objects.filter(operador=id_operador).order_by('-timestamp')[:5]
-    context = {'obj_list': obj_list, 'id_operador': id_operador}
-        
-    return render(request, template, context)
 
 def pedidoitem_crud_view(request, pedido_id=None, item_id=None):
     context, template = {}, 'apps/pedidos/partials/table-form.html'

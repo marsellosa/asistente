@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils.timezone import datetime
 from productos.models import Categoria, Detalles
 from bot.models import BotUser, Activity
 from bot.forms import MessageForm
@@ -12,6 +13,7 @@ from comanda.models import Comanda
 from main.models import Monto
 from socios.models import Socio
 from home.decorators import allowed_users
+
 
 @staff_member_required
 def bot_user_profile(request, user_id):
@@ -63,8 +65,9 @@ def inicio_view(request):
     detalles = Detalles.objects.all()
     users = BotUser.objects.all()
     # activities = Activity.objects.values('inserted_on__date').distinct().values('user_id').distinct()
+    date = datetime.today()
     activities = Activity.objects.all().order_by('-inserted_on')[:25]
-    comandas = Comanda.objects.filter(status='p')
+    comandas = Comanda.objects.filter(fecha=date)
     try:
         operador = request.user.groups.get(name='operadores')
     except:
@@ -112,7 +115,7 @@ def get_amount(ok):
     
 #     return render(request, template, context)
 
-@allowed_users(allowed_roles=['admin', 'operadores'])
+# @allowed_users(allowed_roles=['admin', 'operadores'])
 def search_view(request):
     context, template = {}, 'apps/main/search/results-view.html'
     query = request.GET.get('q')

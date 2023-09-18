@@ -9,7 +9,7 @@ from prepagos.models import Pago
 from reportes.forms import ReporteDiarioForm
 from socios.models import Socio
 from home.decorators import allowed_users
-from datetime import datetime
+from django.utils.timezone import datetime
 
 
 @allowed_users(['admin', 'operadores'])
@@ -33,6 +33,7 @@ def profile_view(request, id=None):
     date = request.GET.get('fechadesde')    
     if not date:
         date = datetime.today()
+    
     lista = Consumo.objects.by_id_operador(id) #type: ignore
     consumos = lista.filter(comanda__fecha=date).order_by('-id')
     efectivo_prepago = Pago.objects.filter(fecha__date=date, usuario__id=id)

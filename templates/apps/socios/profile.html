@@ -126,7 +126,7 @@
                       {% endif %}
                       <td>
                         {% if prepago.activo %}
-                        <span class="badge badge-success">Activo</span>
+                        <span class="badge badge-success">{{ prepago.comanda_set.all.count }}/{{ prepago.cantidad }}</span>
                         {% else %}
                         <span class="badge badge-danger">Inactivo</span>
                         {% endif %}
