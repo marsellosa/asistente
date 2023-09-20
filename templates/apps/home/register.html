@@ -4,12 +4,12 @@
 {% block content %}
 <div class="register-box">
   <div class="register-logo">
-    <a href="{% url 'main:inicio' %}"><b>Admin</b>LTE</a>
+    <a href="{% url 'main:inicio' %}"><b>Admin</b>Club</a>
   </div>
 
   <div class="card">
     <div class="card-body register-card-body">
-      <p class="login-box-msg">Register a new membership</p>
+      <p class="login-box-msg">Registrar nueva membresia</p>
 
       <form action="" method="post">{% csrf_token %}
         {% comment %} <div class="input-group mb-3">
@@ -55,7 +55,7 @@
           </div>
           <!-- /.col -->
           <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">Register</button>
+            <button type="submit" class="btn btn-primary btn-block">Registrar</button>
           </div>
           <!-- /.col -->
         </div>
@@ -66,7 +66,7 @@
         <div class="card-header">
           <h3 class="card-title">
             <i class="icon fas fa-ban"></i>
-            Success
+            Exitoso
           </h3>
 
           <div class="card-tools">
@@ -94,7 +94,7 @@
         </a>
       </div> {% endcomment %}
 
-      <a href="{% url 'home:login' %}" class="text-center">I already have a membership</a>
+      <a href="{% url 'home:login' %}" class="text-center">ya tengo una membresia</a>
     </div>
     <!-- /.form-box -->
   </div><!-- /.card -->

@@ -28,7 +28,7 @@ def recipe_list_view(request):
 @login_required
 def recipe_detail_view(request, id=None):
     context, template = {}, 'apps/recetas/detail.html'
-    obj = get_object_or_404(Receta, id=id, usuario=request.user)
+    obj = get_object_or_404(Receta, id=id)
     context['object'] = obj
     return render(request, template, context)
 

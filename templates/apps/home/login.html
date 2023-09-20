@@ -4,7 +4,7 @@
 {% block content %}
 <div class="login-box">
   <div class="login-logo">
-    <a href="{% url 'main:inicio' %}"><b>Admin</b>LTE</a>
+    <a href="{% url 'main:inicio' %}"><b>Admin</b>Club</a>
   </div>
   <!-- /.login-logo -->
   <div class="card">
@@ -14,7 +14,7 @@
             <p class="login-box-msg text-danger">{{ message }}</p>
         {% endfor %}
       {% else %}
-      <p class="login-box-msg">Sign in to start your session</p>
+      <p class="login-box-msg">Inicio de sesión</p>
       {% endif %}
       <form action="" method="post">
         {% csrf_token %}
@@ -39,13 +39,13 @@
             <div class="icheck-primary">
               <input type="checkbox" id="remember">
               <label for="remember">
-                Remember Me
+                Recuerdame
               </label>
             </div>
           </div>
           <!-- /.col -->
           <div class="col-4">
-            <button type="submit" name="submit" class="btn btn-primary btn-block">Sign In</button>
+            <button type="submit" name="submit" class="btn btn-primary btn-block">Entrar</button>
           </div>
           <!-- /.col -->
         </div>
@@ -63,10 +63,10 @@
       <!-- /.social-auth-links -->
 
       <p class="mb-1">
-        <a href="{% url 'home:reset_password' %}">I forgot my password</a>
+        <a href="{% url 'home:reset_password' %}">Olvidé mi contraseña</a>
       </p>
       <p class="mb-0">
-        <a href="{% url 'home:register' %}" class="text-center">Register a new membership</a>
+        <a href="{% url 'home:register' %}" class="text-center">Registrar nueva membresia</a>
       </p>
     </div>
     <!-- /.login-card-body -->
