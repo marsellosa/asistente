@@ -75,11 +75,15 @@ class Persona(Model):
         return bot_id
     
     def get_profile_pic_url(self):
-        try:
-            profile_pic = self.profile_pic.url
-        except:
-            profile_pic = '/AdminLTE/dist/img/default-150x150.png'
-        print(f"profile_pic: %s" % profile_pic)
+        if self.genero == 'M':
+            profile_pic = '/AdminLTE/dist/img/avatar3.png'
+        else:
+            profile_pic = '/AdminLTE/dist/img/avatar04.png'
+        # try:
+        #     profile_pic = self.profile_pic.url
+        # except:
+        #     profile_pic = '/AdminLTE/dist/img/default-150x150.png'
+        # print(f"profile_pic: %s" % profile_pic)
         return profile_pic
 
     def __str__(self):

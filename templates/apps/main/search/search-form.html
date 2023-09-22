@@ -1,12 +1,7 @@
 
 <form action="/main/search/" method="GET" class="form-inline ml-3">
     <div class="input-group input-group-sm">
-        {% comment %} <select id="search-type" class="custom-select" name="type">
-            <option value="article" {% if request.GET.type == 'article' %}selected{% endif %}>Articulos</option>
-            <option value="recipe" {% if request.GET.type == 'recipe' %}selected{% endif %}>Recetas</option>
-        </select> {% endcomment %}
-      
-      <input 
+     <input 
         hx-target="#typeahead-results"  
         hx-get="/main/search/" 
         hx-trigger="keyup changed delay:200ms" 
@@ -16,8 +11,7 @@
         class="form-control form-control-navbar" 
         type="search" 
         placeholder="Buscar Socio" 
-        aria-label="Search">
-      <datalist id="results"></datalist>
+        aria-label="Buscar">
       <div class="input-group-append">
         <button class="btn btn-navbar" type="submit">
           <i class="fas fa-search"></i>

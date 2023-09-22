@@ -37,7 +37,7 @@ def profile_view(request, id=None):
     lista = Consumo.objects.by_id_operador(id) #type: ignore
     consumos = lista.filter(comanda__fecha=date).order_by('-id')
     efectivo_prepago = Pago.objects.filter(fecha__date=date, usuario__id=id)
-    print(f"Efectivo de prepagos: {Pago.objects.filter(fecha__date=date, usuario__id=id)}")
+    # print(f"Efectivo de prepagos: {Pago.objects.filter(fecha__date=date, usuario__id=id)}")
     if request.htmx:
         if request.method == 'POST':
             
