@@ -92,109 +92,109 @@
   <!-- /.col -->
 </div>
 <div class="row">
-    <div class="col-lg-4">
-        <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">Registros Recientes</h3>
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header border-transparent">
+        <h3 class="card-title">Comandas para hoy</h3>
 
-              <div class="card-tools">
-                <span class="badge badge-danger">8 Recientes</span>
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                  <i class="fas fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-tool" data-card-widget="remove">
-                  <i class="fas fa-times"></i>
-                </button>
-              </div>
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body p-0">
-              <ul class="users-list clearfix">
-                {% for socio in latest %}
-                <li>
-                  <img src="{% static socio.persona.get_profile_pic_url %}" alt="User Image">
-                  <a class="users-list-name" href="{{ socio.get_absolute_url }}">{{ socio.persona.nombre }} {{ socio.persona.apellido }}</a>
-                  <span class="users-list-date">{{ socio.persona.created_on }}</span>
-                </li>
-                {% endfor %}
-                
-              </ul>
-              <!-- /.users-list -->
-            </div>
-            <!-- /.card-body -->
-            <div class="card-footer text-center">
-              <a href=" {% url 'socios:list' %}">Todos los Socios</a>
-            </div>
-            <!-- /.card-footer -->
-          </div>
-    </div>
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header border-transparent">
-              <h3 class="card-title">Comandas para hoy</h3>
-
-              <div class="card-tools">
-                <span class="badge badge-info">{{ comandas.count }} Consumos</span>
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                  <i class="fas fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-tool" data-card-widget="remove">
-                  <i class="fas fa-times"></i>
-                </button>
-              </div>
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body p-0">
-              <div class="table-responsive">
-                <table class="table m-0">
-                  <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Estado</th>
-                    <th>Total</th>
-                    <th>Detalle</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  {% for comanda in comandas %}
-                  <tr>
-                    <td><a href={{ comanda.socio.get_absolute_url }}>{{ comanda.socio }}</a></td>
-                    {% if comanda.status == 'p' %}
-                    <td><span class="badge badge-warning">Pendiente</span></td>
-                    {% elif comanda.status == 'e' %}
-                    <td><span class="badge badge-success">Entregado</span></td>
-                    {% endif %}
-                    <td>{{ comanda.get_cart_total }}</td>
-                    <td>
-                        <div class="sparkbar" data-color="#f39c12" data-height="20">
-                        {% for item in comanda.get_all_items %}
-                            
-                            {% if forloop.last %}
-                            {{item}}
-                            {% else %}
-                            {{item}},
-                            {% endif %}
-                        {% endfor %}
-                        </div>
-                    </td>
-                  </tr>
-                  {% empty %}
-                  <tr>
-                    <td colspan="2">No hay Ordenes</td>
-                  </tr>
+        <div class="card-tools">
+          <span class="badge badge-info"> Consumos: {{ comandas.count }}</span>
+          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+            <i class="fas fa-minus"></i>
+          </button>
+          <button type="button" class="btn btn-tool" data-card-widget="remove">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table m-0">
+            <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Estado</th>
+              <th>Total</th>
+              <th>Detalle</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for comanda in comandas %}
+            <tr>
+              <td><a href={{ comanda.socio.get_absolute_url }}>{{ comanda.socio }}</a></td>
+              {% if comanda.status == 'p' %}
+              <td><span class="badge badge-warning">Pendiente</span></td>
+              {% elif comanda.status == 'e' %}
+              <td><span class="badge badge-success">Entregado</span></td>
+              {% endif %}
+              <td>{{ comanda.get_cart_total }}</td>
+              <td>
+                  <div class="sparkbar" data-color="#f39c12" data-height="20">
+                  {% for item in comanda.get_all_items %}
+                      
+                      {% if forloop.last %}
+                      {{item}}
+                      {% else %}
+                      {{item}},
+                      {% endif %}
                   {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-              <!-- /.table-responsive -->
-            </div>
-            <!-- /.card-body -->
-            <div class="card-footer clearfix">
-              <a href="javascript:void(0)" class="btn btn-sm btn-info float-left">Place New Order</a>
-              <a href="javascript:void(0)" class="btn btn-sm btn-secondary float-right">View All Orders</a>
-            </div>
-            <!-- /.card-footer -->
-          </div>
+                  </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="2">No hay Ordenes</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <!-- /.table-responsive -->
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer clearfix">
+        <a href="javascript:void(0)" class="btn btn-sm btn-info float-left">Place New Order</a>
+        <a href="javascript:void(0)" class="btn btn-sm btn-secondary float-right">View All Orders</a>
+      </div>
+      <!-- /.card-footer -->
     </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Registros Recientes</h3>
+
+          <div class="card-tools">
+            <span class="badge badge-danger">8 Recientes</span>
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body p-0">
+          <ul class="users-list clearfix">
+            {% for socio in latest %}
+            <li>
+              <img src="{% static socio.persona.get_profile_pic_url %}" alt="User Image">
+              <a class="users-list-name" href="{{ socio.get_absolute_url }}">{{ socio.persona.nombre }} {{ socio.persona.apellido }}</a>
+              <span class="users-list-date">{{ socio.persona.created_on }}</span>
+            </li>
+            {% endfor %}
+            
+          </ul>
+          <!-- /.users-list -->
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer text-center">
+          <a href=" {% url 'socios:list' %}">Todos los Socios</a>
+        </div>
+        <!-- /.card-footer -->
+      </div>
+  </div>
 </div>
 {% endblock main-content %}

@@ -18,17 +18,16 @@ def lista_pedidos(request):
 
 def crear_pedido_hx(request, id_operador=None):
     context, template = {}, 'apps/pedidos/partials/list.html'
-        
-    if not request.htmx:
-        raise Http404
-
-    if request.method == 'POST' and id_operador is not None:
+    
+    if request.method == 'POST':
+        operador = get_object_or_404(Operador, id=id_operador)
         pedido = Pedido.objects.create(
             usuario = request.user,
-            operador = Operador.objects.get(id=id_operador)
+            operador = operador
         )
-        headers = {"HX-Redirect": pedido.get_absolute_url()}
-        return HttpResponse("Created", headers=headers)
+        if request.htmx:
+            headers = {"HX-Redirect": pedido.get_absolute_url()}
+            return HttpResponse("Created", headers=headers)
         
     obj_list = Pedido.objects.filter(operador=id_operador).order_by('-timestamp')[:5]
     context = {'obj_list': obj_list, 'id_operador': id_operador}
@@ -145,14 +144,15 @@ def pedidoitem_crud_view(request, pedido_id=None, item_id=None):
 @allowed_users(['admin', 'operadores'])
 def list_pedidos_by_operador(request, id_operador=None):
     context, template = {}, 'apps/pedidos/list.html'
-    operador = Operador.objects.get(id=id_operador)
+    operador = get_object_or_404(Operador, pk=id_operador)
+    # operador = Operador.objects.get(id=id_operador)
     pedidos = operador.pedido_set.all().order_by('-timestamp') #type: ignore
     if request.htmx:
         pedidos = pedidos[:5]
         template = 'apps/pedidos/partials/list.html'
     context = {
         'obj_list': pedidos,
-        'id_operador': id_operador,
+        'operador': operador,
         'bot_user_id': operador.licencia.persona.get_bot_id, #type: ignore
         }
 

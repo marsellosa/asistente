@@ -136,8 +136,10 @@
                       <td colspan="4">
                         <p style="display: none;">
                           <ul>
-                            {% for item in prepago.comanda_set.all %}
+                            {% for item in prepago.get_uses_list %}
                             <li>{{ item.fecha }}</li>
+                            {% empty %}
+                            <li>Sin registros</li>
                             {% endfor %}
                           </ul>
                         </p>

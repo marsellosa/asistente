@@ -1,9 +1,9 @@
 from django.http import Http404
-from django.shortcuts import render
-from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render, get_object_or_404
 from prepagos.forms import PagoForm, PrepagoForm
 from prepagos.models import Prepago, Pago
 from socios.models import Socio
+from home.decorators import allowed_users
 
 def detail_view(request, id=None):
     context, template = {}, 'apps/prepagos/partials/list-form.html'
@@ -13,14 +13,15 @@ def list_view(request):
     context, template = {}, 'apps/prepagos/partials/list-form.html'
     return render(request, template, context)
 
-@staff_member_required
+@allowed_users(['admin', 'operadores'])
 def create_prepago_view(request, id_socio=None):
     context, template = {}, 'apps/prepagos/partials/list-form.html'
 
     if not request.htmx:
         raise Http404
-    socio = Socio.objects.get(id=id_socio)
-    prepagos = socio.prepago_set.filter(pagado=False)
+    # socio = Socio.objects.get(id=id_socio)
+    socio = get_object_or_404(Socio, id=id_socio)
+    prepagos = socio.prepago_set.filter(pagado=False) #type: ignore
     context = {
         'prepagos_obj': prepagos,
         'pago_form': PagoForm(),
@@ -42,7 +43,7 @@ def create_prepago_view(request, id_socio=None):
     return render(request, template, context)
 
 
-@staff_member_required
+@allowed_users(['admin', 'operadores'])
 def add_pago_view(request, prepago_id=None):
     context, template = {}, 'apps/prepagos/partials/prepago.html'
     if not request.htmx:

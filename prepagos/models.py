@@ -36,6 +36,9 @@ class Prepago(Model):
 
     def get_total_pagos(self):
         return self.pago_set.all() #type:ignore
+    
+    def get_uses_list(self):
+        return self.comanda_set.all().order_by('-fecha') #type:ignore
 
     def get_acumulado(self):
         return round(sum([pago.monto for pago in self.get_total_pagos()]), 1)

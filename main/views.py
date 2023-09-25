@@ -121,9 +121,8 @@ def search_view(request):
     query = request.GET.get('q')
     qs = Socio.objects.search(query=query) #type: ignore
     context['objects'] = qs
-    print(f"qs: %s" % qs)
     if request.htmx:
-        context['objects'] = qs[:5]
+        context['objects'] = qs[:10]
         template = 'apps/main/search/partials/results.html'
     
     return render(request, template, context)

@@ -60,12 +60,12 @@
   <!-- /.table-responsive -->
 </div>
 <!-- /.card-body -->
-{% if id_operador %}
+{% if operador %}
   <div class="card-footer clearfix">
     <a class="btn btn-sm btn-info float-left"
-    hx-post="{% url 'pedidos:hx-crear' id_operador=id_operador %}" 
+    hx-post="{% url 'pedidos:hx-crear' id_operador=operador.pk %}" 
     >Nuevo Pedido</a>
-    <a href="{% url 'pedidos:list-by-operador' id_operador %}" class="btn btn-sm btn-secondary float-right">Todos los Pedidos</a>
+    <a href="{% url 'pedidos:list-by-operador' operador.pk %}" class="btn btn-sm btn-secondary float-right">Todos los Pedidos</a>
   </div>
 {% endif %}
 <!-- /.card-footer -->
