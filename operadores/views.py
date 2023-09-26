@@ -9,7 +9,7 @@ from prepagos.models import Pago
 from reportes.forms import ReporteDiarioForm
 from socios.models import Socio
 from home.decorators import allowed_users
-from django.utils.timezone import datetime
+from django.utils import timezone
 
 
 @allowed_users(['admin', 'operadores'])
@@ -32,7 +32,7 @@ def profile_view(request, id=None):
     context, template = {}, 'apps/operadores/profile.html'
     date = request.GET.get('fechadesde')    
     if not date:
-        date = datetime.today()
+        date = timezone.localtime(timezone.now())
     
     lista = Consumo.objects.by_id_operador(id) #type: ignore
     consumos = lista.filter(comanda__fecha=date).order_by('-id')
