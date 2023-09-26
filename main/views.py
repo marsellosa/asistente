@@ -5,12 +5,12 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.utils.timezone import datetime
 from productos.models import Categoria, Detalles
 from bot.models import BotUser, Activity
 from bot.forms import MessageForm
 from comanda.models import Comanda
 from main.models import Monto
+from main.utils import get_today
 from socios.models import Socio
 from home.decorators import allowed_users
 
@@ -65,9 +65,9 @@ def inicio_view(request):
     detalles = Detalles.objects.all()
     users = BotUser.objects.all()
     # activities = Activity.objects.values('inserted_on__date').distinct().values('user_id').distinct()
-    date = datetime.today()
+    today = get_today()
     activities = Activity.objects.all().order_by('-inserted_on')[:25]
-    comandas = Comanda.objects.filter(fecha=date)
+    comandas = Comanda.objects.filter(fecha=today)
     try:
         operador = request.user.groups.get(name='operadores')
     except:
