@@ -55,6 +55,7 @@ def profile_view(request, id=None):
     context = {
         'operador': Operador.objects.get(id=id),
         'consumos': consumos,
+        'hoy': date,
         'totales': {
             'total': consumos.count(),
             'sobre_rojo': round(sum([item.sobre_rojo for item in consumos]), 2),
