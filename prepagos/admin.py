@@ -1,11 +1,17 @@
-from django.contrib.admin import *
+from django.contrib.admin import * #type: ignore
 from prepagos.models import Prepago, Pago
 # from socios.models import Socio
 
+class PagoInline(StackedInline):
+    model = Pago
+    extra = 1
+
 class PrepagoAdmin(ModelAdmin):
-    # inlines = [PrepagoInline]
+    inlines = [PagoInline]
     readonly_fields = ['descuento_decimal']
     list_display =  ['socio', 'valor', 'cantidad', 'descuento']
+
+
 
 site.register(Prepago, PrepagoAdmin)
 site.register(Pago)
