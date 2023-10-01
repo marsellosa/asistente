@@ -3,7 +3,7 @@ from django.urls import reverse
 from persona.models import Licencia
 
 class Operador(Model):
-    licencia = ForeignKey(Licencia, verbose_name=("Operador Club"), on_delete=CASCADE)
+    licencia = OneToOneField(Licencia, verbose_name=("Operador Club"), on_delete=CASCADE)
     timestamp = DateTimeField(auto_now_add=True)
     updated = DateTimeField(auto_now=True)
 

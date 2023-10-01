@@ -79,8 +79,7 @@ class Comanda(Model):
     
     @property
     def get_sobre_rojo(self):
-        comandaitems = self.comandaitem_set.all() # type: ignore
-        costos = sum([item.get_sobre_rojo for item in comandaitems])
+        costos = sum([item.get_sobre_rojo for item in self.get_all_items()])
         try:
             porciento = float(Settings.objects.get(nombre='inversion').valor)
         except:
@@ -90,8 +89,7 @@ class Comanda(Model):
 
     @property
     def get_cart_total(self):
-        comandaitems = self.comandaitem_set.all() # type: ignore
-        total = sum([item.get_total for item in comandaitems])
+        total = sum([item.get_total for item in self.get_all_items()])
         return total
 
     @property
@@ -105,10 +103,9 @@ class Comanda(Model):
 
     @property
     def get_insumos(self):
-        comandaitems = self.comandaitem_set.all() # type: ignore
-        total = sum([item.get_insumos for item in comandaitems])
+        total = sum([item.get_insumos for item in self.get_all_items()])
         insumos = 0
-        if comandaitems:
+        if self.get_all_items():
             try:
                 insumos = float(Settings.objects.get(nombre='insumos').valor)
             except:
@@ -118,33 +115,38 @@ class Comanda(Model):
 
     @property
     def get_cart_count_items(self):
-        comandaitems = self.comandaitem_set.all() # type: ignore
-        total = sum([item.cantidad for item in comandaitems])
+        total = sum([item.cantidad for item in self.get_all_items()])
         return total
 
     @property
     def get_cart_points(self):
-        comandaitems = self.comandaitem_set.all() # type: ignore
-        puntos = round(sum([item.get_puntos for item in comandaitems]), 2)
+        puntos = round(sum([item.get_puntos for item in self.get_all_items()]), 2)
         return puntos
     
     @property
     def get_cart_cash(self):
-        efectivo = self.get_cart_total - sum([prepago.valor for prepago in self.prepago.all()])
+        if self.is_operador():
+            efectivo = sum([self.get_mantenimiento, self.get_insumos, self.get_sobre_rojo])
+        else:
+            efectivo = self.get_cart_total - sum([prepago.valor for prepago in self.prepago.all()])
         return efectivo
     
     @property
     def get_sobre_verde(self):
-        try:
-            licencia = self.socio.persona.licencia_set.first().operador_set.first() # type: ignore
-        except:
-            licencia = None
-        if self.socio.operador == licencia:
+        if self.is_operador():
             s_verde = 0
         else:
             costos = sum([self.get_sobre_rojo, self.get_total_descuento, self.get_insumos, self.get_mantenimiento])
             s_verde = round(self.get_cart_total - costos, 2)
         return s_verde
+    
+    def is_operador(self):
+        try:
+            licencia = self.socio.persona.licencia.operador # type: ignore
+        except:
+            licencia = None
+        return licencia
+
 
     def get_all_items(self):
         return self.comandaitem_set.all() # type: ignore

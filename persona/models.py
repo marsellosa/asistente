@@ -146,7 +146,7 @@ class LicenciaManager(Manager):
 
 class Licencia(Model):
 
-    persona = ForeignKey(Persona, on_delete=CASCADE, blank=True, null=True)
+    persona = OneToOneField(Persona, on_delete=CASCADE, blank=True, null=True)
     id_licencia = CharField(max_length=32, blank=True, null=True)
     status = CharField(max_length=2, choices=LicenciaStatus.choices, default=LicenciaStatus.MAYORISTA)
 
