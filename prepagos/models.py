@@ -35,7 +35,7 @@ class Prepago(Model):
         return reverse("prepagos:detail", kwargs={ "id": self.pk })
 
     def get_total_pagos(self):
-        return self.pago_set.all() #type:ignore
+        return self.pago_set.all().order_by('-fecha') #type:ignore
     
     def get_uses_list(self):
         return self.comanda_set.all().order_by('-fecha') #type:ignore
