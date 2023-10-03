@@ -35,9 +35,10 @@ def profile_view(request, id=None):
         date = get_today()
     
     lista = Consumo.objects.by_id_operador(id) #type: ignore
+    registrados = Consumo.objects.by_user(id, date) #type: ignore
     consumos = lista.filter(comanda__fecha=date).order_by('-id')
     efectivo_prepago = Pago.objects.filter(fecha__date=date, usuario__id=id)
-    # print(f"Efectivo de prepagos: {Pago.objects.filter(fecha__date=date, usuario__id=id)}")
+  
     if request.htmx:
         if request.method == 'POST':
             
@@ -65,6 +66,7 @@ def profile_view(request, id=None):
             'sobre_verde': round(sum([item.sobre_verde for item in consumos]), 2),
             'efectivo': round(sum([item.efectivo for item in consumos]), 2),
             'efectivo_prepago': round(sum([item.monto for item in efectivo_prepago]), 2),
+            'efectivo_consumos': round(sum([item.efectivo for item in registrados]), 2),
         },
         'form': ReporteDiarioForm({'id': id})
     }

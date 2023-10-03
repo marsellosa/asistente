@@ -4,6 +4,9 @@ from comanda.models import Comanda
 
 class ConsumoQuerySet(QuerySet):
 
+    def by_user(self, id_usuario, fecha):
+        return self.filter(comanda__usuario__id=id_usuario, comanda__fecha=fecha)
+
     def by_id_operador(self, id_operador):
         return self.filter(comanda__socio__operador__id=id_operador)
 
@@ -13,6 +16,9 @@ class ConsumoManager(Manager):
         
     def by_id_operador(self, id_operador):
         return self.get_queryset().by_id_operador(id_operador)
+    
+    def by_user(self, id_usuario, fecha):
+        return self.get_queryset().by_user(id_usuario, fecha)
 
 class Consumo(Model):
     comanda = OneToOneField(Comanda, on_delete=CASCADE, null=True, blank=True)

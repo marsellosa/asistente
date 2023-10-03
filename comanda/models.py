@@ -20,10 +20,10 @@ class ComandaStatus(TextChoices):
 class ComandaQuerySet(QuerySet):
 
     def by_user_id(self, user_id):
-        return self.filter(user_id=user_id)
+        return self.filter(id=user_id)
 
-    def by_user(self, user):
-        return self.filter(user=user)
+    def by_user(self, usuario):
+        return self.filter(usuario=usuario)
 
     def candelado(self):
         return self.filter(status=ComandaStatus.CANCELADO)

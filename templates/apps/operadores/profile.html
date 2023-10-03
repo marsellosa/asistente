@@ -69,21 +69,21 @@
       <!-- About Me Box -->
       <div class="card card-success">
         <div class="card-header">
-          <h3 class="card-title">About Me</h3>
+          <h3 class="card-title">Detalle de Ingresos</h3>
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-          <strong><i class="fas fa-book mr-1"></i> Education</strong>
+          <strong><i class="fas fa-book mr-1"></i> Efectivo por consumos</strong>
 
           <p class="text-muted">
-            B.S. in Computer Science from the University of Tennessee at Knoxville
+            {{ totales.efectivo_consumos }}
           </p>
 
           <hr>
 
-          <strong><i class="fas fa-map-marker-alt mr-1"></i> Location</strong>
+          <strong><i class="fas fa-map-marker-alt mr-1"></i> Efectivo por Prepagos</strong>
 
-          <p class="text-muted">Malibu, California</p>
+          <p class="text-muted">{{ totales.efectivo_prepago }}</p>
 
           <hr>
 
