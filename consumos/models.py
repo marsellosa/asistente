@@ -4,6 +4,9 @@ from comanda.models import Comanda
 
 class ConsumoQuerySet(QuerySet):
 
+    def by_user_date_range(self, id_usuario, fechaDesde, fechaHasta):
+        return self.filter(comanda__usuario__id=id_usuario, comanda__fecha__gte=fechaDesde, comanda__fecha__lte=fechaHasta).order_by('pk')
+
     def by_user(self, id_usuario, fecha):
         return self.filter(comanda__usuario__id=id_usuario, comanda__fecha=fecha)
 
@@ -19,6 +22,9 @@ class ConsumoManager(Manager):
     
     def by_user(self, id_usuario, fecha):
         return self.get_queryset().by_user(id_usuario, fecha)
+    
+    def by_user_date_range(self, id_usuario, fechaDesde, fechaHasta):
+        return self.get_queryset().by_user_date_range(id_usuario, fechaDesde, fechaHasta)
 
 class Consumo(Model):
     comanda = OneToOneField(Comanda, on_delete=CASCADE, null=True, blank=True)

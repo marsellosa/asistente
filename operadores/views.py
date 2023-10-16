@@ -44,6 +44,7 @@ def profile_view(request, id=None):
             
             fechaDesde = request.POST.get('fechadesde')
             fechaHasta = request.POST.get('fechahasta')
+            registrados = Consumo.objects.by_user_date_range(id, fechaDesde, fechaHasta) #type: ignore
             try:
                 consumos = lista.filter(comanda__fecha__gte=fechaDesde, comanda__fecha__lte=fechaHasta).order_by('pk')
             except ValidationError:
@@ -53,6 +54,7 @@ def profile_view(request, id=None):
             except ValidationError:
                 messages.warning = (request, "faltan datos en el formulario de fechas")
         template = 'apps/reportes/partials/results.html'
+
     context = {
         'operador': Operador.objects.get(id=id),
         'consumos': consumos,
