@@ -126,7 +126,7 @@ class Comanda(Model):
     @property
     def get_cart_cash(self):
         if self.is_operador():
-            efectivo = sum([self.get_mantenimiento, self.get_insumos, self.get_sobre_rojo])
+            efectivo = round(sum([self.get_mantenimiento, self.get_insumos, self.get_sobre_rojo]), 2)
         else:
             efectivo = self.get_cart_total - sum([prepago.valor for prepago in self.prepago.all()])
         return efectivo
@@ -136,7 +136,7 @@ class Comanda(Model):
         if self.is_operador():
             s_verde = 0
         else:
-            costos = sum([self.get_sobre_rojo, self.get_total_descuento, self.get_insumos, self.get_mantenimiento])
+            costos = round(sum([self.get_sobre_rojo, self.get_total_descuento, self.get_insumos, self.get_mantenimiento]), 2)
             s_verde = round(self.get_cart_total - costos, 2)
         return s_verde
     

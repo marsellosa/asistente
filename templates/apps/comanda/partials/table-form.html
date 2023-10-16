@@ -1,7 +1,9 @@
   <div class="table-responsive">
-    {% if msg %}
-      {% include 'apps/pedidos/partials/item-deleted.html' %}
-    {% endif %}
+    <div id="error-message">
+      {% if msg %}
+        {% include 'apps/pedidos/partials/item-deleted.html' %}
+      {% endif %}
+    </div>
     <table class="table m-0">
       <thead>
         <tr>

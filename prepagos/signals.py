@@ -5,8 +5,6 @@ from prepagos.models import Pago, Prepago
 
 @receiver(pre_save, sender=Pago)
 def set_prepago_payed(instance, **kwargs):
-    print(f"{instance.prepago.get_saldo()}")
-    print(f"{instance.monto}")
     if instance.monto >= instance.prepago.get_saldo():
         saldo = instance.monto - instance.prepago.get_saldo()
         instance.monto = instance.prepago.get_saldo()

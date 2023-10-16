@@ -18,3 +18,7 @@ def get_float_for_save(cant):
         return cant_decimal
     else:
         return None
+    
+def get_final_price(costo, margen=50):
+    price = costo / (100 - margen) * 100
+    return round(price, 2)

@@ -133,9 +133,22 @@ def comanda_item_edit_view(request, id_comanda_item):
     return render(request, template,context)
 
 def hx_update_status(request, id_comanda):
-    comanda = Comanda.objects.get(id=id_comanda)
-    comanda.status = ComandaStatus.ENTREGADO
-    comanda.save()
-    headers = {'HX-Redirect': comanda.socio.get_absolute_url()}
+    context, template = {}, 'apps/pedidos/partials/item-deleted.html'
+    comanda = get_object_or_404(Comanda, id=id_comanda)
+    # comanda = Comanda.objects.get(id=id_comanda)
+    if comanda.usuario == request.user:
+        if comanda.comandaitem_set.all(): #type: ignore
+            comanda.status = ComandaStatus.ENTREGADO
+            comanda.save()
+            messages.success(request, 'Comanda registrada')
+            headers = {'HX-Redirect': comanda.socio.get_absolute_url()}
+            return HttpResponse("Success", headers=headers)
+        else:
+            messages.error(request, 'La comanda esta vacia')
+    else:
+        messages.error(request, 'No es tu comanda')
     
-    return HttpResponse("Success", headers=headers)
+    context = {'messages': [message for message in messages.get_messages(request)]}
+        
+
+    return render(request, template, context)

@@ -18,6 +18,7 @@
         <div class="form-group">
             <button type="button" class="btn btn-success btn-block"
             hx-get="{% url 'comanda:hx-update-status' id_comanda=parent_obj.id %}"
+            hx-target="#error-message"
             >Pagada</button>
         </div>
     </div>

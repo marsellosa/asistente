@@ -1,0 +1,60 @@
+<!-- /.card-header -->
+<div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table m-0">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Monto</th>
+          <th>Status</th>
+          <th>Estado</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for prepago in socio_obj.get_prepagos %}
+        <tr data-widget="expandable-table" aria-expanded="false"
+          _="on click toggle the *display of the next <p/>
+            toggle .d-none on the next <tr/>"
+        >
+          <td><a href="javascript:void(0)">{{ prepago.id }}</a></td>
+          <td>{{ prepago }}</td>
+          {% if prepago.pagado %}
+          <td><span class="badge badge-success">Pagado</span></td>
+          {% else %}
+          <td><span class="badge badge-warning">Pendiente</span></td>
+          {% endif %}
+          <td>
+            {% if prepago.activo %}
+            <span class="badge badge-success">{{ prepago.comanda_set.all.count }}/{{ prepago.cantidad }}</span>
+            {% else %}
+            <span class="badge badge-danger">Inactivo</span>
+            {% endif %}
+          </td>
+        </tr>
+        <tr class="expandable-body d-none">
+          <td colspan="4">
+            <p style="display: none;">
+              <ul>
+                {% for item in prepago.get_uses_list %}
+                <li>{{ item.fecha }}</li>
+                {% empty %}
+                <li>Sin registros</li>
+                {% endfor %}
+              </ul>
+            </p>
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <!-- /.table-responsive -->
+  </div>
+  <!-- /.card-body -->
+  
+  <div class="card-footer clearfix" hx-on:click="alert('SweetAlert2 is working!')">
+    <a _="on click toggle .float-right on me"
+      class="btn btn-sm btn-info float-left">Place New Order</a>
+    {% comment %} <a href="javascript:void(0)" class="btn btn-sm btn-secondary float-right">Ver Todos</a> {% endcomment %}
+  </div>
+  <!-- /.card-footer -->
