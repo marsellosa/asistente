@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.contrib import messages
+from django_htmx.http import trigger_client_event
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
 from consumos.models import Consumo
@@ -38,7 +39,8 @@ def profile_view(request, id=None):
     registrados = Consumo.objects.by_user(id, date) #type: ignore
     consumos = lista.filter(comanda__fecha=date).order_by('-id')
     efectivo_prepago = Pago.objects.filter(fecha__date=date, usuario__id=id)
-  
+    prepagos_operador  = Pago.objects.filter(fecha__date=date, prepago__socio__operador__id=id).order_by('-fecha')
+        
     if request.htmx:
         if request.method == 'POST':
             
@@ -54,7 +56,7 @@ def profile_view(request, id=None):
             except ValidationError:
                 messages.warning = (request, "faltan datos en el formulario de fechas")
         template = 'apps/reportes/partials/results.html'
-
+       
     context = {
         'operador': Operador.objects.get(id=id),
         'consumos': consumos,
@@ -69,9 +71,11 @@ def profile_view(request, id=None):
             'efectivo': round(sum([item.efectivo for item in consumos]), 2),
             'efectivo_prepago': round(sum([item.monto for item in efectivo_prepago]), 2),
             'efectivo_consumos': round(sum([item.efectivo for item in registrados]), 2),
+            'prepagos_x_id' : round(sum([item.monto for item in prepagos_operador]) ,2)
         },
         'form': ReporteDiarioForm({'id': id})
     }
+    
     return render(request, template, context)
 
 

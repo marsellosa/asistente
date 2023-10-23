@@ -32,7 +32,8 @@
     <div class="info-box">
       <span class="info-box-icon bg-info elevation-1"><i class="fas fa-shopping-cart"></i></span>
 
-      <div class="info-box-content">
+      <div class="info-box-content" 
+        hx-on:click="outputMessage('este es mi error')">
         <span class="info-box-text">Ventas</span>
         <span class="info-box-number">
           4000
@@ -198,3 +199,15 @@
   </div>
 </div>
 {% endblock main-content %}
+{% block js %}
+<script>
+  function outputMessage(error){
+    Swal.fire({
+      icon: 'warning',
+      title: error,
+      text: 'Something went wrong!',
+      footer: '<a href="{% url "main:inicio" %}" >Why do I have this issue?</a>'
+    })
+  }
+</script>
+{% endblock js %}

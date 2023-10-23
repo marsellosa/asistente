@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.utils.timezone import now
+from main.utils import get_today
 from django.db.models import * #type:ignore
 from socios.models import Socio
 from django.urls import reverse
@@ -55,11 +56,27 @@ class Prepago(Model):
         self.descuento_decimal = self.valor * self.descuento / 100
         super().save(*args, **kwargs)
 
+class PagoQuerySet(QuerySet):
+    def pago_by_user(self, user):
+        return self.filter(usuario=user)
+    
+    def pago_by_id(self, id):
+        return self.filter(id=id)
+
+class PagoManager(Manager):
+    def get_queryset(self):
+        return PagoQuerySet(self.model, using=self._db)
+    
+    def pago_by_user(self, user):
+        return self.get_queryset().pago_by_user(user)
+    
+    def pago_by_id(self, id):
+        return self.get_queryset().pago_by_id(id)
 
 class Pago(Model):
     prepago = ForeignKey(Prepago, on_delete=CASCADE)
     monto = FloatField()
-    fecha = DateTimeField(default=now)
+    fecha = DateTimeField(default=get_today)
     usuario = ForeignKey(User, on_delete=CASCADE)
     timestamp = DateTimeField(auto_now_add=True)
 

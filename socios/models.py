@@ -8,8 +8,8 @@ class SocioQuerySet(QuerySet):
         if query is None or query == "":
             return self.none()
         lookups = (
-            Q(persona__nombre__icontains=query) |
-            Q(persona__apellido__icontains=query)
+            Q(persona__nombre__icontains=query, persona__activo=True) |
+            Q(persona__apellido__icontains=query, persona__activo=True)
         )
         return self.filter(lookups)
 
