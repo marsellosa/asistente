@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.http import Http404
-from django.utils.timezone import datetime
+from main.utils import get_today
 from consumos.models import Consumo
 from reportes.forms import ReporteDiarioForm
 from home.decorators import allowed_users
@@ -13,7 +13,7 @@ def reporte_diario(request, id_operador):
     
     date = request.GET.get('fechadesde')    
     if not date:
-        date = datetime.today()
+        date = get_today()
     lista = Consumo.objects.by_id_operador(id_operador) #type: ignore
     consumos = lista.filter(comanda__fecha=date).order_by('pk')
     # print(f"consumos: {consumos}")
