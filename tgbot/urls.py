@@ -28,6 +28,7 @@ urlpatterns = [
     path('main/', include('main.urls')),
     path('operadores/', include('operadores.urls')),
     path('pedidos/', include('pedidos.urls')),
+    path('personas/', include('persona.urls')),
     path('prepagos/', include('prepagos.urls')),
     path('productos/', include('productos.urls')),
     path('recetas/', include('recetas.urls')),
