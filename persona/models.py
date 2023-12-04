@@ -79,11 +79,6 @@ class Persona(Model):
             profile_pic = '/AdminLTE/dist/img/avatar3.png'
         else:
             profile_pic = '/AdminLTE/dist/img/avatar04.png'
-        # try:
-        #     profile_pic = self.profile_pic.url
-        # except:
-        #     profile_pic = '/AdminLTE/dist/img/default-150x150.png'
-        # print(f"profile_pic: %s" % profile_pic)
         return profile_pic
 
     def __str__(self):

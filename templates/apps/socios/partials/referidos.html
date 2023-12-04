@@ -1,0 +1,27 @@
+    <button class="btn btn-success btn-block"
+    hx-get="{% url "personas:agregar-referido" id_referidor=id_referidor%}"
+    hx-target="#referidos"
+    >Agregar Referido</button>
+    <div class="table-responsive">
+        <table class="table table-hover m-0">
+            <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for referido in referidos %}
+            <tr data-widget="expandable-table" aria-expanded="false">
+              <td>{{ referido.timestamp }}</td>
+              <td>{{ referido.persona.nombre }}</td>
+              <td>{{ referido.persona.apellido }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- /.table-responsive -->
+<!-- /.card-body -->
+  

@@ -1,12 +1,12 @@
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.http import HttpResponse, Http404
+from django.shortcuts import render, get_object_or_404
 #
 from comanda.forms import ComandaItemForm, ComandaModelForm
-from comanda.models import Comanda, ComandaStatus
-from prepagos.models import Prepago
+from persona.forms import PersonaForm
 from prepagos.forms import PrepagoForm, PagoForm
+from comanda.models import Comanda, ComandaStatus
 from socios.models import Socio
 from home.decorators import allowed_users
 
@@ -25,13 +25,8 @@ def socios_list_view(request):
 def socio_profile_view(request, id=None):
     context, template = {}, 'apps/socios/profile.html'
     lista = ''
-    try:
-        obj = Socio.objects.get(pk=id)
-    except:
-        obj = None
-    if obj is None:
-        return HttpResponse("Profile not Found")
-        
+    obj = get_object_or_404(Socio, id=id)
+    
     try:
         comanda = Comanda.objects.get(socio_id=id, status=ComandaStatus.PENDIENTE)
         lista = comanda.prepago.all()
@@ -53,9 +48,23 @@ def socio_profile_view(request, id=None):
 
 def hx_asistencia(request, id_socio):
     context, template = {}, 'apps/socios/partials/asistencia.html'
-    socio = Socio.objects.get(id=id_socio)
+    socio = get_object_or_404(Socio, id=id_socio)
     context['comandas'] = socio.comanda_set.all().order_by('-fecha')[:5] #type:ignore
 
+    return render(request, template, context)
+
+def hx_referidos(request, id_socio):
+    context, template = {}, 'apps/socios/partials/referidos.html'
+    if not request.htmx:
+        raise Http404
+    
+    socio = get_object_or_404(Socio, id=id_socio)
+    referidos = socio.socio_set.all().order_by('-timestamp')
+    context = {
+        'referidos': referidos,
+        'id_referidor': id_socio,
+        }
+    # print(f"referidos: {referidos}")
     return render(request, template, context)
 
 def hx_socio_crud(request, id_socio=None):

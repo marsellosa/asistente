@@ -59,5 +59,8 @@ class Socio(Model):
     def get_asistencia(self):
         return reverse("socios:hx-asistencia", kwargs={"id_socio": self.pk})
     
+    def get_referidos(self):
+        return reverse("socios:hx-referidos", kwargs={"id_socio": self.pk})
+    
     def __str__(self):
         return str(self.persona)
