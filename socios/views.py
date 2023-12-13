@@ -63,6 +63,7 @@ def hx_referidos(request, id_socio):
     context = {
         'referidos': referidos,
         'id_referidor': id_socio,
+        'referidor': socio.referidor
         }
     
     return render(request, template, context)

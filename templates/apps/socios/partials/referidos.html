@@ -1,14 +1,26 @@
-    <button class="btn btn-success btn-block"
-    hx-get="{% url "personas:agregar-referido" id_referidor=id_referidor%}"
-    hx-target="#referidos"
-    >Agregar Referido</button>
+
+    <div class="card-header">
+      
+      <h3 class="card-title"><small class="text-muted"> Ref.</small><a href="{{referidor.get_absolute_url }}"> {{ referidor }} </a></h3>
+
+      <div class="card-tools">
+        <span title="{{ referidos.count }} referidos" class="badge bg-success">{{ referidos.count }}</span>
+
+        <button type="button" class="btn btn-tool" title="Agregar" data-widget="chat-pane-toggle"
+          hx-get="{% url "personas:agregar-referido" id_referidor%}"
+          hx-target="#referidos"
+        >
+          <i class="fa-solid fa-square-plus"></i>
+        </button>
+
+      </div>
+    </div>
     <div class="table-responsive">
         <table class="table table-hover m-0">
             <thead>
             <tr>
               <th>Fecha</th>
               <th>Nombre</th>
-
             </tr>
             </thead>
             <tbody>
@@ -27,5 +39,5 @@
         </table>
     </div>
     <!-- /.table-responsive -->
-<!-- /.card-body -->
+
   

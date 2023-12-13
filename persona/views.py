@@ -28,6 +28,7 @@ def agregar_referido(request, id_referidor):
             )
             referidos = referidor.socio_set.all().order_by('-timestamp')[:50] #type:ignore
             context['referidos'] = referidos
+            context['referidor'] = referidor.referidor
             template = 'apps/socios/partials/referidos.html'
     
     return render(request, template, context)
