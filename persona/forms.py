@@ -1,15 +1,20 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, ModelChoiceField
 from persona.models import Persona
+from operadores.models import Operador
 
 class PersonaForm(ModelForm):
     required_css_class = "required-field"
+
+    operador = ModelChoiceField(Operador.objects.all())
+    
     class Meta:
         model = Persona
-        fields = ['nombre', 'apellido']
+        fields = ['nombre', 'apellido', 'genero']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:
+            
             field_name = str(field)
             new_data = {
                 'placeholder': f"{field_name}".capitalize(),

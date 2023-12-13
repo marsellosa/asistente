@@ -40,7 +40,7 @@ class Socio(Model):
     persona = OneToOneField(Persona, on_delete=CASCADE)
     referidor = ForeignKey('Socio', on_delete=SET_NULL, blank=True, null=True)
     operador = ForeignKey(Operador, on_delete=SET_NULL, blank=True, null=True)
-    timestamp = DateField(auto_now_add=True)
+    timestamp = DateTimeField(auto_now_add=True)
 
     objects = SocioManager()
 

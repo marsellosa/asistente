@@ -59,12 +59,12 @@ def hx_referidos(request, id_socio):
         raise Http404
     
     socio = get_object_or_404(Socio, id=id_socio)
-    referidos = socio.socio_set.all().order_by('-timestamp')
+    referidos = socio.socio_set.all().order_by('-timestamp')[:50] #type:ignore
     context = {
         'referidos': referidos,
         'id_referidor': id_socio,
         }
-    # print(f"referidos: {referidos}")
+    
     return render(request, template, context)
 
 def hx_socio_crud(request, id_socio=None):

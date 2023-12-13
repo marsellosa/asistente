@@ -8,15 +8,19 @@
             <tr>
               <th>Fecha</th>
               <th>Nombre</th>
-              <th>Apellido</th>
+
             </tr>
             </thead>
             <tbody>
             {% for referido in referidos %}
             <tr data-widget="expandable-table" aria-expanded="false">
               <td>{{ referido.timestamp }}</td>
-              <td>{{ referido.persona.nombre }}</td>
-              <td>{{ referido.persona.apellido }}</td>
+              <td><a href="{{ referido.get_absolute_url }}"> {{ referido.persona.nombre }} {{ referido.persona.apellido }}</a></td>
+            </tr>
+            {% empty %}
+            <tr data-widget="expandable-table" aria-expanded="false">
+              <td>Ningun Referido</td>
+              <td>...</td>
             </tr>
             {% endfor %}
             </tbody>
