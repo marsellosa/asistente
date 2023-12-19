@@ -26,60 +26,28 @@
 <div class="row">
   <!-- left column -->
   <div class="col-md-3">
-    <!-- general form elements -->
+    <!-- /.card -->
     <div class="card card-primary">
       <div class="card-header">
-        <h3 class="card-title">Quick Example</h3>
+        <h3 class="card-title">Filtros</h3>
       </div>
-      <!-- /.card-header -->
-      
-     
-      <!-- form start -->
+       <!-- form start -->
       <form hx-post="." hx-target="#consumo-results">
-        <div class="card-body">
-          {% for field in form %}
-          <label for={{field.name }}>{{ field.label }}:</label>
-          <div class="imput-group mb-3">
-            {{ field }}
-          </div>
-          {% endfor %}
-          {% comment %} <label for="">Fecha Desde:</label>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
-                Action
-              </button>
-              <ul class="dropdown-menu">
-                <li class="dropdown-item"><a href="#" hx-get="{% url 'reportes:list' %}" hx-target="#consumo-results">Hoy</a></li>
-                <li class="dropdown-item"><a href="#">Ultimos 7 dias</a></li>
-                <li class="dropdown-item"><a href="#">Ultimos 30 dias</a></li>
-                <li class="dropdown-divider"></li>
-                <li class="dropdown-item"><a href="#">Separated link</a></li>
-              </ul>
-            </div>
-            <!-- /btn-group -->
-            <input type="date" class="form-control" name="fechaDesde" id="fechaDesde"
-            hx-get="{% url 'reportes:list' %}"
-            hx-target="#consumo-results"
-            >
-          </div>
-          <!-- /input-group -->
-          
-          <div class="form-group">
-            <label for="fechaHasta">Fecha Hasta:</label>
-            <input type="date" class="form-control" id="fechaHasta" name="fechaHasta">
-          </div>
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-            <label class="form-check-label" for="exampleCheck1">Check me out</label>
-          </div>
-        </div> {% endcomment %}
-        <!-- /.card-body -->
-
-        <div class="card-footer">
-          <button type="submit" class="btn btn-primary swalDefaultSuccess">Submit</button>
+      <div class="card-body">
+        {% for field in form %}
+        <div class="form-group">
+        <label for={{field.name }}>{{ field.label }}:</label>
+          {{ field }}
         </div>
-      </form>
+        {% endfor %}
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer">
+        <button type="submit" class="btn btn-primary swalDefaultSuccess">Filtrar</button>
+      </div>
+      <!-- /.card-footer -->
+    </form>
+     <!--  /.form -->
     </div>
     <!-- /.card -->
   </div>
@@ -103,45 +71,30 @@
         </div>
       </div>
       <!-- /.card-header -->
-      <div class="card-body table-responsive p-0">
-        <table class="table table-hover text-nowrap">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>User</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Reason</th>
-            </tr>
-          </thead>
-          <tbody id="consumo-results">
-            {% include 'apps/reportes/partials/results.html' %}
-          </tbody>
-        </table>
-      </div>
-      <!-- /.card-body -->
-    </div>
-
-    <div class="card card-danger">
-      <div class="card-header">
-        <h3 class="card-title">Different Width</h3>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-3">
-            <input type="text" class="form-control" placeholder=".col-3">
-          </div>
-          <div class="col-4">
-            <input type="text" class="form-control" placeholder=".col-4">
-          </div>
-          <div class="col-5">
-            <input type="text" class="form-control" placeholder=".col-5">
-          </div>
+      <div class="card-body p-0">      
+        <div class="row table-responsive p-0">
+            <table class="table table-hover text-nowrap">
+                <thead>
+                    <tr>
+                    <th>Día</th>
+                    <th>Fecha</th>
+                    <th>Socio</th>
+                    <th>Rojo</th>
+                    <th>Mayoreo</th>
+                    <th>Insumos</th>
+                    <th>Descuento</th>
+                    <th>Verde</th>
+                    <th>Efectivo</th>
+                    </tr>
+                </thead>
+                <tbody id="consumo-results">
+                    {% include 'apps/reportes/partials/results.html' %}
+                </tbody>
+            </table>
         </div>
       </div>
       <!-- /.card-body -->
     </div>
-    <!-- /.card -->
   </div>
   <!--/.col (right) -->
 </div>
