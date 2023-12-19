@@ -22,10 +22,10 @@ class ReporteDiarioForm(Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         id_operador = args[0]['id']
-        # print("ID: {}".format(id_operador))
+        url = reverse('operadores:profile', kwargs={'id': id_operador}) if id_operador else 'reportes/'
         self.fields['fechadesde'].widget.attrs.update(
             {
-                'hx-get': reverse('operadores:profile', kwargs={'id': id_operador}),
+                'hx-get': url,
                 'hx-trigger': 'change',
                 'hx-target': '#consumo-results'
             }
