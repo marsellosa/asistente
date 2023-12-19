@@ -4,5 +4,6 @@ from reportes.views import reporte_diario
 app_name = 'reportes'
 
 urlpatterns = [
-    path('<str:id_operador>/', reporte_diario, name='by-operador')
+    path('', reporte_diario, name='list'),
+    path('<str:id_operador>/', reporte_diario, name='by-operador'),
 ]
