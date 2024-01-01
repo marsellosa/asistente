@@ -11,7 +11,8 @@ class PrepagoAdmin(ModelAdmin):
     readonly_fields = ['descuento_decimal']
     list_display =  ['socio', 'valor', 'cantidad', 'descuento']
 
-
+class PagoAdmin(ModelAdmin):
+    list_display = ['get_nombre_socio', 'monto', 'usuario', 'fecha']
 
 site.register(Prepago, PrepagoAdmin)
-site.register(Pago)
+site.register(Pago, PagoAdmin)

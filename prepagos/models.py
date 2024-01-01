@@ -80,5 +80,8 @@ class Pago(Model):
     usuario = ForeignKey(User, on_delete=CASCADE)
     timestamp = DateTimeField(auto_now_add=True)
 
+    def get_nombre_socio(self):
+        return str(self.prepago.socio)
+    
     def __str__(self):
         return str(self.monto)
