@@ -65,9 +65,9 @@ def inicio_view(request):
     detalles = Detalles.objects.all()
     users = BotUser.objects.all()
     # activities = Activity.objects.values('inserted_on__date').distinct().values('user_id').distinct()
-    today = get_today()
+    today = '2024-01-12'#get_today()
     activities = Activity.objects.all().order_by('-inserted_on')[:25]
-    comandas = Comanda.objects.filter(fecha=today)
+    comandas = Comanda.objects.filter(fecha=today).order_by('-pk')
     try:
         operador = request.user.groups.get(name='operadores')
     except:
@@ -81,7 +81,7 @@ def inicio_view(request):
         'comandas' : comandas,
         'operador' : operador,
         'socios' : socios,
-        'latest' : socios.order_by('-persona__created_on__date')[:8],
+        'latest' : socios.order_by('-persona__created_on')[:8],
     }
 
     return render(request, template, context)
