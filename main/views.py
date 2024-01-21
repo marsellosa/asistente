@@ -65,7 +65,7 @@ def inicio_view(request):
     detalles = Detalles.objects.all()
     users = BotUser.objects.all()
     # activities = Activity.objects.values('inserted_on__date').distinct().values('user_id').distinct()
-    today = '2024-01-12'#get_today()
+    today = get_today()
     activities = Activity.objects.all().order_by('-inserted_on')[:25]
     comandas = Comanda.objects.filter(fecha=today).order_by('-pk')
     try:
