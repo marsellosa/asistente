@@ -62,5 +62,11 @@ class Socio(Model):
     def get_referidos(self):
         return reverse("socios:hx-referidos", kwargs={"id_socio": self.pk})
     
+    def get_datos_contacto(self):
+        return self.persona.contacto_set.all() #type:ignore
+    
+    def get_nivel_licencia(self):
+        return self.persona.licencia.status #type:ignore
+    
     def __str__(self):
         return str(self.persona)

@@ -4,13 +4,13 @@
       <h3 class="card-title"><small class="text-muted"> Ref.</small><a href="{{referidor.get_absolute_url }}"> {{ referidor }} </a></h3>
 
       <div class="card-tools">
-        <span title="{{ referidos.count }} referidos" class="badge bg-success">{{ referidos.count }}</span>
+        <span title="{{ referidos.count }} referidos" class="badge bg-warning">{{ referidos.count }}</span>
 
-        <button type="button" class="btn btn-tool" title="Agregar" data-widget="chat-pane-toggle"
+        <button type="button" class="btn btn-success btn-xs" title="Agregar" data-widget="chat-pane-toggle"
           hx-get="{% url "personas:agregar-referido" id_referidor%}"
           hx-target="#referidos"
         >
-          <i class="fa-solid fa-square-plus"></i>
+          <i class="fas fa-plus-circle"></i>
         </button>
 
       </div>

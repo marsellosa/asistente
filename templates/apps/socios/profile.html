@@ -39,14 +39,14 @@
         <ul class="list-group list-group-unbordered mb-3">
           {% for dato in socio_obj.get_datos_contacto %}
           <li class="list-group-item">
-            <b>{{ dato.tipo }}</b> <a class="float-right">{{ dato.dato }}</a>
+            <b>{{ dato.tipo }}</b> {% if dato.tipo == "Celular" %}<a href="https://wa.me/591{{ dato.dato }}" class="float-right">{{ dato.dato }}</a>{%else%}<a class="float-right">{{ dato.dato }}</a>{% endif %} 
           </li>
           {% empty %}
-          <li class="list-group-item">
-            <b>#</b> <a class="float-right">Sin datos de Contacto</a>
+          <li class="list-group-item" hx-on:click="alert('funcion proximamente habilitada!')">
+            <b>Agregar dato de Contacto</b> <a class="float-right">#</a>
           </li>
           {% endfor %}
-          {% if socio_obj.persona.get_nivel_licencia %}
+          {% if socio_obj.get_nivel_licencia %}
           <li class="list-group-item">
             <b>Licencia (nivel)</b> <a class="float-right">{{ socio_obj.persona.get_nivel_licencia }}</a>
           </li>

@@ -1,5 +1,5 @@
 from django.contrib.admin import *
-from persona.models import Persona, Licencia
+from persona.models import Persona, Licencia, Contacto
 from socios.models import Socio
 
 class SocioInline(StackedInline):
@@ -16,4 +16,5 @@ class PersonaAdmin(ModelAdmin):
 
 site.register(Persona, PersonaAdmin)
 site.register(Licencia)
+site.register(Contacto)
 # Register your models here.

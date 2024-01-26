@@ -62,7 +62,7 @@ class Persona(Model):
             'cl': 'Cliente',
         }
         try:
-            nivel = status[str(self.licencia_set.first().status)] #type:ignore
+            nivel = status[str(self.licencia.status)] #type:ignore
         except:
             nivel = None
         return nivel
