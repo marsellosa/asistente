@@ -35,7 +35,8 @@ try:
                 'HOST': PGHOST,
                 'PORT': PGPORT
             }
-    }
+        }
+        print(DATABASES)
 except:
     pass
 
