@@ -4,6 +4,7 @@
 tgbot/settings/local.py
 local.py
 tests.py
+set_webhook.py
 
 __pycache__/
 *.py[cod]
