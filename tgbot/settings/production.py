@@ -10,18 +10,18 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['web-production-d293.up.railway.app', 'miasistenteherbalife.com']
 
-POSTGRES_DB         = config('POSTGRES_DB', default=None)
-POSTGRES_PASSWORD   = config('POSTGRES_PASSWORD', default=None)
-POSTGRES_USER       = config('POSTGRES_USER', default=None)
-POSTGRES_HOST       = config('POSTGRES_HOST', default=None)
-POSTGRES_PORT       = config('POSTGRES_PORT', default=0, cast=int)
+PGDATABASE   = config('PGDATABASE', default=None)
+PGPASSWORD   = config('PGPASSWORD', default=None)
+PGUSER       = config('PGUSER', default=None)
+PGHOST       = config('PGHOST', default=None)
+PGPORT       = config('PGPORT', default=0, cast=int)
 
 POSTGRES_READY = (
-    POSTGRES_DB is not None
-    and POSTGRES_PASSWORD is not None
-    and POSTGRES_USER is not None
-    and POSTGRES_HOST is not None
-    and POSTGRES_PORT is not None
+    PGDATABASE is not None
+    and PGPASSWORD is not None
+    and PGUSER is not None
+    and PGHOST is not None
+    and PGPORT is not None
 )
 
 try:
@@ -29,11 +29,11 @@ try:
         DATABASES = {
             'default' : {
                 'ENGINE': 'django.db.backends.postgresql',
-                'NAME': POSTGRES_DB,
-                'USER': POSTGRES_USER,
-                'PASSWORD': POSTGRES_PASSWORD,
-                'HOST': POSTGRES_HOST,
-                'PORT': POSTGRES_PORT
+                'NAME': PGDATABASE,
+                'USER': PGUSER,
+                'PASSWORD': PGPASSWORD,
+                'HOST': PGHOST,
+                'PORT': PGPORT
             }
     }
 except:
