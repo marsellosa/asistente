@@ -36,7 +36,6 @@ try:
                 'PORT': PGPORT
             }
         }
-        print(DATABASES)
 except:
     pass
 
