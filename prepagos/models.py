@@ -60,8 +60,11 @@ class PagoQuerySet(QuerySet):
     def pago_by_user(self, user):
         return self.filter(usuario=user)
     
-    def pago_by_id(self, id):
-        return self.filter(id=id)
+    def pago_by_id(self, id_operador):
+        return self.filter(prepago__socio__operador__id=id_operador)
+    
+    def pago_by_date(self, date):
+        return self.filter(fecha=date)
 
 class PagoManager(Manager):
     def get_queryset(self):
@@ -72,6 +75,9 @@ class PagoManager(Manager):
     
     def pago_by_id(self, id):
         return self.get_queryset().pago_by_id(id)
+    
+    def pago_by_date(self, date):
+        return self.get_queryset().pago_by_date(date)
 
 class Pago(Model):
     prepago = ForeignKey(Prepago, on_delete=CASCADE)

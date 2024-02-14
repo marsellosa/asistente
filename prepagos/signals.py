@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 
 from prepagos.models import Pago, Prepago
@@ -22,3 +22,9 @@ def set_prepago_payed(instance, **kwargs):
                 prepago=prepago, 
                 monto=saldo
             )
+
+@receiver(post_delete, sender=Pago)
+def update_prepago(instance, **kwargs):
+    if instance.prepago.get_saldo() > 0:
+        instance.prepago.pagado = False
+        instance.prepago.save()

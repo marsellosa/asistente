@@ -61,7 +61,7 @@ class Pedido(Model):
     updated = DateTimeField(auto_now=True)
     status = CharField(max_length=1, choices=PedidoStatus.choices, default=PedidoStatus.PENDIENTE)
     pedido_id = CharField(max_length=200)
-    total_final = CharField(max_length=10, null=True, blank=True)
+    total_final = FloatField(null=True, blank=True)
 
     objects = PedidoManager()
 

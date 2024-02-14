@@ -55,7 +55,9 @@ def profile_view(request, id=None):
                 efectivo_prepago = Pago.objects.filter(fecha__date__gte=fechaDesde, fecha__date__lte=fechaHasta, usuario__id=id)
             except ValidationError:
                 messages.warning = (request, "faltan datos en el formulario de fechas")
-        template = 'apps/reportes/partials/results.html'
+            template = 'apps/reportes/partials/results.html'
+        else:
+            template = 'apps/operadores/partials/consumos.html'
        
     context = {
         'operador': Operador.objects.get(id=id),

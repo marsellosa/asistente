@@ -238,10 +238,5 @@ class RecetaIngredienteHerbal(Model):
     def get_delete_url(self):
         return reverse('recetas:herbal-ingredient-delete', kwargs=self._kwargs())
 
-    # def get_portion(self):
-    #     return self.categoria.set_
-
-    
-
     def __str__(self):
         return str(self.categoria)

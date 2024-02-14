@@ -25,9 +25,11 @@ class RecetaAdmin(ModelAdmin):
     readonly_fields = ['timestamp', 'updated']
     raw_id_fields = ['usuario']
 
-class RecetaIngredienteAdmin(ModelAdmin):
-    # inlines = [PrecioIngredienteInline]
-    list_display = ['ingrediente', 'receta', 'cantidad', 'unidad']
+class IngredienteAdmin(ModelAdmin):
+    inlines = [PrecioIngredienteInline]
+    list_display = ['nombre', 'descripcion', 'timestamp']
+    readonly_fields = ['timestamp']
+
 
 class RecetaIngredienteHerbalAdmin(ModelAdmin):
     list_display = ['categoria', 'get_total']
@@ -36,7 +38,11 @@ class CostoIngredienteAdmin(ModelAdmin):
     list_display = ['ingrediente', 'precio', 'cantidad_decimal', 'unidad']
     readonly_fields = ['cantidad_decimal']
 
-site.register(Ingrediente)
+class RecetaIngredienteAdmin(ModelAdmin):
+    
+    list_display = ['ingrediente', 'receta', 'cantidad', 'unidad']
+
+site.register(Ingrediente, IngredienteAdmin)
 site.register(Receta, RecetaAdmin)
 site.register(RecetaIngrediente, RecetaIngredienteAdmin)
 site.register(RecetaIngredienteHerbal, RecetaIngredienteHerbalAdmin)
