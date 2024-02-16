@@ -10,14 +10,12 @@ bot_template = "BOT : {0}"
 user_template = "USER : {0}"
 
 rules = {
+
     'hola (.*)': [
         'Hola {0}!,\nte doy la bienvenida, estoy aca para ayudarte.',
         'Hola {0}!,\nmis respuestas son limitadas, asi que has las preguntas correctas.'
     ],
-    'hola': [
-        'Hola {0}!,\nTe doy la bienvenida, estoy aca para ayudarte.',
-        'Hola {0}!,\nMis respuestas son limitadas, asi que has las preguntas correctas.'
-    ],
+
     'sts': [
         '¿Por que quieres saber donde es el STS {0}?',
         '¿Sabías que ahora los STS son virtuales {0}?'
@@ -25,18 +23,22 @@ rules = {
     'ayuda' : [
         'con gusto! presiona aqui >> /ayuda <<',
     ],
+
     'licencia' : [
         'con gusto! presiona aqui >> /hmp <<',
     ],
+
     'gracias': [
         'Gracias a ti por confiar en mi {0}',
         'Es un gusto poder ayudarte {0}',
         'Estaré aqui cuando me necesites {0}'
     ],
+
     'te acuerdas (.*)': [
         'Claro que me acuerdo {0}, me da gusto saber de ti!',
         'Lo siento, pero me cuesta acordarme {0}'
     ],
+
     'default': [
         'La vida es una combinación única entre "querer hacer" y "cómo hacerlo", y necesitamos darle atención por igual a los dos',
         'La pregunta mas importante acerca de un trabajo no es "¿Qué estoy consiguiendo?" sino "¿En qué me estoy convirtiendo?"',
@@ -81,15 +83,14 @@ def match_rule(rules, message):
             break
     if '{0}' in response:
         response = response.format(nombre.capitalize())
-
     # Return the response and phrase
     return response
 
 # Define a function that responds to a user's message: respond
 
 
-def respond(message):
-
+def res(message):
+    
     # Call match_rule
     response = match_rule(rules, message)
 
@@ -140,7 +141,7 @@ def send_message(message):
     # Print user_template including the user_message
     print(user_template.format(message))
     # Get the bot's response to the message
-    response = respond(message)
+    response = res(message)
     # Print the bot template including the bot's response.
     print(bot_template.format(response))
 
@@ -176,4 +177,3 @@ def replace_pronouns(message):
         return re.sub('you', 'me', message)
 
     return message
-

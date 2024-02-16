@@ -4,7 +4,7 @@ from django.http import HttpResponse, Http404
 from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from bot.chat import respond, welcome
+from bot.chat import res, welcome
 from bot.forms import MessageForm
 from bot.models import BotUser, Activity
 from productos.models import Categoria, Detalles
@@ -25,7 +25,6 @@ class UpdateBot(APIView):
         bot.process_new_updates([update]) #type: ignore
         bot.set_my_commands(comandos)
         return Response({'code': 200})
-
 
 def save_new_user(message):
 
@@ -225,9 +224,13 @@ def detail(message):
             link = InlineKeyboardMarkup()
             for producto in productos: #type: ignore
                 link.add(InlineKeyboardButton(text=str(producto), callback_data=str(producto)))
+
+            # link = ReplyKeyboardMarkup(resize_keyboard=True)
+            # link.add(KeyboardButton(text='Web App', web_app=WebAppInfo(url='https://web-production-d293.up.railway.app/')))
+            # link = InlineKeyboardButton(text='web_app', callback_data='web_app')
         else:
             # escoge un mensaje aleatorio
-            msg = respond(message)
+            msg = res(message)
         
         
     return msg, link, image
