@@ -12,7 +12,7 @@ from pedidos.models import Pedido
 
 import telebot
 
-from telebot.types import InlineKeyboardButton, BotCommand, ReplyKeyboardMarkup, InlineKeyboardMarkup
+from telebot.types import InlineKeyboardButton, BotCommand, ReplyKeyboardMarkup, InlineKeyboardMarkup, KeyboardButton
 
 bot = telebot.TeleBot(config('TOKEN')) #type: ignore
 
@@ -46,110 +46,6 @@ def save_new_user(message):
         bot.send_message(admin_id, text=new_user)
 
     return (obj, created)
-
-@bot.message_handler(commands=['sam_cam'])
-def sam_cam(message):
-    file_dir = 'https://www.estoesherbalife.com/media/kit_files/KitRegistro_07132020.pdf'
-    bot.send_document(message.from_user.id, data=file_dir) #type: ignore
-
-@bot.message_handler(commands=['interna','externa', 'hmp'])
-def nutricion_ext(message):
-    msg = "Usa los botones de la parte de abajo por favor"
-    if message.text == '/interna':
-        tipo = 'interna'
-        msg = f"NUTRICIóN {tipo.upper()}. {msg}"
-    elif message.text == '/externa':
-        tipo = 'externa'
-        msg = f"NUTRICIóN {tipo.upper()}. {msg}"
-    elif message.text == '/hmp':
-        tipo = 'hmp'
-        msg = f"{tipo.upper()}. {msg}"
-    else:
-        tipo = None
-    
-    cols = 2
-    key = ReplyKeyboardMarkup(row_width=cols, resize_keyboard=True, one_time_keyboard=True)
-    queryset = Categoria.objects.filter(activo=True, tipo=tipo).order_by('nombre')
-    nro_items = queryset.count()
-    vueltas = int(nro_items//cols)
-    impar = True if nro_items % cols > 0 else False
-
-    i = 0
-    for _ in range(vueltas):
-        btn_izq = str(queryset[i])
-        i += 1
-        btn_der = str(queryset[i])
-        i += 1
-        key.row(btn_izq, btn_der)
-
-    if impar:
-        key.row(str(queryset[i]))
-    
-    # Solicita un saludo segun el idioma
-    user_id = message.from_user.id
-    # Verifica el registro
-    save_new_user(message)
-    
-    # Envia una respuesta
-    bot.send_message(user_id, msg, reply_markup=key)
-
-@bot.message_handler(commands=['menu', 'menú'])
-def main_menu(message):
-    # Pone los botones del menu principal
-    user_id = message.from_user.id
-    msg = 'Menú principal'
-    botones = ['/hmp', '/interna', '/externa']
-    key = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, selective=True, row_width=1)
-    for boton in botones:
-        key.add(boton)
-        
-    bot.send_message(chat_id=user_id, text=msg, reply_markup=key)
-
-
-@bot.message_handler(commands=['start', 'ayuda'])
-def start(message):
-    
-    key = ''
-
-    # Solicita un saludo segun el idioma
-    msg = welcome(message)
-
-    # Verifica el registro
-    user, created = save_new_user(message)
-    
-    # Envia una respuesta
-    bot.send_message(user.user_id, msg, reply_markup=key) #type: ignore
-    #
-    main_menu(message)
-
-
-@bot.message_handler(content_types=['text'])
-def send_message(message):
-    
-    json_data = message.from_user
-    user, created = save_new_user(message)
-
-    # Registramos la actividad del usuario
-    Activity(bot_user=user, text=message.text).save()
-
-    msg, link, image_url = detail(message)
-    if image_url is None:
-        # Enviamos el mensaje
-        bot.send_message(user.user_id, msg, reply_markup=link)
-    else:
-        bot.send_photo(user.user_id, image_url, caption=msg)
-
-def send_m_bot(user, msg):
-    bot.send_message(user, msg)
-
-@bot.callback_query_handler(func=lambda call: True)
-def callback_inline(call):
-    # le damos atributo text a call
-    # para enviarlo a la funcion detail
-    call.text = call.data
-    # si existe mensaje mandamos una respuesta
-    if call.message:
-        send_message(call)
 
 def response_msg(producto):
     msg = None
@@ -200,7 +96,6 @@ def detail(message):
     productos = []
     # calcula y envia el precio del producto solicitado
     msg, link, image = None, None, None
-
     # Procesamos la respuesta al usurio
     # TODO corregir el codigo de msg para limpiar codigo
     try:
@@ -231,9 +126,127 @@ def detail(message):
         else:
             # escoge un mensaje aleatorio
             msg = res(message)
-        
+    if msg is None:
+        msg = "No se que decir"
         
     return msg, link, image
+
+@bot.message_handler(commands=['sam_cam'])
+def sam_cam(message):
+    file_dir = 'https://www.estoesherbalife.com/media/kit_files/KitRegistro_07132020.pdf'
+    bot.send_document(message.from_user.id, data=file_dir) #type: ignore
+
+@bot.message_handler(commands=['interna','externa', 'hmp'])
+def nutricion_ext(message):
+    msg = "Usa los botones de la parte de abajo por favor"
+    if message.text == '/interna':
+        tipo = 'interna'
+        msg = f"NUTRICIóN {tipo.upper()}. {msg}"
+    elif message.text == '/externa':
+        tipo = 'externa'
+        msg = f"NUTRICIóN {tipo.upper()}. {msg}"
+    elif message.text == '/hmp':
+        tipo = 'hmp'
+        msg = f"{tipo.upper()}. {msg}"
+    else:
+        tipo = None
+    
+    cols = 2
+    key = ReplyKeyboardMarkup(row_width=cols, resize_keyboard=True, one_time_keyboard=True)
+    queryset = Categoria.objects.filter(activo=True, tipo=tipo).order_by('nombre')
+    nro_items = queryset.count()
+    vueltas = int(nro_items//cols)
+    impar = True if nro_items % cols > 0 else False
+    
+    i = 0
+    for _ in range(vueltas):
+        btn_izq = KeyboardButton(text=str(queryset[i]), )
+        i += 1
+        btn_der = KeyboardButton(text=str(queryset[i]))
+        i += 1
+        key.row(btn_izq, btn_der)
+
+    if impar:
+        key.row(KeyboardButton(text=str(queryset[i])))
+
+    # i = 0
+    # for _ in range(vueltas):
+    #     btn_izq = str(queryset[i])
+    #     i += 1
+    #     btn_der = str(queryset[i])
+    #     i += 1
+    #     key.row(btn_izq, btn_der)
+
+    # if impar:
+    #     key.row(str(queryset[i]))
+    
+    # Solicita un saludo segun el idioma
+    user_id = message.from_user.id
+    # Verifica el registro
+    save_new_user(message)
+    
+    # Envia una respuesta
+    bot.send_message(user_id, msg, reply_markup=key)
+
+@bot.message_handler(commands=['menu', 'menú'])
+def main_menu(message):
+    # Pone los botones del menu principal
+    user_id = message.from_user.id
+    msg = 'Menú principal'
+    botones = ['/hmp', '/interna', '/externa']
+    key = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, selective=True, row_width=1)
+    for boton in botones:
+        key.add(boton)
+        
+    bot.send_message(chat_id=user_id, text=msg, reply_markup=key)
+
+
+@bot.message_handler(commands=['start', 'ayuda'])
+def start(message):
+    
+    key = ''
+
+    # Solicita un saludo segun el idioma
+    msg = welcome(message)
+
+    # Verifica el registro
+    user, created = save_new_user(message)
+    
+    # Envia una respuesta
+    bot.send_message(user.user_id, msg, reply_markup=key) #type: ignore
+    #
+    main_menu(message)
+
+
+@bot.message_handler(content_types=['text'])
+def send_message(message):
+    
+    user, created = save_new_user(message)
+    
+    # Registramos la actividad del usuario
+    Activity(bot_user=user, text=message.text).save()
+
+    msg, link, image_url = detail(message)
+
+    if image_url is None:
+        # Enviamos el mensaje
+        bot.send_message(user.user_id, msg, reply_markup=link)
+    else:
+        bot.send_photo(user.user_id, image_url, caption=msg)
+
+def send_m_bot(user, msg):
+    bot.send_message(user, msg)
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_inline(call):
+    # le damos atributo text a call
+    # para enviarlo a la funcion detail
+    call.text = call.data
+    # si existe mensaje mandamos una respuesta
+    if call.message:
+        send_message(call)
+
+
 
 def user_send_message(request, user_id):
     context, template = {}, 'apps/bot/partials/message-form.html'
@@ -276,7 +289,7 @@ def enviar_detalle_pedido(request, user_id, pedido_id):
         detail += f"{item.categoria} {item.detalles} x{item.cantidad}\n"
     detail += f"\nCantidad: {pedido.get_cart_items}\nPuntos: {pedido.get_cart_points}\nTotal: {pedido.get_cart_total} Bs."
     sended = bot.send_message(user_id, text=detail)
-    # print(f"sended: {sended}")
+    
     context = {
         'bot_user_id' : user_id,
         'obj' : pedido,
