@@ -138,12 +138,10 @@ responses = {
 
 
 def send_message(message):
-    # Print user_template including the user_message
-    print(user_template.format(message))
+        
     # Get the bot's response to the message
     response = res(message)
-    # Print the bot template including the bot's response.
-    print(bot_template.format(response))
+    
 
 # Test match_rule
 
