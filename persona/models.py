@@ -76,9 +76,9 @@ class Persona(Model):
     
     def get_profile_pic_url(self):
         if self.genero == 'M':
-            profile_pic = '/AdminLTE/dist/img/avatar3.png'
+            profile_pic = '/AdminLTE/dist/img/user3-128x128.jpg'
         else:
-            profile_pic = '/AdminLTE/dist/img/avatar04.png'
+            profile_pic = '/AdminLTE/dist/img/user1-128x128.jpg'
         return profile_pic
 
     def __str__(self):

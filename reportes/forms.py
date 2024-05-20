@@ -1,6 +1,7 @@
 from django.forms import * #type:ignore
 from django.urls import reverse
 from operadores.models import Operador
+from reportes.models import Ingreso
 
 class ReporteDiarioForm(Form):
 
@@ -22,7 +23,7 @@ class ReporteDiarioForm(Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         id_operador = args[0]['id']
-        url = reverse('operadores:profile', kwargs={'id': id_operador}) if id_operador else 'reportes/'
+        url = reverse('reportes:by-operador', kwargs={'id_operador': id_operador}) if id_operador else reverse('reportes:list')
         self.fields['fechadesde'].widget.attrs.update(
             {
                 'hx-get': url,
@@ -31,4 +32,9 @@ class ReporteDiarioForm(Form):
             }
         )
 
-        
+class IngresoForm(ModelForm):
+
+    model = Ingreso
+    
+    class Meta:
+        fields = ['monto', 'tipo_ingreso', 'detalle', 'operador']
