@@ -38,10 +38,12 @@ def profile_view(request, id=None):
     lista = Consumo.objects.by_id_operador(id) #type: ignore
     registrados = Consumo.objects.by_user(id, date) #type: ignore
     consumos = lista.filter(comanda__fecha=date).order_by('-id')
-    efectivo_prepago = Pago.objects.filter(fecha__date=date, usuario__id=id)
-    prepagos_operador  = Pago.objects.filter(fecha__date=date, prepago__socio__operador__id=id).order_by('-fecha')
+    efectivo_prepago = Pago.objects.filter(fecha__date=date, usuario__id=id) #prepago registrados por el usuario
+    prepagos_operador  = Pago.objects.filter(fecha__date=date, prepago__socio__operador__id=id).order_by('-fecha') #prepago por operador
         
     if request.htmx:
+        template = 'apps/operadores/partials/consumos.html'
+        
         if request.method == 'POST':
             
             fechaDesde = request.POST.get('fechadesde')
@@ -56,9 +58,7 @@ def profile_view(request, id=None):
             except ValidationError:
                 messages.warning = (request, "faltan datos en el formulario de fechas")
             template = 'apps/reportes/partials/results.html'
-        else:
-            template = 'apps/operadores/partials/consumos.html'
-       
+        
     context = {
         'operador': Operador.objects.get(id=id),
         'consumos': consumos,
@@ -68,6 +68,7 @@ def profile_view(request, id=None):
             'sobre_rojo': round(sum([item.sobre_rojo for item in consumos]), 2),
             'mayoreo': round(sum([item.mayoreo for item in consumos]), 2),
             'insumos': round(sum([item.insumos for item in consumos]), 2),
+            'puntos_volumen': round(sum([item.puntos_volumen for item in consumos]),2 ),
             'descuento': round(sum([item.descuento for item in consumos]), 2),
             'sobre_verde': round(sum([item.sobre_verde for item in consumos]), 2),
             'efectivo': round(sum([item.efectivo for item in consumos]), 2),
