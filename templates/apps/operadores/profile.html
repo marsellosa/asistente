@@ -75,18 +75,16 @@
         <div class="card-body">
           <strong><i class="fas fa-book mr-1"></i> Efectivo por consumos</strong>
 
-          <p class="text-muted">
-            {{ totales.efectivo_consumos }}
-          </p>
+          <p id="efectivo-consumos" class="text-muted">{{ totales.efectivo_consumos }}</p>
 
           <hr>
 
           <strong><i class="fas fa-map-marker-alt mr-1"></i> Efectivo por Prepagos</strong>
 
-          <p class="text-muted">{{ totales.efectivo_prepago }}</p>
+          <p id="efectivo-prepago" class="text-muted">{{ totales.efectivo_prepago }}</p>
 
           <hr>
-
+          
           <strong><i class="fas fa-pencil-alt mr-1"></i> Skills</strong>
 
           <p class="text-muted">
@@ -112,7 +110,7 @@
       <div class="card">
         <div class="card-header p-2">
           <ul class="nav nav-pills">
-            <li class="nav-item"><btn hx-get="{% url 'consumos:by-id-operador' id_operador=operador.id %}" hx-target="#resultados" class="nav-link active" data-toggle="tab">Reporte</btn></li>
+            <li class="nav-item"><btn hx-get="{% url 'reportes:by-operador' id_operador=operador.id %}" hx-target="#resultados" class="nav-link active" data-toggle="tab">Reporte</btn></li>
             <li class="nav-item"><btn hx-get="{% url 'pedidos:list-by-operador' id_operador=operador.id %}" hx-target="#resultados" class="nav-link" data-toggle="tab">Pedidos</btn></li>
             <li class="nav-item"><btn hx-get="" hx-target="#resultados" class="nav-link" data-toggle="tab">Settings</btn></li>
           </ul>
