@@ -26,8 +26,8 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     else:
         consumos = Consumo.objects.by_date(fechaDesde) # type: ignore
         efectivo_prepago = Pago.objects.filter(fecha__date=fechaDesde)
-
-    if type(id_operador) is int:
+    
+    if id_operador is not None:
         consumos = consumos.by_id_operador(id_operador) # type: ignore
         efectivo_prepago = efectivo_prepago.filter(prepago__socio__operador__id=id_operador)
 

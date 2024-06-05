@@ -8,6 +8,7 @@ from operadores.models import *
 from pedidos.models import Pedido
 from prepagos.models import Pago
 from reportes.forms import ReporteDiarioForm
+from reportes.utils import reporte_consumos
 from socios.models import Socio
 from home.decorators import allowed_users
 from main.utils import get_today
@@ -31,53 +32,12 @@ def list_view(request):
 @allowed_users(['admin', 'operadores'])
 def profile_view(request, id=None):
     context, template = {}, 'apps/operadores/profile.html'
-    date = request.GET.get('fechadesde')    
-    if not date:
-        date = get_today()
-    
-    lista = Consumo.objects.by_id_operador(id) #type: ignore
-    registrados = Consumo.objects.by_user(id, date) #type: ignore
-    consumos = lista.filter(comanda__fecha=date).order_by('-id')
-    efectivo_prepago = Pago.objects.filter(fecha__date=date, usuario__id=id) #prepago registrados por el usuario
-    prepagos_operador  = Pago.objects.filter(fecha__date=date, prepago__socio__operador__id=id).order_by('-fecha') #prepago por operador
         
     if request.htmx:
         template = 'apps/operadores/partials/consumos.html'
         
-        if request.method == 'POST':
-            
-            fechaDesde = request.POST.get('fechadesde')
-            fechaHasta = request.POST.get('fechahasta')
-            registrados = Consumo.objects.by_user_date_range(id, fechaDesde, fechaHasta) #type: ignore
-            try:
-                consumos = lista.filter(comanda__fecha__gte=fechaDesde, comanda__fecha__lte=fechaHasta).order_by('pk')
-            except ValidationError:
-                messages.warning = (request, "faltan datos")
-            try:
-                efectivo_prepago = Pago.objects.filter(fecha__date__gte=fechaDesde, fecha__date__lte=fechaHasta, usuario__id=id)
-            except ValidationError:
-                messages.warning = (request, "faltan datos en el formulario de fechas")
-            template = 'apps/reportes/partials/results.html'
-        
-    context = {
-        'operador': Operador.objects.get(id=id),
-        'consumos': consumos,
-        'hoy': date,
-        'totales': {
-            'total': consumos.count(),
-            'sobre_rojo': round(sum([item.sobre_rojo for item in consumos]), 2),
-            'mayoreo': round(sum([item.mayoreo for item in consumos]), 2),
-            'insumos': round(sum([item.insumos for item in consumos]), 2),
-            'puntos_volumen': round(sum([item.puntos_volumen for item in consumos]),2 ),
-            'descuento': round(sum([item.descuento for item in consumos]), 2),
-            'sobre_verde': round(sum([item.sobre_verde for item in consumos]), 2),
-            'efectivo': round(sum([item.efectivo for item in consumos]), 2),
-            'efectivo_prepago': round(sum([item.monto for item in efectivo_prepago]), 2),
-            'efectivo_consumos': round(sum([item.efectivo for item in registrados]), 2),
-            'prepagos_x_id' : round(sum([item.monto for item in prepagos_operador]) ,2)
-        },
-        'form': ReporteDiarioForm({'id': id})
-    }
+    context = reporte_consumos(id_operador=id, user=request.user)
+    context['form']= ReporteDiarioForm({'id': id})
     
     return render(request, template, context)
 
