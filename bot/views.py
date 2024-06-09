@@ -160,7 +160,7 @@ def nutricion_ext(message):
     
     i = 0
     for _ in range(vueltas):
-        btn_izq = KeyboardButton(text=str(queryset[i]), )
+        btn_izq = KeyboardButton(text=str(queryset[i]))
         i += 1
         btn_der = KeyboardButton(text=str(queryset[i]))
         i += 1

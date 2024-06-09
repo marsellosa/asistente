@@ -76,3 +76,4 @@ Pipfile.lock
 whatsapp.py
 bin
 .vscode
+static/
