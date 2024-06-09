@@ -8,7 +8,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['web-production-d293.up.railway.app', 'miasistenteherbalife.com']
+ALLOWED_HOSTS = ['*']
 
 PGDATABASE   = config('PGDATABASE', default=None)
 PGPASSWORD   = config('PGPASSWORD', default=None)
