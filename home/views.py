@@ -18,6 +18,7 @@ def login_view(request):
             username = request.POST.get('username'),
             password = request.POST.get('password')
             )
+        print(f"user: {user}")
         if user is not None:
             login(request, user)
             return redirect('main:inicio')
