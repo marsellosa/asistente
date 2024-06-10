@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.views.decorators.csrf import requires_csrf_token
 from home.forms import CreateUserForm
 from home.decorators import unauthenticated_user
 
@@ -10,7 +9,6 @@ def home_view(request):
     return render(request, template, context)
 
 @unauthenticated_user
-@requires_csrf_token
 def login_view(request):
     context, template  = {}, 'apps/home/login.html'
     if request.method == 'POST':

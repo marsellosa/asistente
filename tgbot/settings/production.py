@@ -8,6 +8,11 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://web-production-d293.up.railway.app',
+]
+
+
 ALLOWED_HOSTS = ['web-production-d293.up.railway.app']
 
 PGDATABASE   = config('PGDATABASE', default=None)
