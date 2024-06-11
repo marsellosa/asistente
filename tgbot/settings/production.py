@@ -1,19 +1,19 @@
 
 from .base import *
-from decouple import config
+from decouple import config, Csv
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 CSRF_TRUSTED_ORIGINS = [
     'https://web-production-d293.up.railway.app',
 ]
 
 
-ALLOWED_HOSTS = ['web-production-d293.up.railway.app']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
 PGDATABASE   = config('PGDATABASE', default=None)
 PGPASSWORD   = config('PGPASSWORD', default=None)
