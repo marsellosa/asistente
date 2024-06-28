@@ -6,8 +6,9 @@
   <td>
     <div class="btn-group">
       <button type="button" class="btn btn-danger btn-sm"
-        hx-delete="{{ obj.get_crud_url }}"
-        hx-confirm="¿Realmente quieres eliminar '{{ obj.cantidad }}.- {{ obj.receta }}'?"
+        data-url="{{ obj.get_crud_url }}"
+        data-receta="{{ obj.receta }}"
+        data-cantidad="{{ obj.cantidad }}"
         hx-target="#comanda-list-and-form"
         >
         <i class="fas fa-trash"></i>
@@ -21,3 +22,37 @@
     </div>
   </td>
 </tr>
+
+{% block js %}
+
+<script>
+  document.body.addEventListener('htmx:configRequest', (event) => {
+      event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+  });
+
+  document.querySelectorAll('.btn-danger').forEach(button => {
+      button.addEventListener('click', function() {
+          const url = this.getAttribute('data-url');
+          const receta = this.getAttribute('data-receta');
+          const cantidad = this.getAttribute('data-cantidad');
+
+          Swal.fire({
+              title: 'Confirma',
+              text: `¿Quieres eliminar ${receta} x ${cantidad}?`,
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'Sí, eliminar',
+              cancelButtonText: 'Cancelar'
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  htmx.ajax('DELETE', url, {
+                      target: this.getAttribute('hx-target'),
+                      swap: 'innerHTML'
+                  });
+              }
+          });
+      });
+  });
+</script>
+
+{% endblock js %}
