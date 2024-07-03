@@ -48,6 +48,11 @@ class Prepago(Model):
         total = self.valor * self.cantidad
         descuento = total * self.descuento / 100
         return round(total - descuento - self.get_acumulado(), 2)
+    
+    def get_alert(self) -> bool:
+        credito = int(self.get_acumulado()//self.valor)
+        alerta = len(self.get_uses_list()) > credito
+        return alerta
 
     def __str__(self):
         return str(self.valor)
@@ -91,3 +96,17 @@ class Pago(Model):
     
     def __str__(self):
         return str(self.monto)
+
+class TransferenciaPP(Model):
+    pago = OneToOneField(Pago, on_delete=CASCADE)
+    inserted_on = DateField(auto_now_add=True)
+    edited_on = DateField(auto_now=True)
+
+    def usuario(self):
+        return str(self.pago.usuario)
+
+    def socio(self):
+        return str(self.pago.prepago.socio)
+
+    def __str__(self):
+        return str(self.pago.prepago.socio) #type: ignore

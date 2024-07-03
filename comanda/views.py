@@ -37,7 +37,7 @@ def hx_create_comanda_view(request, id_socio=None):
 def hx_crud_comandaitem_view(request, id_comanda=None, id_receta=None):
     # add/delete item for Comanda
     context, template = {}, 'apps/comanda/partials/table-form.html'
-    msg = None
+    
     if not request.htmx:
         raise Http404
 
@@ -82,11 +82,9 @@ def hx_crud_comandaitem_view(request, id_comanda=None, id_receta=None):
         obj = ComandaItem.objects.get(id=id_receta, comanda__id=id_comanda)
         obj.delete()
         messages.success(request, "Receta Eliminada Correctamente")
-        msg = 'Receta Eliminada'
     
     context['parent_obj'] = comanda
     context['comanda_item_form'] = form
-    context['msg'] = msg
 
     # context = {
     #     'parent_obj': comanda,

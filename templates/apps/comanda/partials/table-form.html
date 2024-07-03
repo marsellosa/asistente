@@ -67,4 +67,59 @@
     
   {% include 'apps/comanda/partials/total.html' %}
 
-  
+  {% block js %}
+
+<script>
+
+  document.querySelectorAll('.btn-danger').forEach(button => {
+    button.addEventListener('click', function() {
+      const url = this.getAttribute('data-url');
+      const receta = this.getAttribute('data-receta');
+      const cantidad = this.getAttribute('data-cantidad');
+
+      Swal.fire({
+          title: 'Confirma',
+          text: `¿Quieres eliminar ${receta} x ${cantidad}?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Sí, eliminar',
+          cancelButtonText: 'Cancelar'
+      }).then((result) => {
+          if (result.isConfirmed) {
+              htmx.ajax('DELETE', url, {
+                  target: this.getAttribute('hx-target'),
+                  swap: 'innerHTML'
+              });
+          }
+      });
+    });
+    function outputMessage(message, type) {
+      Swal.fire({
+          title: type === 'error' ? 'Error' : 'Hecho',
+          text: message,
+          icon: type === 'error' ? 'error' : 'success',
+          confirmButtonText: 'Ok'
+      });
+  }
+
+    // Mostrar mensajes al cargar la página
+    showMessages();
+
+    // Mostrar mensajes después de una actualización parcial con HTMX específica
+    document.body.addEventListener('htmx:afterRequest', function(event) {
+        if (event.detail.elt.getAttribute('data-action') === 'delete') {
+            showMessages();
+        }
+    });
+
+    function showMessages() {
+        {% if messages %}
+            {% for message in messages %}
+                outputMessage("{{ message.message|escapejs }}", "{{ message.tags }}");
+            {% endfor %}
+        {% endif %}
+    }
+  });
+</script>
+
+{% endblock js %}

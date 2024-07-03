@@ -2,7 +2,7 @@
 <div class="card-body" hx-target="this" hx-swap="outerHTML">
   <!-- checkbox -->
   <div class="row">
-    <div class="col-5">
+    <div class="col-4">
       <div class="form-group">
         <label class="col-form-label" ><i class="fas fa-check"></i> Prepagos: </label>
         {% for prepago in parent_obj.get_uniq_prepagos_list %}
@@ -22,18 +22,41 @@
         {% endfor %}
       </div>
     </div>
-    <div class="col-7">
+    <div class="col-8">
       <div class="info-box" id="total_a_pagar">
-        <span class="info-box-icon bg-success"><i class="fas fa-dollar-sign"></i></span>
+        {% if parent_obj.consumo.transferencia %}
+        {% include "apps/comanda/partials/transfer.html" %}
+        {% else %}
+          {% include "apps/comanda/partials/dollar.html" %}
+        {% endif %}
 
         <div class="info-box-content">
           <span class="info-box-text">Total a pagar</span>
-          <span class="info-box-number">{{ parent_obj.get_cart_cash }}</span>
+          <div class="custom-control custom-switch">
+            <input
+              hx-get="{% url 'consumos:crud_transferencia' parent_obj.consumo.id %}"
+              hx-trigger="change"
+              hx-target="#icon-selected"
+              hx-swap="outerHTML"
+              type="checkbox" 
+              class="custom-control-input" 
+              id="qrSwitch"
+              name="qrSwitch"
+              {% if parent_obj.consumo.transferencia %}
+              checked
+              {% endif %}
+              {% if parent_obj.get_cart_cash == 0 %}
+              disabled
+              {% endif %}>
+            <label class="custom-control-label" for="qrSwitch">{{ parent_obj.get_cart_cash }}</label>
+          </div>
         </div>
         <!-- /.info-box-content -->
       </div>
     </div>
   </div>
 </div>
+
+
 
 

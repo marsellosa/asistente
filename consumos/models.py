@@ -55,3 +55,14 @@ class Consumo(Model):
 
     def __str__(self):
         return str(self.comanda)
+    
+class Transferencia(Model):
+    consumo = OneToOneField(Consumo, on_delete=CASCADE)
+    inserted_on = DateField(auto_now_add=True)
+    edited_on = DateField(auto_now=True)
+
+    def get_monto(self):
+        return self.consumo.efectivo
+
+    def __str__(self):
+        return str(self.consumo.comanda.socio) #type: ignore

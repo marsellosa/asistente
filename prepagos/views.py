@@ -1,7 +1,7 @@
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from prepagos.forms import PagoForm, PrepagoForm
-from prepagos.models import Prepago, Pago
+from prepagos.models import Prepago, Pago, TransferenciaPP
 from socios.models import Socio
 from home.decorators import allowed_users
 
@@ -44,22 +44,25 @@ def create_prepago_view(request, id_socio=None):
 
 
 @allowed_users(['admin', 'operadores'])
-def add_pago_view(request, prepago_id=None):
+def add_pago_view(request, prepago_id):
     context, template = {}, 'apps/prepagos/partials/prepago.html'
     if not request.htmx:
         raise Http404
     
-    prepago = Prepago.objects.get(id=prepago_id) if prepago_id is not None else None    
+    prepago = get_object_or_404(Prepago, pk=prepago_id)
+    
     form = PagoForm(request.POST or None)
     
     if request.method == 'POST':
-        # print(f"form: {form}")
+        
         if form.is_valid():
-            # print(f"form: {prepago}")
             obj = form.save(commit=False)
             obj.usuario = request.user
             obj.prepago = prepago
             obj.save()
+            if form.cleaned_data['qr']:
+                trans = TransferenciaPP.objects.create(pago=obj)
+                
             form = PagoForm()
 
     context = {
