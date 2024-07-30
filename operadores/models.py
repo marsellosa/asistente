@@ -21,6 +21,9 @@ class Operador(Model):
 
     def get_absolute_url(self):
         return reverse("operadores:profile", kwargs={"id": self.pk})
+    
+    def get_profile_picture(self):
+        return self.licencia.persona.get_profile_pic_url()
 
     def __str__(self):
         return str(self.licencia)
