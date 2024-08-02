@@ -6,7 +6,7 @@ from decouple import config, Csv
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 CSRF_TRUSTED_ORIGINS = [
     'https://web-production-d293.up.railway.app',
