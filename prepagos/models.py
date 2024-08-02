@@ -68,8 +68,11 @@ class PagoQuerySet(QuerySet):
     def pago_by_id(self, id_operador):
         return self.filter(prepago__socio__operador__id=id_operador)
     
-    def pago_by_date(self, date):
-        return self.filter(fecha=date)
+    def pago_by_date(self, fechaDesde):
+        return self.filter(fecha__date=fechaDesde)
+    
+    def pago_by_date_range(self, fechaDesde, fechaHasta):
+        return self.filter(fecha__date__gte=fechaDesde, fecha__date__lte=fechaHasta)
 
 class PagoManager(Manager):
     def get_queryset(self):
@@ -81,8 +84,11 @@ class PagoManager(Manager):
     def pago_by_id(self, id):
         return self.get_queryset().pago_by_id(id)
     
-    def pago_by_date(self, date):
-        return self.get_queryset().pago_by_date(date)
+    def pago_by_date(self, fechaDesde):
+        return self.get_queryset().pago_by_date(fechaDesde)
+    
+    def pago_by_date_range(self, fechaDesde, fechaHasta):
+        return self.get_queryset().pago_by_date_range(fechaDesde, fechaHasta)
 
 class Pago(Model):
     prepago = ForeignKey(Prepago, on_delete=CASCADE)
@@ -91,6 +97,8 @@ class Pago(Model):
     usuario = ForeignKey(User, on_delete=CASCADE)
     timestamp = DateTimeField(auto_now_add=True)
 
+    objects = PagoManager()
+
     def get_nombre_socio(self):
         return str(self.prepago.socio)
     
@@ -98,7 +106,7 @@ class Pago(Model):
         return str(self.monto)
 
 class TransferenciaPP(Model):
-    pago = OneToOneField(Pago, on_delete=CASCADE)
+    pago = OneToOneField(Pago, on_delete=CASCADE, related_name='transferenciapp')
     inserted_on = DateField(auto_now_add=True)
     edited_on = DateField(auto_now=True)
 

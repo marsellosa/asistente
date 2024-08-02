@@ -2,7 +2,7 @@
 <div class="card-body" hx-target="this" hx-swap="outerHTML">
   <!-- checkbox -->
   <div class="row">
-    <div class="col-4">
+    <div class="col-5">
       <div class="form-group">
         <label class="col-form-label" ><i class="fas fa-check"></i> Prepagos: </label>
         {% for prepago in parent_obj.get_uniq_prepagos_list %}
@@ -22,7 +22,7 @@
         {% endfor %}
       </div>
     </div>
-    <div class="col-8">
+    <div class="col-7">
       <div class="info-box" id="total_a_pagar">
         {% if parent_obj.consumo.transferencia %}
         {% include "apps/comanda/partials/transfer.html" %}

@@ -4,14 +4,17 @@ from comanda.models import Comanda
 
 class ConsumoQuerySet(QuerySet):
 
+    def qr_by_date(self, fechaDesde):
+        return self.filter(comanda__fecha=fechaDesde, transferencia__isnull=False)
+
     def by_user_date_range(self, id_usuario, fechaDesde, fechaHasta):
         return self.filter(comanda__usuario__id=id_usuario, comanda__fecha__gte=fechaDesde, comanda__fecha__lte=fechaHasta).order_by('-comanda__fecha')
     
     def by_date_range(self, fechaDesde, fechaHasta):
         return self.filter(comanda__fecha__gte=fechaDesde, comanda__fecha__lte=fechaHasta).order_by('-comanda__fecha')
 
-    def by_user(self, id_usuario, fecha):
-        return self.filter(comanda__usuario__id=id_usuario, comanda__fecha=fecha).order_by('-comanda__fecha')
+    def by_user(self, id_usuario, fechaDesde):
+        return self.filter(comanda__usuario__id=id_usuario, comanda__fecha=fechaDesde).order_by('-comanda__fecha')
     
     def by_date(self, fecha):
         return self.filter(comanda__fecha=fecha).order_by('-inserted_on')
@@ -57,7 +60,7 @@ class Consumo(Model):
         return str(self.comanda)
     
 class Transferencia(Model):
-    consumo = OneToOneField(Consumo, on_delete=CASCADE)
+    consumo = OneToOneField(Consumo, on_delete=CASCADE, related_name='transferencia')
     inserted_on = DateField(auto_now_add=True)
     edited_on = DateField(auto_now=True)
 

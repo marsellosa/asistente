@@ -59,10 +59,14 @@ class Comanda(Model):
     
     @property
     def get_uniq_prepagos_list(self):
-        ppagos = list(chain(self.socio.prepago_set.filter(activo=True), self.prepago.all())) #type: ignore
-        prepagos_uniq = []
-        [prepagos_uniq.append(ppago) for ppago in ppagos if ppago not in prepagos_uniq]
-        return prepagos_uniq
+        socio_prepagos = self.socio.prepago_set.filter(activo=True)
+        comanda_prepagos = self.prepago.all()
+        all_prepagos = chain(socio_prepagos, comanda_prepagos)
+        
+        # Utilizar un conjunto para eliminar duplicados
+        unique_prepagos = set(all_prepagos)
+        
+        return list(unique_prepagos)
 
     @property
     def get_total_descuento(self):
