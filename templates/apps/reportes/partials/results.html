@@ -1,5 +1,5 @@
 <tr>
-  <td colspan="3"><strong># Consumos: {{ consumos.count }} | PrePago ($): {{ totales.efectivo_prepago }}</strong></td>
+  <td colspan="3"><strong># Consumos: {{ consumos.count }} | PrePago ($): {{ totales.pp_oper }}</strong></td>
   {% comment %} <td><strong> > Totales ></strong></td> {% endcomment %}
   <td><strong>{{ totales.sobre_rojo }}</strong></td>
   <td><strong>{{ totales.mayoreo }}</strong></td>
@@ -23,7 +23,7 @@
     <td>{{ consumo.insumos }}</td>
     <td>{{ consumo.puntos_volumen }}</td>
     <td>{{ consumo.sobre_verde }}</td>
-    <td>{{ consumo.efectivo }}</td>
+    <td>{% if consumo.transferencia  %}<span class="badge bg-info">{{ consumo.efectivo }}</span>{% else %}{{ consumo.efectivo }}{% endif %}</td>
     
   </tr>
   <tr class="expandable-body d-none">
