@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from consumos.models import Consumo, Transferencia
 from prepagos.models import Pago
 from operadores.models import Operador
-from main.utils import get_today, get_aware_date
+from main.utils import get_today
 from datetime import datetime, timedelta
 
 def day_of_year_to_date(year, day_of_year):
