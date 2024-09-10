@@ -3,7 +3,7 @@ from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from consumos.models import Consumo, Transferencia
-from prepagos.models import Pago
+from prepagos.models import Pago, Prepago
 from operadores.models import Operador
 from main.utils import get_today
 from datetime import datetime, timedelta
@@ -51,27 +51,39 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     
     if rango:
         consumos = Consumo.objects.by_date_range(fechaDesde, fechaHasta) #type: ignore
-        pagos = Pago.objects.pago_by_date_range(fechaDesde, fechaHasta)
-        pp_oper = Pago.objects.pago_by_date_range(fechaDesde, fechaHasta)
+        # pagos = Pago.objects.pago_by_date_range(fechaDesde, fechaHasta)
+        prepagos = Pago.objects.pago_by_date_range(fechaDesde, fechaHasta)
     else:
         consumos = Consumo.objects.by_date(fechaDesde) # type: ignore
         # qr_cons = Transferencia.objects.filter(consumo__comanda__fecha=fechaDesde)
         # con_trans = consumos.filter(transferencia__isnull=False)
-        pp_oper = Pago.objects.pago_by_date(fechaDesde)
+        prepagos = Pago.objects.pago_by_date(fechaDesde)
     
     if id_operador is not None:
         operador = get_object_or_404(Operador, id=id_operador)
+        lista_prepagos = prepagos_list(id_operador=id_operador)
         usuario = operador.licencia.persona.usuario
+        try:
+            cons_user = consumos.by_user(usuario)
+            prep_user = prepagos.by_user(usuario)
+            # print(f"fecha: {fechaDesde}, ef_cons_user, qr_cons_user: {get_cons_oper(cons_user)}")
+            # print(f"fecha: {fechaDesde}, ef_prep_user, qr_prep_user: {get_pp_oper(prep_user)}")
+        except:
+            pass
         consumos = consumos.by_id_operador(id_operador) # type: ignore
-        pp_oper = pp_oper.filter(prepago__socio__operador=operador)
+        prepagos = prepagos.filter(prepago__socio__operador=operador)
+        # print(f"pp_oper: {pp_oper}")
     else:
         operador = None
+        lista_prepagos = prepagos_list()
 
     # print(f"user: {user}, operador: {operador}, usuario: {usuario}")
     # print(f"fecha: {fechaDesde}, ef_cons_oper, qr_cons_oper: {get_cons_oper(consumos)}")
-    # print(f"fecha: {fechaDesde}, efectivo_pp, transferencias_pp: {get_pp_oper(pp_oper)}")
+    # print(f"fecha: {fechaDesde}, ef_prep_oper, qr_prep_oper: {get_pp_oper(prepagos)}")
+    # print(f"fecha: {fechaDesde}, ef_prep_oper, qr_prep_oper: {get_pp_oper(prepagos)}")
 
     context = {
+        'prepagos' : lista_prepagos,
         'operador': operador,
         'consumos': consumos,
         'hoy': fechaDesde,
@@ -84,10 +96,19 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
             'puntos_volumen': round(sum([item.puntos_volumen for item in consumos]), 2),
             'sobre_verde': round(sum([item.sobre_verde for item in consumos]), 2),
             'efectivo': round(sum([item.efectivo for item in consumos]), 2),
-            'pp_oper': round(sum([item.monto for item in pp_oper]), 2),
+            'pp_oper': round(sum([item.monto for item in prepagos]), 2),
             'efectivo_consumos': round(sum([item.efectivo for item in consumos]), 2),
-            # 'prepagos_x_id' : round(sum([item.monto for item in prepagos_operador]) ,2)
+            
         },
     }
     
     return context
+
+def prepagos_list(id_operador=None, activo=True, pagado=False):
+
+    if id_operador is not None:
+        prepagos = Prepago.objects.filter(socio__operador__id=id_operador, activo=activo, pagado=pagado)
+    else:
+        prepagos = Prepago.objects.filter(activo=activo, pagado=pagado)
+    
+    return prepagos

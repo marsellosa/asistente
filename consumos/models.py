@@ -13,8 +13,8 @@ class ConsumoQuerySet(QuerySet):
     def by_date_range(self, fechaDesde, fechaHasta):
         return self.filter(comanda__fecha__gte=fechaDesde, comanda__fecha__lte=fechaHasta).order_by('-comanda__fecha')
 
-    def by_user(self, id_usuario, fechaDesde):
-        return self.filter(comanda__usuario__id=id_usuario, comanda__fecha=fechaDesde).order_by('-comanda__fecha')
+    def by_user(self, usuario):
+        return self.filter(comanda__usuario=usuario).order_by('-comanda__fecha')
     
     def by_date(self, fecha):
         return self.filter(comanda__fecha=fecha).order_by('-inserted_on')
@@ -29,8 +29,8 @@ class ConsumoManager(Manager):
     def by_id_operador(self, id_operador):
         return self.get_queryset().by_id_operador(id_operador)
     
-    def by_user(self, id_usuario, fecha):
-        return self.get_queryset().by_user(id_usuario, fecha)
+    def by_user(self, usuario):
+        return self.get_queryset().by_user(usuario)
     
     def by_date(self, fecha):
         return self.get_queryset().by_date(fecha)

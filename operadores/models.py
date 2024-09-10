@@ -18,6 +18,9 @@ class Operador(Model):
         }
 
         return status[self.licencia.status]
+    
+    def get_admin_url(self):
+        return reverse('operadores:profile_admin', kwargs={'id_operador': self.id})
 
     def get_absolute_url(self):
         return reverse("operadores:profile", kwargs={"id": self.pk})

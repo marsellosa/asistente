@@ -49,10 +49,21 @@ class Prepago(Model):
         descuento = total * self.descuento / 100
         return round(total - descuento - self.get_acumulado(), 2)
     
+    def total_gastado(self):
+        return self.get_uses_list().count() * self.valor
+        # return int(self.get_acumulado()//self.valor)
+
     def get_alert(self) -> bool:
-        credito = int(self.get_acumulado()//self.valor)
-        alerta = len(self.get_uses_list()) > credito
-        return alerta
+        # Verifica si el saldo es insuficiente
+        if self.total_gastado() > self.get_acumulado():
+            return True  # Se dispara la alerta
+
+        # Verifica si el número de usos es mayor o igual a 5
+        if len(self.get_uses_list()) >= 5:
+            return True  # Se dispara la alerta
+
+        # Si no hay alertas
+        return False
 
     def __str__(self):
         return str(self.valor)
@@ -62,7 +73,7 @@ class Prepago(Model):
         super().save(*args, **kwargs)
 
 class PagoQuerySet(QuerySet):
-    def pago_by_user(self, user):
+    def by_user(self, user):
         return self.filter(usuario=user)
     
     def pago_by_id(self, id_operador):
@@ -78,8 +89,8 @@ class PagoManager(Manager):
     def get_queryset(self):
         return PagoQuerySet(self.model, using=self._db)
     
-    def pago_by_user(self, user):
-        return self.get_queryset().pago_by_user(user)
+    def by_user(self, user):
+        return self.get_queryset().by_user(user)
     
     def pago_by_id(self, id):
         return self.get_queryset().pago_by_id(id)

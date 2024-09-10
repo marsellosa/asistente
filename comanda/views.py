@@ -101,7 +101,11 @@ def hx_add_prepago_view(request, id_comanda=None, id_prepago=None):
     if prepago in comanda.prepago.all():
         comanda.prepago.remove(prepago)
     else:
+        # TODO: verficar si su saldo alcanza
         comanda.prepago.add(prepago)
+        if prepago.get_alert():
+            comanda.prepago.remove(prepago)
+            messages.error(request, "No puede usar este prepago")
     comanda.save()
     
     prepago.activo = True if prepago.get_uses_list().count() < prepago.cantidad else False

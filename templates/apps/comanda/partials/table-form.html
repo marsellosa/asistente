@@ -102,8 +102,13 @@
       });
   }
 
-    // Mostrar mensajes al cargar la página
-    showMessages();
+    function showMessages() {
+      {% if messages %}
+          {% for message in messages %}
+              outputMessage("{{ message.message|escapejs }}", "{{ message.tags }}");
+          {% endfor %}
+      {% endif %}
+  }
 
     // Mostrar mensajes después de una actualización parcial con HTMX específica
     document.body.addEventListener('htmx:afterRequest', function(event) {
@@ -112,13 +117,8 @@
         }
     });
 
-    function showMessages() {
-        {% if messages %}
-            {% for message in messages %}
-                outputMessage("{{ message.message|escapejs }}", "{{ message.tags }}");
-            {% endfor %}
-        {% endif %}
-    }
+    // Mostrar mensajes al cargar la página
+    showMessages();
   });
 </script>
 

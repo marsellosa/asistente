@@ -57,6 +57,36 @@
   </div>
 </div>
 
+<script>
 
+
+    function outputMessage(message, type) {
+      Swal.fire({
+          title: type === 'error' ? 'Error' : 'Hecho',
+          text: message,
+          icon: type === 'error' ? 'error' : 'success',
+          confirmButtonText: 'Ok'
+      });
+    }
+
+    function showMessages() {
+      {% if messages %}
+          {% for message in messages %}
+              outputMessage("{{ message.message|escapejs }}", "{{ message.tags }}");
+          {% endfor %}
+      {% endif %}
+    } 
+
+    // Mostrar mensajes después de una actualización parcial con HTMX específica
+    document.body.addEventListener('htmx:afterRequest', function(event) {
+        if (event.detail.elt.getAttribute('data-action') === 'delete') {
+            showMessages();
+        }
+    });
+
+    // Mostrar mensajes al cargar la página
+    showMessages();
+
+</script>
 
 

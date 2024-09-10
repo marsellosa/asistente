@@ -1,0 +1,295 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content-header %}
+<div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0 text-dark">Operadores</h1>
+          
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'main:inicio' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'operadores:list_admin' %}">Operadores</a></li>
+            <li class="breadcrumb-item active">{{operador}}</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div><!-- /.content-header -->
+{% endblock content-header %}
+
+{% block main-content %}
+
+<div class="row">
+    <div class="col-md-3">
+      
+      <div class="card card-widget">
+        <div class="card-header">
+          <div class="user-block">
+            <img class="img-circle" src="{% static operador.get_profile_picture %}" alt="User Image">
+            <span class="username"><h5>{{ operador }}</h5></span>
+            <span class="description">{{ operador.get_nivel_licencia }}</span>
+          </div>
+          <!-- /.user-block -->
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+          </div>
+          <!-- /.card-tools -->
+        </div>
+        <div class="card">
+          <div class="card-header p-2">
+            <ul class="nav nav-pills">
+              <li class="nav-item"><btn hx-get="{% url 'operadores:profile' id=operador.id %}" hx-target="#target-results" hx-select="#target-results" class="nav-link active" data-toggle="tab">Reporte</btn></li>
+              <li class="nav-item"><btn hx-get="{% url 'pedidos:list-by-operador' id_operador=operador.id %}" hx-target="#resultados" class="nav-link" data-toggle="tab">Pedidos</btn></li>
+              <li class="nav-item"><btn hx-get="" hx-target="#target-results" class="nav-link" data-toggle="tab">Settings</btn></li>
+            </ul>
+          </div><!-- /.card-header -->
+          
+        </div>
+        <!-- /.card-header -->
+        
+      </div>
+      <div class="card card-primary card-outline card-outline-tabs">
+        <div class="card-header p-0 border-bottom-0">
+          <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="custom-tabs-four-home-tab" data-toggle="pill" href="#custom-tabs-four-home" role="tab" aria-controls="custom-tabs-four-home" aria-selected="true">Reporte</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="custom-tabs-four-profile-tab" data-toggle="pill" href="#custom-tabs-four-profile" role="tab" aria-controls="custom-tabs-four-profile" aria-selected="false">Pedidos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="custom-tabs-four-messages-tab" data-toggle="pill" href="#custom-tabs-four-messages" role="tab" aria-controls="custom-tabs-four-messages" aria-selected="false">Mensajes</a>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body">
+          <div class="tab-content" id="custom-tabs-four-tabContent">
+            <form hx-post="{% url 'reportes:by-operador' id_operador=operador.id %}" hx-target="#consumo-results" class="form-horizontal">
+              <div class="card-body p-0">
+                {% for field in form %}
+                <div class="form-group">
+                  <label for="{{ field.name }}">{{ field.name }}</label>
+                  {{ field }}
+                </div>
+                {% endfor %}
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                <button type="submit" class="btn btn-default float-right">Enviar</button>
+              </div>
+              <!-- /.card-footer -->
+            </form>
+          </div>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.card -->
+    </div>
+    <!-- /.col -->
+    <div class="col-md-9">
+        <div class="card card-outline card-primary">
+            <div class="card-header">
+              <h3 class="card-title">PrePagos Pendientes</h3>
+  
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+              <!-- /.card-tools -->
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+              
+                <div class="table-responsive">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                            <th>Fecha</th>
+                            <th>Socio</th>
+                            <th>Acumulado</th>
+                            <th>Saldo</th>
+                            <th>Usos</th>
+                            <th>Valor</th>
+                            <th>Gastado</th>
+                            <th>Alerta</th>
+                            {% comment %} <th>Verde</th>
+                            <th>Efectivo</th> {% endcomment %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                          
+                          {% for prepago in prepagos %}
+                          <tr data-widget="expandable-table" aria-expanded="false"
+                            _="on click toggle the *display of the next <p/>
+                              toggle .d-none on the next <tr/>"
+                              >
+                              {% comment %} <td>{{ prepago.id }}</td> {% endcomment %}
+                              {% comment %} <td>{{ prepago.created | date:'D' }}</td> {% endcomment %}
+                              <td>{{ prepago.created | date:'d M Y' }}</td>
+                              <td>{{ prepago.socio }}</td>
+                              <td>{{ prepago.get_acumulado }}</td>
+                              <td>{{ prepago.get_saldo }}</td>
+                              <td>{{ prepago.get_uses_list.count }} </td>
+                              <td>{{ prepago.valor}}</td>
+                              <td>{{ prepago.total_gastado }} </td>
+                              <td>{% if prepago.get_alert  %}<span class="badge bg-danger">{{ prepago.get_alert }}</span>{% else %}{{ prepago.get_alert }}{% endif %}</td>
+                              {% comment %} <td>{{ prepago.get_alert }}</td> {% endcomment %}
+                              {% comment %} <td>{{ prepago.sobre_verde }}</td>
+                              <td>{% if prepago.transferencia  %}<span class="badge bg-info">{{ consumo.efectivo }}</span>{% else %}{{ consumo.efectivo }}{% endif %}</td> {% endcomment %}
+                              
+                            </tr>
+                            <tr class="expandable-body d-none">
+                              <td colspan="9">
+                                <p style="display: none;">
+                                  <ul>
+                                    {% for item in consumo.comanda.comandaitem_set.all %}
+                                    <li>{{ item }} x {{ item.cantidad }}</li>
+                                    {% endfor %}
+                                  </ul>
+                                </p>
+                              </td>
+                            </tr>
+                          {% empty %}
+                          <tr>
+                              <td>....</td>
+                              <td>....</td>
+                              <td>....</td>
+                              <td>....</td>
+                              <td>....</td>
+                              <td>....</td>
+                              <td>....</td>
+                              <td>....</td>
+                              <td>....</td>
+                            </tr>
+                          
+                          {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+              
+            </div>
+            <!-- /.card-body -->
+          </div>
+      <div id="target-results">
+        <div class="card card-outline card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Reporte</h3>
+
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+            </div>
+            <!-- /.card-tools -->
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body p-0">
+            
+              <div class="table-responsive">
+                  <table class="table table-hover text-nowrap">
+                      <thead>
+                          <tr>
+                          <th>Día</th>
+                          <th>Fecha</th>
+                          <th>Socio</th>
+                          <th>Rojo</th>
+                          <th>Mayoreo</th>
+                          <th>Insumos</th>
+                          <th>Puntos</th>
+                          <th>Verde</th>
+                          <th>Efectivo</th>
+                          </tr>
+                      </thead>
+                      <tbody id="consumo-results">
+                        <tr>
+                          <td colspan="3"><strong># Consumos: {{ consumos.count }} | PrePago ($): {{ totales.pp_oper }}</strong></td>
+                          {% comment %} <td><strong> > Totales ></strong></td> {% endcomment %}
+                          <td><strong>{{ totales.sobre_rojo }}</strong></td>
+                          <td><strong>{{ totales.mayoreo }}</strong></td>
+                          <td><strong>{{ totales.insumos }}</strong></td>
+                          <td><strong>{{ totales.puntos_volumen }}</strong></td>
+                          <td><strong>{{ totales.sobre_verde }}</strong></td>
+                          <td><strong>{{ totales.efectivo }}</strong></td>
+                        </tr>
+                        
+                        {% for consumo in consumos %}
+                        <tr data-widget="expandable-table" aria-expanded="false"
+                          _="on click toggle the *display of the next <p/>
+                            toggle .d-none on the next <tr/>"
+                            >
+                            {% comment %} <td>{{ consumo.id }}</td> {% endcomment %}
+                            <td>{{ consumo.comanda.fecha | date:'D' }}</td>
+                            <td>{{ consumo.comanda.fecha | date:'d M Y' }}</td>
+                            <td>{{ consumo }}</td>
+                            <td>{{ consumo.sobre_rojo }}</td>
+                            <td>{{ consumo.mayoreo }}</td>
+                            <td>{{ consumo.insumos }}</td>
+                            <td>{{ consumo.puntos_volumen }}</td>
+                            <td>{{ consumo.sobre_verde }}</td>
+                            <td>{% if consumo.transferencia  %}<span class="badge bg-info">{{ consumo.efectivo }}</span>{% else %}{{ consumo.efectivo }}{% endif %}</td>
+                            
+                          </tr>
+                          <tr class="expandable-body d-none">
+                            <td colspan="9">
+                              <p style="display: none;">
+                                <ul>
+                                  {% for item in consumo.comanda.comandaitem_set.all %}
+                                  <li>{{ item }} x {{ item.cantidad }}</li>
+                                  {% endfor %}
+                                </ul>
+                              </p>
+                            </td>
+                          </tr>
+                        {% empty %}
+                        <tr>
+                            <td>....</td>
+                            <td>....</td>
+                            <td>....</td>
+                            <td>....</td>
+                            <td>....</td>
+                            <td>....</td>
+                            <td>....</td>
+                            <td>....</td>
+                            <td>....</td>
+                          </tr>
+                        
+                        {% endfor %}
+                      </tbody>
+                  </table>
+              </div>
+            
+          </div>
+          <!-- /.card-body -->
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header p-2">
+          <ul class="nav nav-pills">
+            <li class="nav-item"><btn hx-get="{% url 'operadores:profile_admin' id_operador=operador.id %}" hx-target="#resultados" class="nav-link active" data-toggle="tab">Reporte</btn></li>
+            <li class="nav-item"><btn hx-get="{% url 'pedidos:list-by-operador' id_operador=operador.id %}" hx-target="#resultados" class="nav-link" data-toggle="tab">Pedidos</btn></li>
+            <li class="nav-item"><btn hx-get="" hx-target="#resultados" class="nav-link" data-toggle="tab">Settings</btn></li>
+          </ul>
+        </div><!-- /.card-header -->
+        <div class="card-body">
+          <div class="tab-content">
+            <div class="active tab-pane" id="resultados">
+                {% include 'apps/operadores/partials/consumos.html' %}
+            </div>
+            <!-- /.tab-pane -->
+          </div>
+          <!-- /.tab-content -->
+        </div><!-- /.card-body -->
+      </div>
+      <!-- /.card -->
+    </div>
+    <!-- /.col -->
+</div>
+
+{% endblock main-content %}
