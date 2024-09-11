@@ -54,13 +54,14 @@ class Prepago(Model):
         # return int(self.get_acumulado()//self.valor)
 
     def get_alert(self) -> bool:
-        # Verifica si el saldo es insuficiente
-        if self.total_gastado() > self.get_acumulado():
-            return True  # Se dispara la alerta
+        if not self.pagado:
+            # Verifica si el saldo es insuficiente
+            if self.total_gastado() > self.get_acumulado():
+                return True  # Se dispara la alerta
 
-        # Verifica si el número de usos es mayor o igual a 5
-        if len(self.get_uses_list()) >= 5:
-            return True  # Se dispara la alerta
+            # Verifica si el número de usos es mayor o igual a 5
+            if len(self.get_uses_list()) >= 5:
+                return True  # Se dispara la alerta
 
         # Si no hay alertas
         return False
