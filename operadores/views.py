@@ -34,8 +34,7 @@ def profile_view(request, id=None):
     context, template = {}, 'apps/operadores/profile.html'
         
     if request.htmx:
-        pass
-        # template = 'apps/operadores/partials/consumos.html'
+        template = 'apps/operadores/partials/consumos.html'
         
     context = reporte_consumos(id_operador=id, user=request.user)
     context['form']= ReporteDiarioForm({'id': id})
