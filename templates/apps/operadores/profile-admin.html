@@ -105,7 +105,9 @@
               <!-- /.card-tools -->
             </div>
             <!-- /.card-header -->
-            <div class="card-body p-0">
+            <div class="card-body">
+
+              <h4>Dinero disponible: {{ ppagos.disponible }} Bs.</h4>
               
                 <div class="table-responsive">
                     <table class="table table-hover text-nowrap">
@@ -124,6 +126,16 @@
                             </tr>
                         </thead>
                         <tbody>
+                          <tr>
+                            <td colspan="2"><strong>>> Totales >> </strong></td>
+                            {% comment %} <td><strong> > Totales ></strong></td> {% endcomment %}
+                            <td><strong>{{ ppagos.acumulado }}</strong></td>
+                            <td><strong>{{ ppagos.saldo }}</strong></td>
+                            <td><strong></strong></td>
+                            <td><strong></strong></td>
+                            <td><strong>{{ ppagos.gastado}}</strong></td>
+                            <td><strong></strong></td>
+                          </tr>
                           
                           {% for prepago in prepagos %}
                           <tr data-widget="expandable-table" aria-expanded="false"
@@ -136,13 +148,13 @@
                               <td>{{ prepago.socio }}</td>
                               <td>{{ prepago.get_acumulado }}</td>
                               <td>{{ prepago.get_saldo }}</td>
-                              <td>{{ prepago.get_uses_list.count }} </td>
-                              <td>{{ prepago.valor}}</td>
+                              <td>{{ prepago.get_uses_list.count }}/{{ prepago.cantidad }} </td>
+                              <td><span class="badge bg-{% if prepago.pagado %}success{% else %}warning{% endif %}">{{ prepago.valor }}</span></td>
                               <td>{{ prepago.total_gastado }} </td>
                               <td>{% if prepago.get_alert  %}<span class="badge bg-danger">{{ prepago.get_alert }}</span>{% else %}{{ prepago.get_alert }}{% endif %}</td>
                               {% comment %} <td>{{ prepago.get_alert }}</td> {% endcomment %}
-                              {% comment %} <td>{{ prepago.sobre_verde }}</td>
-                              <td>{% if prepago.transferencia  %}<span class="badge bg-info">{{ consumo.efectivo }}</span>{% else %}{{ consumo.efectivo }}{% endif %}</td> {% endcomment %}
+                              {% comment %} <td>{{ prepago.sobre_verde }}</td>{% endcomment %}
+                              {% comment %} <td>{{ consumo.efectivo }}</td>  {% endcomment %}
                               
                             </tr>
                             <tr class="expandable-body d-none">

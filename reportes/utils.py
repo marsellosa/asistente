@@ -77,12 +77,18 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
         operador = None
         lista_prepagos = prepagos_list()
 
-    # print(f"user: {user}, operador: {operador}, usuario: {usuario}")
-    # print(f"fecha: {fechaDesde}, ef_cons_oper, qr_cons_oper: {get_cons_oper(consumos)}")
-    # print(f"fecha: {fechaDesde}, ef_prep_oper, qr_prep_oper: {get_pp_oper(prepagos)}")
-    # print(f"fecha: {fechaDesde}, ef_prep_oper, qr_prep_oper: {get_pp_oper(prepagos)}")
+    acumulado = round(sum([prepago.get_acumulado() for prepago in lista_prepagos]), 2)
+    saldo = round(sum([prepago.get_saldo() for prepago in lista_prepagos]), 2)
+    gastado = round(sum([prepago.total_gastado() for prepago in lista_prepagos]), 2)
+    disponible = acumulado - gastado
 
     context = {
+        'ppagos' : {
+            'acumulado' : acumulado,
+            'saldo' : saldo,
+            'gastado' : gastado,
+            'disponible' : disponible
+        },
         'prepagos' : lista_prepagos,
         'operador': operador,
         'consumos': consumos,
@@ -104,11 +110,11 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     
     return context
 
-def prepagos_list(id_operador=None, activo=True, pagado=False):
+def prepagos_list(id_operador=None, activo=True):
 
     if id_operador is not None:
-        prepagos = Prepago.objects.filter(socio__operador__id=id_operador, activo=activo, pagado=pagado)
+        prepagos = Prepago.objects.filter(socio__operador__id=id_operador, activo=activo)
     else:
-        prepagos = Prepago.objects.filter(activo=activo, pagado=pagado)
+        prepagos = Prepago.objects.filter(activo=activo)
     
-    return prepagos
+    return prepagos.order_by('-created')

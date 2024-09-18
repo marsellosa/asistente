@@ -60,7 +60,7 @@ class Prepago(Model):
                 return True  # Se dispara la alerta
 
             # Verifica si el número de usos es mayor o igual a 5
-            if len(self.get_uses_list()) >= 5:
+            if len(self.get_uses_list()) > 5:
                 return True  # Se dispara la alerta
 
         # Si no hay alertas
