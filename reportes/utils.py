@@ -51,11 +51,11 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     
     if rango:
         consumos = Consumo.objects.by_date_range(fechaDesde, fechaHasta) #type: ignore
-        # pagos = Pago.objects.pago_by_date_range(fechaDesde, fechaHasta)
+        
         prepagos = Pago.objects.pago_by_date_range(fechaDesde, fechaHasta)
     else:
         consumos = Consumo.objects.by_date(fechaDesde) # type: ignore
-        # qr_cons = Transferencia.objects.filter(consumo__comanda__fecha=fechaDesde)
+        
         # con_trans = consumos.filter(transferencia__isnull=False)
         prepagos = Pago.objects.pago_by_date(fechaDesde)
     
@@ -81,6 +81,7 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     saldo = round(sum([prepago.get_saldo() for prepago in lista_prepagos]), 2)
     gastado = round(sum([prepago.total_gastado() for prepago in lista_prepagos]), 2)
     disponible = acumulado - gastado
+    pagos = get_cons_oper(consumos)
 
     context = {
         'ppagos' : {
@@ -104,6 +105,8 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
             'efectivo': round(sum([item.efectivo for item in consumos]), 2),
             'pp_oper': round(sum([item.monto for item in prepagos]), 2),
             'efectivo_consumos': round(sum([item.efectivo for item in consumos]), 2),
+            'pagos_ef': pagos[0],
+            'pagos_qr': pagos[1],
             
         },
     }
