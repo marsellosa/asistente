@@ -15,6 +15,15 @@ def day_of_year_to_date(year, day_of_year):
     target_date = start_of_year + timedelta(days=day_of_year - 1)
     return target_date
 
+def prepagos_list(id_operador=None, activo=True):
+
+    if id_operador is not None:
+        prepagos = Prepago.objects.filter(socio__operador__id=id_operador, activo=activo)
+    else:
+        prepagos = Prepago.objects.filter(activo=activo)
+    
+    return prepagos.order_by('-created')
+
 def get_pp_oper(pp_oper):
     transferencias = pp_oper.filter(transferenciapp__isnull=False)
     efectivo = pp_oper.filter(transferenciapp__isnull=True)
@@ -82,6 +91,7 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     gastado = round(sum([prepago.total_gastado() for prepago in lista_prepagos]), 2)
     disponible = acumulado - gastado
     pagos = get_cons_oper(consumos)
+    ppagos = get_pp_oper(prepagos)
 
     context = {
         'ppagos' : {
@@ -107,17 +117,11 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
             'efectivo_consumos': round(sum([item.efectivo for item in consumos]), 2),
             'pagos_ef': pagos[0],
             'pagos_qr': pagos[1],
+            'ppagos_ef': ppagos[0],
+            'ppagos_qr': ppagos[1],
             
         },
     }
     
     return context
 
-def prepagos_list(id_operador=None, activo=True):
-
-    if id_operador is not None:
-        prepagos = Prepago.objects.filter(socio__operador__id=id_operador, activo=activo)
-    else:
-        prepagos = Prepago.objects.filter(activo=activo)
-    
-    return prepagos.order_by('-created')
