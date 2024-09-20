@@ -50,8 +50,16 @@ class Prepago(Model):
         return round(total - descuento - self.get_acumulado(), 2)
     
     def total_gastado(self):
-        return self.get_uses_list().count() * self.valor
-        # return int(self.get_acumulado()//self.valor)
+        uses_count = self.get_uses_list().count()  # Store count result to avoid multiple calls
+        gastado = uses_count * self.valor
+        
+        if not self.pagado:
+            return gastado
+        else:
+            descuento = uses_count * self.descuento_decimal
+            total_con_descuento = gastado - descuento
+            return max(total_con_descuento, 0)  # Ensure total is not negative
+
 
     def get_alert(self) -> bool:
         if not self.pagado:

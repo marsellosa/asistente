@@ -1,9 +1,5 @@
-from django.core.exceptions import ValidationError
-from django.contrib import messages
-from django_htmx.http import trigger_client_event
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
-from consumos.models import Consumo
 from operadores.models import *
 from pedidos.models import Pedido
 from prepagos.models import Pago
@@ -11,7 +7,6 @@ from reportes.forms import ReporteDiarioForm
 from reportes.utils import reporte_consumos
 from socios.models import Socio
 from home.decorators import allowed_users
-from main.utils import get_today
 
 
 @allowed_users(['admin', 'operadores'])
