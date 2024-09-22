@@ -92,6 +92,7 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     disponible = acumulado - gastado
     pagos = get_cons_oper(consumos)
     ppagos = get_pp_oper(prepagos)
+    pagos_totales = sum(pagos + ppagos)
 
     context = {
         'ppagos' : {
@@ -119,7 +120,7 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
             'pagos_qr': pagos[1],
             'ppagos_ef': ppagos[0],
             'ppagos_qr': ppagos[1],
-            
+            'total_pagos': pagos_totales,
         },
     }
     
