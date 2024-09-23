@@ -1,9 +1,9 @@
 
-<form action="/main/search/" method="GET" class="form-inline ml-3">
+<form action="{% url "main:search" %}" method="GET" class="form-inline ml-3">
     <div class="input-group input-group-sm">
      <input 
         hx-target="#typeahead-results"  
-        hx-get="/main/search/" 
+        hx-get="{% url "main:search" %}" 
         hx-trigger="keyup changed delay:200ms" 
         hx-include="[name='type']"
         name="q" 
@@ -15,9 +15,6 @@
       <div class="input-group-append">
         <button class="btn btn-navbar" type="submit">
           <i class="fas fa-search"></i>
-        </button>
-        <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-          <i class="fas fa-times"></i>
         </button>
       </div>
     </div>
