@@ -6,7 +6,7 @@ from socios.models import Socio
 from home.decorators import allowed_users
 
 def detail_view(request, id=None):
-    context, template = {}, 'apps/prepagos/partials/list-form.html'
+    context, template = {}, 'apps/prepagos/detail.html'
     return render(request, template, context)
 
 def list_view(request):

@@ -93,102 +93,101 @@
     </div>
     <!-- /.col -->
     <div class="col-md-9">
-        <div class="card card-outline card-primary">
-            <div class="card-header">
-              <h3 class="card-title">PrePagos Pendientes</h3>
-  
-              <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                  <i class="fas fa-minus"></i>
-                </button>
-              </div>
-              <!-- /.card-tools -->
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body">
+      <div class="card card-outline card-primary">
+        <div class="card-header">
+          <h3 class="card-title">PrePagos Pendientes</h3>
 
-              <h4>Dinero disponible: {{ ppagos.disponible }} Bs.</h4>
-              
-                <div class="table-responsive">
-                    <table class="table table-hover text-nowrap">
-                        <thead>
-                            <tr>
-                            <th>Fecha</th>
-                            <th>Socio</th>
-                            <th>Acumulado</th>
-                            <th>Saldo</th>
-                            <th>Usos</th>
-                            <th>Valor</th>
-                            <th>Gastado</th>
-                            <th>Alerta</th>
-                            {% comment %} <th>Verde</th>
-                            <th>Efectivo</th> {% endcomment %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td colspan="2"><strong>>> Totales >> </strong></td>
-                            {% comment %} <td><strong> > Totales ></strong></td> {% endcomment %}
-                            <td><strong>{{ ppagos.acumulado }}</strong></td>
-                            <td><strong>{{ ppagos.saldo }}</strong></td>
-                            <td><strong></strong></td>
-                            <td><strong></strong></td>
-                            <td><strong>{{ ppagos.gastado}}</strong></td>
-                            <td><strong></strong></td>
-                          </tr>
-                          
-                          {% for prepago in prepagos %}
-                          <tr data-widget="expandable-table" aria-expanded="false"
-                            _="on click toggle the *display of the next <p/>
-                              toggle .d-none on the next <tr/>"
-                              >
-                              {% comment %} <td>{{ prepago.id }}</td> {% endcomment %}
-                              {% comment %} <td>{{ prepago.created | date:'D' }}</td> {% endcomment %}
-                              <td>{{ prepago.created | date:'d M Y' }}</td>
-                              <td>{{ prepago.socio }}</td>
-                              <td>{{ prepago.get_acumulado }}</td>
-                              <td>{{ prepago.get_saldo }}</td>
-                              <td>{{ prepago.get_uses_list.count }}/{{ prepago.cantidad }} </td>
-                              <td><span class="badge bg-{% if prepago.pagado %}success{% else %}warning{% endif %}">{{ prepago.valor }}</span></td>
-                              <td>{{ prepago.total_gastado }} </td>
-                              <td>{% if prepago.get_alert  %}<span class="badge bg-danger">{{ prepago.get_alert }}</span>{% else %}{{ prepago.get_alert }}{% endif %}</td>
-                              {% comment %} <td>{{ prepago.get_alert }}</td> {% endcomment %}
-                              {% comment %} <td>{{ prepago.sobre_verde }}</td>{% endcomment %}
-                              {% comment %} <td>{{ consumo.efectivo }}</td>  {% endcomment %}
-                              
-                            </tr>
-                            <tr class="expandable-body d-none">
-                              <td colspan="9">
-                                <p style="display: none;">
-                                  <ul>
-                                    {% for item in consumo.comanda.comandaitem_set.all %}
-                                    <li>{{ item }} x {{ item.cantidad }}</li>
-                                    {% endfor %}
-                                  </ul>
-                                </p>
-                              </td>
-                            </tr>
-                          {% empty %}
-                          <tr>
-                              <td>....</td>
-                              <td>....</td>
-                              <td>....</td>
-                              <td>....</td>
-                              <td>....</td>
-                              <td>....</td>
-                              <td>....</td>
-                              <td>....</td>
-                              <td>....</td>
-                            </tr>
-                          
-                          {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-              
-            </div>
-            <!-- /.card-body -->
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
           </div>
+          <!-- /.card-tools -->
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+
+          <h4>Dinero disponible: {{ ppagos.disponible }} Bs.</h4>
+          
+            <div class="table-responsive">
+                <table class="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                        <th>Fecha</th>
+                        <th>Socio</th>
+                        <th>Acumulado</th>
+                        <th>Saldo</th>
+                        <th>Usos</th>
+                        <th>Valor</th>
+                        <th>Gastado</th>
+                      
+                        {% comment %} <th>Verde</th>
+                        <th>Efectivo</th> {% endcomment %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td colspan="2"><strong>>> Totales >> </strong></td>
+                        {% comment %} <td><strong> > Totales ></strong></td> {% endcomment %}
+                        <td><strong>{{ ppagos.acumulado }}</strong></td>
+                        <td><strong>{{ ppagos.saldo }}</strong></td>
+                        <td><strong></strong></td>
+                        <td><strong></strong></td>
+                        <td><strong>{{ ppagos.gastado}}</strong></td>
+                        
+                      </tr>
+                      
+                      {% for prepago in prepagos %}
+                      <tr data-widget="expandable-table" aria-expanded="false"
+                        _="on click toggle the *display of the next <p/>
+                          toggle .d-none on the next <tr/>"
+                          >
+                          {% comment %} <td>{{ prepago.id }}</td> {% endcomment %}
+                          {% comment %} <td>{{ prepago.created | date:'D' }}</td> {% endcomment %}
+                          <td>{{ prepago.created | date:'d M Y' }}</td>
+                          <td>{% if prepago.get_alert  %}<span class="badge bg-danger">{{ prepago.socio }}</span>{% else %}{{ prepago.socio }}{% endif %}</td>
+                          <td>{{ prepago.get_acumulado }}</td>
+                          <td>{{ prepago.get_saldo }}</td>
+                          <td>{{ prepago.get_uses_list.count }}/{{ prepago.cantidad }} </td>
+                          <td><span class="badge bg-{% if prepago.pagado %}success{% else %}warning{% endif %}">{{ prepago.valor }}</span></td>
+                          <td>{{ prepago.total_gastado }} </td>
+                          {% comment %} <td>{{ prepago.get_alert }}</td> {% endcomment %}
+                          {% comment %} <td>{{ prepago.sobre_verde }}</td>{% endcomment %}
+                          {% comment %} <td>{{ consumo.efectivo }}</td>  {% endcomment %}
+                          
+                        </tr>
+                        <tr class="expandable-body d-none">
+                          <td colspan="9">
+                            <p style="display: none;">
+                              <ul>
+                                {% for item in consumo.comanda.comandaitem_set.all %}
+                                <li>{{ item }} x {{ item.cantidad }}</li>
+                                {% endfor %}
+                              </ul>
+                            </p>
+                          </td>
+                        </tr>
+                      {% empty %}
+                      <tr>
+                          <td>....</td>
+                          <td>....</td>
+                          <td>....</td>
+                          <td>....</td>
+                          <td>....</td>
+                          <td>....</td>
+                          <td>....</td>
+                          <td>....</td>
+                          <td>....</td>
+                        </tr>
+                      
+                      {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+          
+        </div>
+        <!-- /.card-body -->
+      </div>
       <div id="target-results">
         <div class="card card-outline card-primary">
           <div class="card-header">

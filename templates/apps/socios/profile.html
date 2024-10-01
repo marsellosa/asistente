@@ -32,8 +32,15 @@
         Debe completar su prepago
       </div>
       {% endif %}
-    
+      <div class="progress-group">
+        Usos del prepago <a href={{ prepago.get_absolute_url }}> {{ prepago.id }}</a>
+        <span class="float-right"><b>{{ prepago.comanda_set.all.count }}</b>/{{ prepago.cantidad }}</span>
+        <div class="progress progress-sm">
+          <div class="progress-bar bg-warning" style="width: {{ prepago.comanda_set.all.count }}0%"></div>
+        </div>
+      </div>
     {% endfor %}
+    
     <!-- Profile Image -->
     <div class="card card-success card-outline">
       <div class="card-body box-profile">
