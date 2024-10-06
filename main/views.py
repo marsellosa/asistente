@@ -82,6 +82,7 @@ def inicio_view(request):
         'operador' : operador,
         'socios' : socios,
         'latest' : socios.order_by('-persona__created_on')[:8],
+        'hoy': today,
     }
 
     return render(request, template, context)
