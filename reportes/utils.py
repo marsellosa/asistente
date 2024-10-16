@@ -89,7 +89,7 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     acumulado = round(sum([prepago.get_acumulado() for prepago in lista_prepagos]), 2)
     saldo = round(sum([prepago.get_saldo() for prepago in lista_prepagos]), 2)
     gastado = round(sum([prepago.total_gastado() for prepago in lista_prepagos]), 2)
-    disponible = acumulado - gastado
+    disponible = round(acumulado - gastado, 2)
     pagos = get_cons_oper(consumos)
     ppagos = get_pp_oper(prepagos)
     pagos_totales = sum(pagos + ppagos)

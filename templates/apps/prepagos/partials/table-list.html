@@ -14,7 +14,7 @@
           _="on click toggle the *display of the next <p/>
             toggle .d-none on the next <tr/>"
         >
-          <td><a href="javascript:void(0)">{{ prepago.id }}</a></td>
+          <td><a href="{{ prepago.get_absolute_url }}">{{ prepago.id }}</a></td>
           <td>{{ prepago }}</td>
           {% if prepago.pagado %}
           <td><span class="badge badge-success">Pagado</span></td>
@@ -25,21 +25,22 @@
             {% if prepago.activo %}
             <span class="badge badge-success">{{ prepago.comanda_set.all.count }}/{{ prepago.cantidad }}</span>
             {% else %}
-            <span class="badge badge-danger">Inactivo</span>
+            <span class="badge badge-secondary">Inactivo</span>
             {% endif %}
           </td>
         </tr>
         <tr class="expandable-body d-none">
           <td colspan="4">
-            <p style="display: none;">
+            <div class="card-body">
+              <p>Usos </p>
               <ul>
                 {% for item in prepago.get_uses_list %}
-                <li>{{ item.fecha }}</li>
+                <li>{{ item.fecha | date:'d M Y' }}</li>
                 {% empty %}
                 <li>Sin registros</li>
                 {% endfor %}
               </ul>
-            </p>
+            </div>
           </td>
         </tr>
         {% endfor %}
