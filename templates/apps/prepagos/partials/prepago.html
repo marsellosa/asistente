@@ -23,7 +23,7 @@
         {% for pago in prepago.get_total_pagos %}
         <tr>
           <td>{{ pago.fecha|date }}</td>
-          <td>{{pago}} Bs.</td>
+          <td><span class="{% if pago.transferenciapp %}badge bg-info{% endif %}">{{ pago }}</span></td>
           <td>{{ pago.fecha|date:"l" }}</td>
         </tr>
         {% empty %}

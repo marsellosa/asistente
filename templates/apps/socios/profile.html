@@ -7,7 +7,7 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0 text-dark">Detalle</h1>
+          <h1 class="m-0 text-dark">Perfil Socio</h1>
         </div><!-- /.col -->
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
@@ -33,8 +33,8 @@
       </div>
       {% endif %}
       <div class="progress-group">
-        Usos del prepago <a href={{ prepago.get_absolute_url }}> {{ prepago.id }}</a>
-        <span class="float-right"><b>{{ prepago.comanda_set.all.count }}</b>/{{ prepago.cantidad }}</span>
+        <a href={{ prepago.get_absolute_url }}> {{ prepago.id }}</a> - Pagos pendientes
+        <span class="float-right">Usos: <b>{{ prepago.comanda_set.all.count }}</b>/{{ prepago.cantidad }}</span>
         <div class="progress progress-sm">
           <div class="progress-bar bg-warning" style="width: {{ prepago.comanda_set.all.count }}0%"></div>
         </div>
