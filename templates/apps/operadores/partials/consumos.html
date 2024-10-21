@@ -1,6 +1,6 @@
-<div class="card-body p-0">
+  
   <div class="row mb-3">
-    <form hx-post="{% url 'reportes:by-operador' id_operador=operador.id %}" hx-target="#consumo-results" class="row">
+    <form class="row" hx-post="{% url 'reportes:by-operador' id_operador=operador.id %}" hx-target="#consumo-results" hx-select="#tablas-resultados">
       {% for field in form %}
         <div class="col-5">
           {{ field }}
@@ -12,27 +12,70 @@
         </button>
       </div>
     </form>
-  </div> 
-  <div class="row">
-    <div class="table-responsive p-0">
+  </div>
+  <div id="consumo-results">
+    <div class="row" id="tablas-resultados">
+      <h4>{{ hoy }}</h4>
+      <table class="table table-striped table-valign-middle">
+        <thead>
+        <tr>
+          <th>Detalle</th>
+          <th>Monto</th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Total
+            </td>
+            <td>{{ totales.total_pagos }}</td>
+          </tr>
+          <tr>
+        <tr>
+          <td>
+            Pagos Efectivo
+          </td>
+          <td>{{ totales.pagos_ef}}</td>
+        </tr>
+        <tr>
+          <td>
+            Pagos Transfer
+          </td>
+          <td><span class="badge bg-info">{{ totales.pagos_qr }}</span></td>
+        </tr>
+        <tr>
+          <td>
+            PrePagos Efectivo
+          </td>
+          <td>{{ totales.ppagos_ef }}</td>
+        </tr>
+        <tr>
+          <td>
+            PrePagos Transfer
+          </td>
+          <td><span class="badge bg-info">{{ totales.ppagos_qr }}</span></td>
+        </tr>
+        </tbody>
+      </table>
+      <div class="table-responsive">
         <table class="table table-hover text-nowrap">
-            <thead>
-                <tr>
-                <th>Día</th>
-                <th>Fecha</th>
-                <th>Socio</th>
-                <th>Rojo</th>
-                <th>Mayoreo</th>
-                <th>Insumos</th>
-                <th>Puntos</th>
-                <th>Verde</th>
-                <th>Pagado</th>
-                </tr>
-            </thead>
-            <tbody id="consumo-results">
-                {% include 'apps/reportes/partials/results.html' %}
-            </tbody>
+          <thead>
+              <tr>
+              <th>Día</th>
+              <th>Fecha</th>
+              <th>Socio</th>
+              <th>Rojo</th>
+              <th>Mayoreo</th>
+              <th>Insumos</th>
+              <th>Puntos</th>
+              <th>Verde</th>
+              <th>Pagado</th>
+              </tr>
+          </thead>
+          <tbody >
+              {% include 'apps/reportes/partials/results.html' %}
+          </tbody>
         </table>
+      </div>
     </div>
   </div>
-</div>

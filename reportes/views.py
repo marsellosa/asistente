@@ -19,7 +19,8 @@ def reporte_diario(request, id_operador=None, fechaDesde=None, fechaHasta=None):
             fechaDesde = request.POST.get('fechadesde')
             fechaHasta = request.POST.get('fechahasta')
 
-        template = 'apps/reportes/partials/results.html'
+        template = 'apps/operadores/partials/consumos.html'
+        # template = 'apps/reportes/partials/results.html'
 
     context = reporte_consumos(id_operador=id_operador, fechaDesde=fechaDesde, fechaHasta=fechaHasta, user=request.user)
     context['form'] = ReporteDiarioForm({'id': id_operador})
