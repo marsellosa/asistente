@@ -49,30 +49,15 @@ class Prepago(Model):
         descuento = total * self.descuento / 100
         return round(total - descuento - self.get_acumulado(), 2)
     
-    def total_gastado(self):
-        uses_count = self.get_uses_list().count()  # Store count result to avoid multiple calls
-        gastado = uses_count * self.valor
-        
-        if not self.pagado:
-            return gastado
-        else:
-            descuento = uses_count * self.descuento_decimal
-            total_con_descuento = gastado - descuento
-            return max(total_con_descuento, 0)  # Ensure total is not negative
+    def gasto_neto(self):
+        return len(self.get_uses_list()) * self.valor
 
+    def total_gastado(self):
+        return max(self.gasto_neto() - len(self.get_uses_list()) * self.descuento_decimal, 0)
 
     def get_alert(self) -> bool:
-        if not self.pagado:
-            # Verifica si el saldo es insuficiente
-            if self.total_gastado() > self.get_acumulado():
-                return True  # Se dispara la alerta
-
-            # Verifica si el número de usos es mayor o igual a 5
-            if len(self.get_uses_list()) > 5:
-                return True  # Se dispara la alerta
-
-        # Si no hay alertas
-        return False
+        return (not self.pagado and 
+                (self.gasto_neto() > self.get_acumulado() or len(self.get_uses_list()) > 5))
 
     def __str__(self):
         return str(self.valor)
