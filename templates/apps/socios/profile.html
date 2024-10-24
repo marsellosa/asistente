@@ -34,7 +34,7 @@
       {% endif %}
       <div class="progress-group">
         <a href={{ prepago.get_absolute_url }}> {{ prepago.id }}</a> - Pagos pendientes
-        <span class="float-right">Usos: <b>{{ prepago.comanda_set.all.count }}</b>/{{ prepago.cantidad }}</span>
+        <span class="float-right">Gastado: <b>{{ prepago.gasto_neto }}</b>/{{ prepago.get_acumulado }}</span>
         <div class="progress progress-sm">
           <div class="progress-bar bg-warning" style="width: {{ prepago.comanda_set.all.count }}0%"></div>
         </div>
