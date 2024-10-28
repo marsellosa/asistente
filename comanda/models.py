@@ -133,7 +133,7 @@ class Comanda(Model):
             efectivo = round(sum([self.get_mantenimiento, self.get_insumos, self.get_sobre_rojo]), 2)
         else:
             efectivo = self.get_cart_total - sum([prepago.valor for prepago in self.prepago.all()])
-        return efectivo
+        return max(efectivo, 0)
     
     @property
     def get_sobre_verde(self):
