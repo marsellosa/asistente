@@ -1,5 +1,6 @@
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -118,3 +119,25 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login/'
+
+try:
+    EMAIL_BACKEND       = config('EMAIL_BACKEND', default=None)
+    EMAIL_HOST          = config('EMAIL_HOST', default=None)
+    EMAIL_PORT          = config('EMAIL_PORT', default=0, cast=int)
+    EMAIL_USE_TLS       = config('EMAIL_USE_TLS', default=False, cast=bool)
+    EMAIL_HOST_USER     = config('EMAIL_HOST_USER', default=None)
+    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default=None)
+    DEFAULT_FROM_EMAIL  = EMAIL_HOST_USER
+except:
+    pass
+
+EMAIL_READY = (
+    EMAIL_BACKEND is not None and
+    EMAIL_HOST is not None and
+    EMAIL_PORT is not None and
+    EMAIL_USE_TLS is not None and
+    EMAIL_HOST_USER is not None and
+    EMAIL_HOST_PASSWORD is not None
+)
+if EMAIL_READY:
+    pass
