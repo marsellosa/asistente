@@ -12,7 +12,7 @@ class PagoInline(StackedInline):
 class PrepagoAdmin(ModelAdmin):
     inlines = [PagoInline]
     readonly_fields = ['descuento_decimal']
-    list_display =  ['socio', 'valor', 'cantidad', 'descuento']
+    list_display =  ['socio', 'valor', 'cantidad', 'descuento', 'created', 'activo', 'pagado']
 
 class PagoAdmin(ModelAdmin):
     inlines = [TransferenciaPPInLine]
