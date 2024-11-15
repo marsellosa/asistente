@@ -1,5 +1,6 @@
 {% extends 'apps/home/base.html' %}
 {% block title %}Login Page{% endblock title %}
+{% block classfeatures %}class="login-page"{% endblock classfeatures %}
 
 {% block content %}
 <div class="login-box">
@@ -63,10 +64,10 @@
       <!-- /.social-auth-links -->
 
       <p class="mb-1">
-        <a href="{% url 'home:reset_password' %}">Olvidé mi contraseña</a>
+        <a href="{% url 'password_reset' %}">Olvidé mi contraseña</a>
       </p>
       <p class="mb-0">
-        <a href="{% url 'home:register' %}" class="text-center">Registrar nueva membresia</a>
+        <a href="{% url 'register' %}" class="text-center">Registrar nueva cuenta</a>
       </p>
     </div>
     <!-- /.login-card-body -->

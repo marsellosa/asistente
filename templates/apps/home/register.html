@@ -1,5 +1,6 @@
 {% extends 'apps/home/base.html' %}
 {% block title %}Register New{% endblock title %}
+{% block classfeatures %}class="register-page"{% endblock classfeatures %}
 
 {% block content %}
 <div class="register-box">
@@ -94,7 +95,7 @@
         </a>
       </div> {% endcomment %}
 
-      <a href="{% url 'home:login' %}" class="text-center">ya tengo una membresia</a>
+      <a href="{% url 'login' %}" class="text-center">Ya tengo una cuenta</a>
     </div>
     <!-- /.form-box -->
   </div><!-- /.card -->

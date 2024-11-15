@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  
   <title>{% block title %}{% endblock title %}</title>
 
   <!-- Google Font: Source Sans Pro -->
@@ -14,9 +15,11 @@
   <link rel="stylesheet" href="{% static 'AdminLTE/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
   <!-- Theme style -->
   <link rel="stylesheet" href="{% static 'AdminLTE/dist/css/adminlte.min.css' %}">
+  <!-- HTMX -->
+  <script src="{% static "AdminLTE/dist/js/htmx.min.js" %}"></script>
 </head>
-<body class="hold-transition register-page">
-    
+<body {% block classfeatures %}{% endblock classfeatures %}>
+
 {% block content %}{% endblock content %}
 
 <!-- jQuery -->
@@ -25,5 +28,7 @@
 <script src="{% static 'AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <!-- AdminLTE App -->
 <script src="{% static 'AdminLTE/dist/js/adminlte.min.js' %}"></script>
+{% block specificjs %}{% endblock specificjs %}
 </body>
+
 </html>
