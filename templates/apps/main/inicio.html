@@ -29,7 +29,7 @@
 
 <div class="row">
   <div class="col-lg-8">
-    <div class="card">
+    <div class="card" id="cardConsumos" hx-target="this" hx-swap='outerHTML'>
       <div class="card-header border-transparent">
         <h3 class="card-title">{{ hoy | date:'d M Y' }}</h3>
 
@@ -38,7 +38,13 @@
           <button type="button" class="btn btn-tool" data-card-widget="collapse">
             <i class="fas fa-minus"></i>
           </button>
-          <button type="button" class="btn btn-tool" hx-get="{% url "main:inicio" %}" hx-target="#consumosDiarios" hx-select="#tablaConsumos">
+          <button type="button" class="btn btn-tool" 
+            hx-get="{% url 'main:inicio' %}" 
+            hx-select="#cardConsumos"
+            hx-trigger="click"
+            _="on htmx:beforeRequest put 'flex' into #loadingOverlay.style.display
+              on htmx:afterRequest put 'none' into #loadingOverlay.style.display"
+            >
             <i class="fas fa-sync-alt"></i>
           </button>
         </div>
@@ -88,12 +94,11 @@
         </div>
         <!-- /.table-responsive -->
       </div>
+      <!-- Overlay to show when loading -->
+      <div class="overlay" id="loadingOverlay" style="display: none;">
+        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+      </div>
       <!-- /.card-body -->
-      {% comment %} <div class="card-footer clearfix">
-        <a href="javascript:void(0)" class="btn btn-sm btn-info float-left">Place New Order</a>
-        <a href="javascript:void(0)" class="btn btn-sm btn-secondary float-right">View All Orders</a>
-      </div> {% endcomment %}
-      <!-- /.card-footer -->
     </div>
   </div>
   <div class="col-lg-4">
