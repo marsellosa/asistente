@@ -14,6 +14,11 @@ def list_view(request):
     return render(request, template, context)
 
 @allowed_users(['admin', 'operadores'])
+def list_operador_view(request, id_operador):
+    context, template = {}, 'apps/prepagos/partials/lista_prepagos.html'
+    return render(request, template, context)
+
+@allowed_users(['admin', 'operadores'])
 def create_prepago_view(request, id_socio=None):
     context, template = {}, 'apps/prepagos/partials/list-form.html'
 

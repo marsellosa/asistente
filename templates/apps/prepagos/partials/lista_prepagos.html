@@ -1,0 +1,65 @@
+<h4>Dinero disponible: {{ ppagos.disponible }} Bs.</h4>
+<div class="table-responsive">
+    <table class="table table-hover text-nowrap">
+        <thead>
+            <tr>
+            <th>Fecha</th>
+            <th>Socio</th>
+            <th>Valor</th>
+            <th>Usos</th>
+            <th>Pagado</th>
+            <th>Saldo</th>
+            <th>Gastado</th>
+          
+            {% comment %} <th>Verde</th>
+            <th>Efectivo</th> {% endcomment %}
+            </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="2"><strong>>> Totales >> </strong></td>
+            <td><strong></strong></td>
+            <td><strong></strong></td>
+            <td><strong>{{ ppagos.acumulado }}</strong></td>
+            <td><strong>{{ ppagos.saldo }}</strong></td>
+            <td><strong>{{ ppagos.gastado}}</strong></td>
+          </tr>
+          
+          {% for prepago in prepagos %}
+            <tr data-widget="expandable-table" aria-expanded="false"
+              _="on click toggle the *display of the next <p/>
+                toggle .d-none on the next <tr/>">
+                <td>{{ prepago.created | date:'d M Y' }}</td>
+                <td>{% if prepago.get_alert  %}<span class="badge bg-danger">{{ prepago.socio }}</span>{% else %}{{ prepago.socio }}{% endif %}</td>
+                <td><span class="badge bg-{% if prepago.pagado %}success{% else %}warning{% endif %}">{{ prepago.valor }}</span></td>
+                <td>{{ prepago.get_uses_list.count }}/{{ prepago.cantidad }} </td>
+                <td>{{ prepago.get_acumulado }}</td>
+                <td>{{ prepago.get_saldo }}</td>
+                <td>{{ prepago.total_gastado }} </td>                        
+            </tr>
+            <tr class="expandable-body d-none">
+              <td colspan="9">
+                <p style="display: none;">
+                  <ul>
+                    {% for item in consumo.comanda.comandaitem_set.all %}
+                    <li>{{ item }} x {{ item.cantidad }}</li>
+                    {% endfor %}
+                  </ul>
+                </p>
+              </td>
+            </tr>
+          {% empty %}
+          <tr>
+              <td colspan="3"><strong>Sin datos para: {{ hoy }}</strong></td>
+              <td>....</td>
+              <td>....</td>
+              <td>....</td>
+              <td>....</td>
+              <td>....</td>
+              <td>....</td>
+            </tr>
+          
+          {% endfor %}
+        </tbody>
+    </table>
+</div>
