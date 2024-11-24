@@ -1,6 +1,7 @@
   
   <div class="row mb-3">
     <form class="row" hx-post="{% url 'reportes:by-operador' id_operador=operador.id %}" hx-target="#consumo-results" hx-select="#tablas-resultados">
+      {% csrf_token %}
       {% for field in form %}
         <div class="col-5">
           {{ field }}
