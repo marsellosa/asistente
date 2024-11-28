@@ -33,6 +33,7 @@
       </div>
        <!-- form start -->
       <form hx-post="." hx-target="#consumo-results">
+        {% csrf_token %}
       <div class="card-body">
         {% for field in form %}
         <div class="form-group">

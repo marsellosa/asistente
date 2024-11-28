@@ -58,29 +58,27 @@
       <div class="card-body">
         <ul class="nav nav-tabs mb-3" id="custom-content-below-tab" role="tablist">
           <li class="nav-item">
-            <a class="nav-link active" 
-              id="custom-content-below-home-tab" 
-              data-toggle="pill" 
-              href="#custom-content-below-home" 
-              role="tab" 
-              aria-controls="custom-content-below-home" 
-              aria-selected="true"
+            <a class="nav-link active" id="custom-content-below-home-tab" data-toggle="pill" role="tab" href="#"
               hx-get="{% url 'reportes:by-operador' operador.id %}"
               hx-target="#custom-content-below-tabContent"
+            >Reporte</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="custom-content-below-profile-tab" data-toggle="pill" role="tab" href="#"
+              hx-get="{% url 'reportes:pp-by-operador' operador.id %}"
+              hx-target="#custom-content-below-tabContent"
+            >PrePagos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="custom-content-below-messages-tab" data-toggle="pill" href="#" role="tab" 
               
-              >Reporte</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="custom-content-below-profile-tab" data-toggle="pill" href="#custom-content-below-profile" role="tab" aria-controls="custom-content-below-profile" aria-selected="false">PrePagos</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="custom-content-below-messages-tab" data-toggle="pill" href="#custom-content-below-messages" role="tab" aria-controls="custom-content-below-messages" aria-selected="false">Messages</a>
+            >Messages</a>
         </ul>
         <div class="tab-content" id="custom-content-below-tabContent">
           {% include "apps/operadores/partials/consumos.html" %}
         </div>
         <div class="tab-custom-content">
-          <p class="lead mb-0">Custom Content goes here</p>
+          <p class="lead mb-0">Algunos datos Extra</p>
         </div>
         
       </div>
@@ -89,7 +87,7 @@
 
     <div class="card card-outline card-primary">
       <div class="card-header">
-        <h3 class="card-title">PrePagos Pendientes</h3>
+        <h3 class="card-title">Detalle de PrePagos</h3>
 
         <div class="card-tools">
           <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -101,84 +99,6 @@
       <!-- /.card-header -->
       <div class="card-body">
 
-        <h4>Dinero disponible: {{ ppagos.disponible }} Bs.</h4>
-        
-          <div class="table-responsive">
-              <table class="table table-hover text-nowrap">
-                  <thead>
-                      <tr>
-                      <th>Fecha</th>
-                      <th>Socio</th>
-                      <th>Acumulado</th>
-                      <th>Saldo</th>
-                      <th>Usos</th>
-                      <th>Valor</th>
-                      <th>Gastado</th>
-                    
-                      {% comment %} <th>Verde</th>
-                      <th>Efectivo</th> {% endcomment %}
-                      </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td colspan="2"><strong>>> Totales >> </strong></td>
-                      {% comment %} <td><strong> > Totales ></strong></td> {% endcomment %}
-                      <td><strong>{{ ppagos.acumulado }}</strong></td>
-                      <td><strong>{{ ppagos.saldo }}</strong></td>
-                      <td><strong></strong></td>
-                      <td><strong></strong></td>
-                      <td><strong>{{ ppagos.gastado}}</strong></td>
-                      
-                    </tr>
-                    
-                    {% for prepago in prepagos %}
-                    <tr data-widget="expandable-table" aria-expanded="false"
-                      _="on click toggle the *display of the next <p/>
-                        toggle .d-none on the next <tr/>"
-                        >
-                        {% comment %} <td>{{ prepago.id }}</td> {% endcomment %}
-                        {% comment %} <td>{{ prepago.created | date:'D' }}</td> {% endcomment %}
-                        <td>{{ prepago.created | date:'d M Y' }}</td>
-                        <td>{% if prepago.get_alert  %}<span class="badge bg-danger">{{ prepago.socio }}</span>{% else %}{{ prepago.socio }}{% endif %}</td>
-                        <td>{{ prepago.get_acumulado }}</td>
-                        <td>{{ prepago.get_saldo }}</td>
-                        <td>{{ prepago.get_uses_list.count }}/{{ prepago.cantidad }} </td>
-                        <td><span class="badge bg-{% if prepago.pagado %}success{% else %}warning{% endif %}">{{ prepago.valor }}</span></td>
-                        <td>{{ prepago.total_gastado }} </td>
-                        {% comment %} <td>{{ prepago.get_alert }}</td> {% endcomment %}
-                        {% comment %} <td>{{ prepago.sobre_verde }}</td>{% endcomment %}
-                        {% comment %} <td>{{ consumo.efectivo }}</td>  {% endcomment %}
-                        
-                      </tr>
-                      <tr class="expandable-body d-none">
-                        <td colspan="9">
-                          <p style="display: none;">
-                            <ul>
-                              {% for item in consumo.comanda.comandaitem_set.all %}
-                              <li>{{ item }} x {{ item.cantidad }}</li>
-                              {% endfor %}
-                            </ul>
-                          </p>
-                        </td>
-                      </tr>
-                    {% empty %}
-                    <tr>
-                        <td>....</td>
-                        <td>....</td>
-                        <td>....</td>
-                        <td>....</td>
-                        <td>....</td>
-                        <td>....</td>
-                        <td>....</td>
-                        <td>....</td>
-                        <td>....</td>
-                      </tr>
-                    
-                    {% endfor %}
-                  </tbody>
-              </table>
-          </div>
-        
       </div>
       <!-- /.card-body -->
     </div>

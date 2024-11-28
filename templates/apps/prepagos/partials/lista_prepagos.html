@@ -1,4 +1,4 @@
-<h4>Dinero disponible: {{ ppagos.disponible }} Bs.</h4>
+<h4>Dinero disponible: {{ prepagos.disponible }} Bs.</h4>
 <div class="table-responsive">
     <table class="table table-hover text-nowrap">
         <thead>
@@ -20,12 +20,12 @@
             <td colspan="2"><strong>>> Totales >> </strong></td>
             <td><strong></strong></td>
             <td><strong></strong></td>
-            <td><strong>{{ ppagos.acumulado }}</strong></td>
-            <td><strong>{{ ppagos.saldo }}</strong></td>
-            <td><strong>{{ ppagos.gastado}}</strong></td>
+            <td><strong>{{ prepagos.acumulado }}</strong></td>
+            <td><strong>{{ prepagos.saldo }}</strong></td>
+            <td><strong>{{ prepagos.gastado}}</strong></td>
           </tr>
           
-          {% for prepago in prepagos %}
+          {% for prepago in prepagos.lista %}
             <tr data-widget="expandable-table" aria-expanded="false"
               _="on click toggle the *display of the next <p/>
                 toggle .d-none on the next <tr/>">

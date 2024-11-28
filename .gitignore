@@ -63,12 +63,13 @@ docs/_build/
 
 # PyBuilder
 target/
-
+*.sql
 *.json
 db.sqlite3
 *.sqlite3
 .idea/
 .env
+*.bak
 logs/*.log
 set_webhook.sh
 Pipfile

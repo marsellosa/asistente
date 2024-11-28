@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from reportes.forms import ReporteDiarioForm
-from reportes.utils import reporte_consumos
+from reportes.utils import reporte_consumos, prepagos_list
 from home.decorators import allowed_users
 # rest_framework 
 
@@ -27,4 +27,9 @@ def reporte_diario(request, id_operador=None, fechaDesde=None, fechaHasta=None):
 
     return render(request, template, context)
 
-
+@allowed_users(['admin', 'operadores'])
+def reporte_prepagos(request, id_operador=None):
+    context, template = {}, 'apps/prepagos/partials/lista_prepagos.html'
+    context = {'prepagos': prepagos_list(id_operador)}
+    # print(f"context: {context}")
+    return render(request, template, context)

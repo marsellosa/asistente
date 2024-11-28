@@ -85,11 +85,22 @@ def obtener_semana_iso(fecha):
 def prepagos_list(id_operador=None, activo=True):
 
     if id_operador is not None:
-        prepagos = Prepago.objects.filter(socio__operador__id=id_operador, activo=activo)
+        prepagos = Prepago.objects.filter(socio__operador__id=id_operador, activo=activo).order_by('-created')
     else:
-        prepagos = Prepago.objects.filter(activo=activo)
+        prepagos = Prepago.objects.filter(activo=activo).order_by('-created')
+        
+    acumulado = round(sum([prepago.get_acumulado() for prepago in prepagos]), 2)
+    gastado = round(sum([prepago.total_gastado() for prepago in prepagos]), 2)
+
+    ppagos = {
+        'lista': prepagos,
+        'acumulado' : acumulado,
+        'saldo' : round(sum([prepago.get_saldo() for prepago in prepagos]), 2),
+        'gastado' : gastado,
+        'disponible' : round(acumulado - gastado, 2)
+    }
     
-    return prepagos.order_by('-created')
+    return ppagos
 
 def get_pp_oper(pp_oper):
     transferencias = pp_oper.filter(transferenciapp__isnull=False)
@@ -153,21 +164,11 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
         operador = None
         lista_prepagos = prepagos_list()
 
-    acumulado = round(sum([prepago.get_acumulado() for prepago in lista_prepagos]), 2)
-    saldo = round(sum([prepago.get_saldo() for prepago in lista_prepagos]), 2)
-    gastado = round(sum([prepago.total_gastado() for prepago in lista_prepagos]), 2)
-    disponible = round(acumulado - gastado, 2)
     pagos = get_cons_oper(consumos)
     ppagos = get_pp_oper(prepagos)
     pagos_totales = round(sum(pagos + ppagos), 2)
 
     context = {
-        'ppagos' : {
-            'acumulado' : acumulado,
-            'saldo' : saldo,
-            'gastado' : gastado,
-            'disponible' : disponible
-        },
         'prepagos' : lista_prepagos,
         'operador': operador,
         'consumos': consumos,
