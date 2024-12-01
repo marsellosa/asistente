@@ -1,7 +1,7 @@
-<td id="statusTag" 
+<td id="statusTag-{{ comanda.id}}" 
     {% if user.is_staff %}
         hx-get="{% url "comanda:hx-admin-update-status" comanda.id %}"
-        hx-target="#statusTag"
+        hx-target="#statusTag-{{ comanda.id}}"
         hx-swap="outerHTML"
     {% endif %}
     >
