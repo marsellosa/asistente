@@ -4,20 +4,21 @@ from django.conf import settings
 from django.contrib import messages
 from comanda.forms import ComandaItemForm
 from comanda.models import Comanda, ComandaItem, ComandaStatus
+from home.decorators import allowed_users
 from prepagos.models import Prepago
 from socios.models import Socio
 
 from productos.models import *
 
 User = settings.AUTH_USER_MODEL
-
+@allowed_users(['admin', 'operador'])
 def comanda_view(request):
     context, template = {}, 'apps/comanda/partials/total.html'
     prod = get_object_or_404(Categoria, nombre='BATIDO')
     context = {'prod': prod}
     return render(request, template, context)
     # return HttpResponse(prod)
-
+@allowed_users(['admin', 'operador'])
 def hx_create_comanda_view(request, id_socio=None):
     context, template = {}, 'apps/comanda/partials/comanda-pendiente.html'
     
@@ -33,7 +34,7 @@ def hx_create_comanda_view(request, id_socio=None):
             }
     
     return render(request, template, context)
-
+@allowed_users(['admin', 'operador'])
 def hx_crud_comandaitem_view(request, id_comanda=None, id_receta=None):
     # add/delete item for Comanda
     context, template = {}, 'apps/comanda/partials/table-form.html'
@@ -92,7 +93,7 @@ def hx_crud_comandaitem_view(request, id_comanda=None, id_receta=None):
     #     'msg': msg
     # }
     return render(request, template, context)
-
+@allowed_users(['admin', 'operador'])
 def hx_add_prepago_view(request, id_comanda=None, id_prepago=None):
     context, template = {}, 'apps/comanda/partials/total.html'
     
@@ -112,7 +113,7 @@ def hx_add_prepago_view(request, id_comanda=None, id_prepago=None):
     prepago.save()
     context = {'parent_obj': comanda}
     return render(request, template, context)
-
+@allowed_users(['admin', 'operador'])
 def comanda_item_edit_view(request, id_comanda_item):
     context, template = {}, 'apps/comanda/partials/comanda-item.html'
     if not request.htmx:
@@ -133,7 +134,7 @@ def comanda_item_edit_view(request, id_comanda_item):
     context['obj']= comanda_item
 
     return render(request, template,context)
-
+@allowed_users(['admin', 'operador'])
 def hx_update_status(request, id_comanda):
     context, template = {}, 'apps/pedidos/partials/item-deleted.html'
     comanda = get_object_or_404(Comanda, id=id_comanda)
@@ -153,4 +154,18 @@ def hx_update_status(request, id_comanda):
     context = {'messages': [message for message in messages.get_messages(request)]}
         
 
+    return render(request, template, context)
+
+@allowed_users(['admin'])
+def hx_admin_update_status(request, id_comanda):
+    context, template = {}, 'apps/main/partials/status.html'
+    comanda = get_object_or_404(Comanda, id=id_comanda)
+    if comanda.status == 'p':
+        status = 'e'
+    elif comanda.status == 'e':
+        status = 'p' 
+    comanda.status = status
+    comanda.save()
+    context.update({'comanda': comanda})
+    
     return render(request, template, context)

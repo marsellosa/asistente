@@ -65,16 +65,11 @@
             {% for comanda in comandas %}
             <tr>
               <td><a href={{ comanda.socio.get_absolute_url }}>{{ comanda.socio }}</a></td>
-              {% if comanda.status == 'p' %}
-              <td><span class="badge badge-warning">Pendiente</span></td>
-              {% elif comanda.status == 'e' %}
-              <td><span class="badge badge-success">Entregado</span></td>
-              {% endif %}
+              {% include "apps/main/partials/status.html" %}
               <td>{{ comanda.get_cart_total }}</td>
               <td>
                   <div class="sparkbar" data-color="#f39c12" data-height="20">
-                  {% for item in comanda.get_all_items %}
-                      
+                  {% for item in comanda.get_all_items %}  
                       {% if forloop.last %}
                       {{item}}
                       {% else %}
