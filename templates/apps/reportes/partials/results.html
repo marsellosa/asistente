@@ -22,8 +22,8 @@
     <td>{{ consumo.mayoreo }}</td>
     <td>{{ consumo.insumos }}</td>
     <td>{{ consumo.puntos_volumen }}</td>
-    <td>{{ consumo.sobre_verde }}</td>
-    <td>{% if consumo.transferencia  %}<span class="badge bg-info">{{ consumo.efectivo }}</span>{% else %}{{ consumo.efectivo }}{% endif %}</td>
+    <td>{% if consumo.comanda.prepago.all %}<span class="badge bg-warning">{{ consumo.sobre_verde }}</span>{% else %}{{ consumo.sobre_verde }}{% endif %}</td>
+    <td>{% if consumo.transferencia %}<span class="badge bg-info">{{ consumo.efectivo }}</span>{% else %}{{ consumo.efectivo }}{% endif %}</td>
     
   </tr>
   <tr class="expandable-body d-none">
@@ -39,8 +39,8 @@
   </tr>
 {% empty %}
 <tr>
-    <td>....</td>
-    <td>....</td>
+    <td>{{ hoy | date:'D' }}</td>
+    <td>{{ hoy | date:'d M Y' }}</td>
     <td>....</td>
     <td>....</td>
     <td>....</td>
