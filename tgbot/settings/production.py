@@ -8,7 +8,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', cast=Csv())
+CSRF_TRUSTED_ORIGINS = config('ALLOWED_HOSTS', cast=Csv())
 
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
