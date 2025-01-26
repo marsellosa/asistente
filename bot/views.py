@@ -1,39 +1,60 @@
-# bot/views.py
+import json
 import logging
-from django.http import JsonResponse
-from decouple import config
+import asyncio
+from django.conf import settings
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
-# Configura el token del bot y la aplicación
-TELEGRAM_TOKEN = config('TOKEN')
-application = Application.builder().token(TELEGRAM_TOKEN).build()
-
+# Configurar logging
 logger = logging.getLogger(__name__)
 
-# Define las funciones de comando como en tu código original
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+# Inicializar la aplicación del bot
+application = Application.builder().token(settings.TELEGRAM_BOT_TOKEN).build()
+
+# Define comandos para el bot
+async def start(update: Update, context):
+    """Manejador para el comando /start."""
     user = update.effective_user
-    await update.message.reply_html(rf"Hi {user.mention_html()}!")
+    await update.message.reply_text(f"Hola {user.first_name}, ¡bienvenido!")
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Help!")
+async def help_command(update: Update, context):
+    """Manejador para el comando /help."""
+    await update.message.reply_text("¿En qué puedo ayudarte?")
 
-async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def echo(update: Update, context):
+    """Echo de los mensajes enviados por el usuario."""
     await update.message.reply_text(update.message.text)
 
-# Agrega los manejadores de comandos
+# Registrar los manejadores de comandos y mensajes
 application.add_handler(CommandHandler("start", start))
 application.add_handler(CommandHandler("help", help_command))
 application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
-# Vista para recibir las actualizaciones
+# Crear un bucle de eventos global
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
 
-async def telegram_webhook(request):
-    if request.method == "POST":
-        # Convierte el JSON de Telegram en un objeto Update
-        update = Update.de_json(request.json(), application.bot)
-        # Procesa el update con la aplicación de Telegram
-        await application.update_queue.put(update)
-        return JsonResponse({"status": "ok"})
-    return JsonResponse({"error": "Método no permitido"}, status=405)
+class TelegramWebhookView(APIView):
+    """Vista para manejar las actualizaciones de Telegram."""
+
+    def post(self, request, *args, **kwargs):
+        try:
+            # Decodifica el JSON recibido desde Telegram
+            json_update = request.body.decode("utf-8")
+            update_data = json.loads(json_update)
+            
+            # Convierte el diccionario a un objeto Update
+            update = Update.de_json(update_data, application.bot)
+            
+            # Inicializa la aplicación en el bucle de eventos
+            loop.run_until_complete(application.initialize())
+            
+            # Procesa la actualización en el bucle de eventos
+            loop.run_until_complete(application.process_update(update))
+            
+            return Response({"message": "OK"}, status=200)
+        except Exception as e:
+            logger.error(f"Error procesando la actualización: {e}. Datos: {json_update}")
+            return Response({"error": str(e)}, status=400)

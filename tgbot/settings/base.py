@@ -141,3 +141,6 @@ EMAIL_READY = (
 )
 if EMAIL_READY:
     pass
+
+# settings.py
+TELEGRAM_BOT_TOKEN = config('TOKEN')  # Reemplaza con tu token real
