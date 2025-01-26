@@ -1,7 +1,6 @@
 # bot/views.py
 import logging
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from decouple import config
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
@@ -29,7 +28,7 @@ application.add_handler(CommandHandler("help", help_command))
 application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
 # Vista para recibir las actualizaciones
-@csrf_exempt
+
 async def telegram_webhook(request):
     if request.method == "POST":
         # Convierte el JSON de Telegram en un objeto Update
