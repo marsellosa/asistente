@@ -27,7 +27,12 @@ def hx_create_comanda_view(request, id_socio=None):
 
     if request.method == 'POST':
         socio = Socio.objects.get(id=id_socio)
-        parent_obj = Comanda.objects.create(usuario=request.user, socio=socio)
+        # parent_obj = Comanda.objects.create(usuario=request.user, socio=socio)
+        parent_obj = Comanda.objects.get_or_create(
+            socio=socio,
+            status=ComandaStatus.PENDIENTE,  # Ajusta 'estado' según el campo de tu modelo
+            defaults={'usuario': request.user}  # Solo se usa si se crea
+        )[0]
         context = {
             'parent_obj': parent_obj,
             'comanda_item_form': ComandaItemForm()

@@ -23,27 +23,33 @@ def socios_list_view(request):
 
 @allowed_users(allowed_roles=['admin', 'operadores'])
 def socio_profile_view(request, id=None):
-    context, template = {}, 'apps/socios/profile.html'
-    lista = ''
-    obj = get_object_or_404(Socio, id=id)
-    
-    try:
-        comanda = Comanda.objects.get(socio_id=id, status=ComandaStatus.PENDIENTE)
-        lista = comanda.prepago.all()
-    except:
-        comanda = None
-    
-    prepagos = obj.prepago_set.filter(pagado=False) #type:ignore
+    context, template = context = {}, 'apps/socios/profile.html'
 
+    obj = get_object_or_404(Socio, id=id)  # Obtener el socio o devolver 404
+   
+    # Intentar obtener la comanda pendiente
+    comanda = Comanda.objects.filter(socio_id=id, status=ComandaStatus.PENDIENTE).first()
+    
+    # Obtener los prepago pendientes asociados al socio
+    prepagos = obj.prepago_set.filter(pagado=False)  # type: ignore
+    
+    # Preparar datos del formulario ComandaModelForm
+    comanda_data = {
+        'comanda': comanda,
+        'prepagos': prepagos
+    }
+    
+    # Preparar el contexto para la plantilla
     context = {
         'socio_obj': obj,
         'parent_obj': comanda,
-        'comanda_form': ComandaModelForm({'comanda': comanda, 'prepagos': prepagos}),
+        'comanda_form': ComandaModelForm(comanda_data),
         'prepagos_obj': prepagos,
         'comanda_item_form': ComandaItemForm(),
         'prepago_form': PrepagoForm(),
-        'pago_form': PagoForm()
+        'pago_form': PagoForm(),
     }
+
     return render(request, template, context)
 
 def hx_asistencia(request, id_socio):

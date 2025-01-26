@@ -29,7 +29,8 @@ class ReporteDiarioForm(Form):
                 'hx-get': url,
                 'hx-trigger': 'change',
                 'hx-target': '#consumo-results',
-                'hx-select': '#tablas-resultados'
+                'hx-select': '#consumo-results',
+                'hx-swap': 'outerHTML'
             }
         )
 

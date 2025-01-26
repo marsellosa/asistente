@@ -32,7 +32,7 @@
         <h3 class="card-title">Filtros</h3>
       </div>
        <!-- form start -->
-      <form hx-post="." hx-target="#consumo-results">
+      <form hx-post="." hx-target="#consumo-results" hx-select="#consumo-results" hx-swap="outerHTML">
         {% csrf_token %}
       <div class="card-body">
         {% for field in form %}
@@ -57,7 +57,7 @@
   <div class="col-md-9">
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Responsive Hover Table</h3>
+        <h3 class="card-title">Reporte</h3>
 
         <div class="card-tools">
           <div class="input-group input-group-sm" style="width: 150px;">
@@ -72,27 +72,77 @@
         </div>
       </div>
       <!-- /.card-header -->
-      <div class="card-body p-0">      
-        <div class="row table-responsive p-0">
-            <table class="table table-hover text-nowrap">
-                <thead>
-                    <tr>
-                    <th>Día</th>
-                    <th>Fecha</th>
-                    <th>Socio</th>
-                    <th>Rojo</th>
-                    <th>Mayoreo</th>
-                    <th>Insumos</th>
-                    <th>Descuento</th>
-                    <th>Verde</th>
-                    <th>Efectivo</th>
+      <div class="card-body table-responsive p-0">      
+          <table class="table table-hover text-nowrap">
+              <thead>
+                  <tr>
+                  <th>Día</th>
+                  <th>Fecha</th>
+                  <th>Socio</th>
+                  <th>Rojo</th>
+                  <th>Mayoreo</th>
+                  <th>Insumos</th>
+                  <th>Descuento</th>
+                  <th>Verde</th>
+                  <th>Efectivo</th>
+                  </tr>
+              </thead>
+              <tbody id="consumo-results">
+                  {% comment %} {% include 'apps/reportes/partials/results.html' %} {% endcomment %}
+                  <tr>
+                    <td colspan="3"><strong># Consumos: {{ consumos.count }} | PrePago ($): {{ totales.pp_oper }}</strong></td>
+                    {% comment %} <td><strong> > Totales ></strong></td> {% endcomment %}
+                    <td><strong>{{ totales.sobre_rojo }}</strong></td>
+                    <td><strong>{{ totales.mayoreo }}</strong></td>
+                    <td><strong>{{ totales.insumos }}</strong></td>
+                    <td><strong>{{ totales.puntos_volumen }}</strong></td>
+                    <td><strong>{{ totales.sobre_verde }}</strong></td>
+                    <td><strong>{{ totales.efectivo }}</strong></td>
+                  </tr>
+                  
+                  {% for consumo in consumos %}
+                    <tr data-widget="expandable-table" aria-expanded="false"
+                      _="on click toggle the *display of the next <p/>
+                        toggle .d-none on the next <tr/>"
+                        >
+                      {% comment %} <td>{{ consumo.id }}</td> {% endcomment %}
+                      <td>{{ consumo.comanda.fecha | date:'D' }}</td>
+                      <td>{{ consumo.comanda.fecha | date:'d M Y' }}</td>
+                      <td>{{ consumo }}</td>
+                      <td>{{ consumo.sobre_rojo }}</td>
+                      <td>{{ consumo.mayoreo }}</td>
+                      <td>{{ consumo.insumos }}</td>
+                      <td>{{ consumo.puntos_volumen }}</td>
+                      <td>{% if consumo.comanda.prepago.all %}<span class="badge bg-warning">{{ consumo.sobre_verde }}</span>{% else %}{{ consumo.sobre_verde }}{% endif %}</td>
+                      <td>{% if consumo.transferencia %}<span class="badge bg-info">{{ consumo.efectivo }}</span>{% else %}{{ consumo.efectivo }}{% endif %}</td>
+                      
                     </tr>
-                </thead>
-                <tbody id="consumo-results">
-                    {% include 'apps/reportes/partials/results.html' %}
-                </tbody>
-            </table>
-        </div>
+                    <tr class="expandable-body d-none">
+                      <td colspan="9">
+                        <p style="display: none;">
+                          <ul>
+                            {% for item in consumo.comanda.comandaitem_set.all %}
+                            <li>{{ item }} x {{ item.cantidad }}</li>
+                            {% endfor %}
+                          </ul>
+                        </p>
+                      </td>
+                    </tr>
+                  {% empty %}
+                    <tr>
+                      <td>{{ hoy | date:'D' }}</td>
+                      <td>{{ hoy | date:'d M Y' }}</td>
+                      <td>....</td>
+                      <td>....</td>
+                      <td>....</td>
+                      <td>....</td>
+                      <td>....</td>
+                      <td>....</td>
+                      <td>....</td>
+                    </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
       </div>
       <!-- /.card-body -->
     </div>
