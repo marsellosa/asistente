@@ -1,71 +1,78 @@
-<div class="card-body p-0">
-  <div class="table-responsive">
-    <table class="table table-hover text-nowrap m-0">
-      <thead>
-      <tr>
-        <th>Fecha</th>
-        <th>Operador</th>
-        <th>Status</th>
-        <th>Total</th>
-        <th>Pagado</th>
-
-      </tr>
-      </thead>
-      <tbody>
-      {% for obj in obj_list %}
-        <tr data-widget="expandable-table" aria-expanded="false"
-        _="on click toggle the *display of the next <p/>
-          toggle .d-none on the next <tr/>">
-          <td><a href="{{ obj.get_absolute_url }}">{{ obj.timestamp }}</a></td>
-          <td>{{ obj.operador }}</td>
-          {% if obj.status == 'p' %}
-            <td><span class="badge badge-warning">Pendiente</span></td>
-          {% elif obj.status == 'e' %}
-            <td><span class="badge badge-success">Entregado</span></td>
-          {% elif obj.status == 'c' %}
-            <td><span class="badge badge-danger">Cancelado</span></td>
-          {% elif obj.status == 'v' %}
-            <td><span class="badge badge-info">Vencido</span></td>               
-          {% endif %}
-          <td>{{ obj.get_cart_total }}</td>
-          <td>{{ obj.total_final }}</td>
-        </tr>
-        <tr class="expandable-body d-none">
-          <td colspan="4">
-            <p style="display: none;">
-              <ul>
-                {% for item in obj.get_all_items %}
-                <li>{{ item.categoria }} {{ item.detalles }} x {{ item.cantidad }}</li>
-                {% endfor %}
-              </ul>
-            </p>
-          </td>
-          <td>
-            {% if obj.get_all_items %}
-              {% include 'apps/pedidos/partials/send_order.html' %}
-            {% endif %}
-          </td>
-        </tr>
-      {% empty %}
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Pedidos</h3>
+  </div>
+  <!-- ./card-header -->
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover text-nowrap m-0">
+        <thead>
         <tr>
-          <td>...</td>
-          <td>...</td>
-          <td><span class="badge badge-danger">Vacio</span></td>
-          <td>...</td>
+          <th>Fecha</th>
+          <th>Operador</th>
+          <th>Status</th>
+          <th>Total</th>
+          <th>Pagado</th>
+  
         </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+        {% for obj in obj_list %}
+          <tr data-widget="expandable-table" aria-expanded="false"
+          _="on click toggle the *display of the next <p/>
+            toggle .d-none on the next <tr/>">
+            <td><a href="{{ obj.get_absolute_url }}">{{ obj.timestamp }}</a></td>
+            <td>{{ obj.operador }}</td>
+            {% if obj.status == 'p' %}
+              <td><span class="badge badge-warning">Pendiente</span></td>
+            {% elif obj.status == 'e' %}
+              <td><span class="badge badge-success">Entregado</span></td>
+            {% elif obj.status == 'c' %}
+              <td><span class="badge badge-danger">Cancelado</span></td>
+            {% elif obj.status == 'v' %}
+              <td><span class="badge badge-info">Vencido</span></td>               
+            {% endif %}
+            <td>{{ obj.get_cart_total }}</td>
+            <td>{{ obj.total_final }}</td>
+          </tr>
+          <tr class="expandable-body d-none">
+            <td colspan="4">
+              <p style="display: none;">
+                <ul>
+                  {% for item in obj.get_all_items %}
+                  <li>{{ item.categoria }} {{ item.detalles }} x {{ item.cantidad }}</li>
+                  {% endfor %}
+                </ul>
+              </p>
+            </td>
+            <td>
+              {% if obj.get_all_items %}
+                {% include 'apps/pedidos/partials/send_order.html' %}
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td>...</td>
+            <td>...</td>
+            <td><span class="badge badge-danger">Vacio</span></td>
+            <td>...</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <!-- /.table-responsive -->
   </div>
-  <!-- /.table-responsive -->
+  <!-- /.card-body -->
+  {% if operador %}
+    <div class="card-footer clearfix">
+      <a class="btn btn-sm btn-info float-left"
+      hx-post="{% url 'pedidos:hx-crear' id_operador=operador.pk %}" 
+      >Nuevo Pedido</a>
+      <a href="{% url 'pedidos:list-by-operador' operador.pk %}" class="btn btn-sm btn-secondary float-right">Todos los Pedidos</a>
+    </div>
+  {% endif %}
+  <!-- /.card-footer -->
 </div>
-<!-- /.card-body -->
-{% if operador %}
-  <div class="card-footer clearfix">
-    <a class="btn btn-sm btn-info float-left"
-    hx-post="{% url 'pedidos:hx-crear' id_operador=operador.pk %}" 
-    >Nuevo Pedido</a>
-    <a href="{% url 'pedidos:list-by-operador' operador.pk %}" class="btn btn-sm btn-secondary float-right">Todos los Pedidos</a>
-  </div>
-{% endif %}
-<!-- /.card-footer -->
+
