@@ -23,7 +23,7 @@ def socios_list_view(request):
 
 @allowed_users(allowed_roles=['admin', 'operadores'])
 def socio_profile_view(request, id=None):
-    context, template = context = {}, 'apps/socios/profile.html'
+    context, template = {}, 'apps/socios/profile.html'
 
     obj = get_object_or_404(Socio, id=id)  # Obtener el socio o devolver 404
    

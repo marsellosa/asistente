@@ -1,15 +1,20 @@
 <tr>
   <td colspan="3"><strong># Consumos: {{ consumos.count }} | PrePago ($): {{ totales.pp_oper }}</strong></td>
   {% comment %} <td><strong> > Totales ></strong></td> {% endcomment %}
+  <td><strong>{{ totales.efectivo }}</strong></td>
   <td><strong>{{ totales.sobre_rojo }}</strong></td>
   <td><strong>{{ totales.mayoreo }}</strong></td>
   <td><strong>{{ totales.insumos }}</strong></td>
-  <td><strong>{{ totales.puntos_volumen }}</strong></td>
   <td><strong>{{ totales.sobre_verde }}</strong></td>
-  <td><strong>{{ totales.efectivo }}</strong></td>
+  <td><strong>{{ totales.puntos_volumen }}</strong></td>
+  
+</tr>
+<tr>
+  <td colspan="3"><strong> Total efectivo consumos</strong></td>
+  <td colspan="6"><strong> {{ totales.pagos_ef }}</strong></td>
 </tr>
 
-{% for consumo in consumos %}
+{% for consumo in socios_efectivo_consumos %}
 <tr data-widget="expandable-table" aria-expanded="false"
   _="on click toggle the *display of the next <p/>
     toggle .d-none on the next <tr/>"
@@ -18,12 +23,63 @@
     <td>{{ consumo.comanda.fecha | date:'D' }}</td>
     <td>{{ consumo.comanda.fecha | date:'d M Y' }}</td>
     <td>{{ consumo }}</td>
+    <td>{% if consumo.transferencia %}<span class="badge bg-info">{{ consumo.efectivo }}</span>{% else %}{{ consumo.efectivo }}{% endif %}</td>
     <td>{{ consumo.sobre_rojo }}</td>
     <td>{{ consumo.mayoreo }}</td>
     <td>{{ consumo.insumos }}</td>
-    <td>{{ consumo.puntos_volumen }}</td>
     <td>{% if consumo.comanda.prepago.all %}<span class="badge bg-warning">{{ consumo.sobre_verde }}</span>{% else %}{{ consumo.sobre_verde }}{% endif %}</td>
+    <td>{{ consumo.puntos_volumen }}</td>
+    
+    
+    
+  </tr>
+  <tr class="expandable-body d-none">
+    <td colspan="9">
+      <p style="display: none;">
+        <ul>
+          {% for item in consumo.comanda.comandaitem_set.all %}
+          <li>{{ item }} x {{ item.cantidad }}</li>
+          {% endfor %}
+        </ul>
+      </p>
+    </td>
+  </tr>
+{% empty %}
+<tr>
+    <td>{{ hoy | date:'D' }}</td>
+    <td>{{ hoy | date:'d M Y' }}</td>
+    <td>....</td>
+    <td>....</td>
+    <td>....</td>
+    <td>....</td>
+    <td>....</td>
+    <td>....</td>
+    <td>....</td>
+  </tr>
+
+{% endfor %}
+
+<tr>
+  <td colspan="3"><strong> Total tranferencia consumos</strong></td>
+  <td colspan="6"><span class="badge bg-info">{{ totales.pagos_qr }}</span></td>
+</tr>
+
+{% for consumo in socios_transferencia_consumos %}
+<tr data-widget="expandable-table" aria-expanded="false"
+  _="on click toggle the *display of the next <p/>
+    toggle .d-none on the next <tr/>"
+    >
+    {% comment %} <td>{{ consumo.id }}</td> {% endcomment %}
+    <td>{{ consumo.comanda.fecha | date:'D' }}</td>
+    <td>{{ consumo.comanda.fecha | date:'d M Y' }}</td>
+    <td>{{ consumo }}</td>
     <td>{% if consumo.transferencia %}<span class="badge bg-info">{{ consumo.efectivo }}</span>{% else %}{{ consumo.efectivo }}{% endif %}</td>
+    <td>{{ consumo.sobre_rojo }}</td>
+    <td>{{ consumo.mayoreo }}</td>
+    <td>{{ consumo.insumos }}</td>
+    <td>{% if consumo.comanda.prepago.all %}<span class="badge bg-warning">{{ consumo.sobre_verde }}</span>{% else %}{{ consumo.sobre_verde }}{% endif %}</td>
+    <td>{{ consumo.puntos_volumen }}</td>
+    
     
   </tr>
   <tr class="expandable-body d-none">

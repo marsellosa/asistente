@@ -1,8 +1,8 @@
-from typing import Any
+from typing import List, Optional
 from django.db.models import * #type: ignore
 from django.conf import settings
 from django.urls import reverse
-from productos.models import Categoria, Detalles, PrecioDistribuidor
+from productos.models import Categoria, Detalles, PrecioDistribuidor, PrecioClientePreferente
 from recetas.validators import validar_unidad_de_medida, todo_a_gramos
 from recetas.utils import get_float_for_save
 
@@ -44,14 +44,46 @@ class Receta(Model):
 
     @property
     def get_cart_points(self):
-        total_puntos = round(sum([ing_herb.get_vol_points() for ing_herb in self.get_herbal_ingredient_children()]), 2)
-        return total_puntos
+        total_puntos = self.get_herbal_ingredient_children().aggregate(
+            total=Sum(self.get_vol_points())
+        )['total'] or 0
+        return round(total_puntos, 2)
 
     @property
-    def get_total_receta(self):
-        total_herbal = round(sum([ingrediente.get_total() for ingrediente in self.get_herbal_ingredient_children()]), 1)
-        total_no_herbal = round(sum([ingrediente.get_costo() for ingrediente in self.get_ingredients_children()]), 1)
-        return round(sum([total_herbal, total_no_herbal]), 2)
+    def get_total_receta(self) -> Optional[float]:
+        """
+        Calcula el costo total de la receta sumando los costos de ingredientes herbales y no herbales.
+
+        Returns:
+            float: El costo total de la receta, redondeado a dos decimales.
+            None: Si no se puede calcular debido a datos insuficientes o errores.
+        """
+        try:
+            # Obtener los ingredientes herbales y no herbales
+            herbal_ingredients = self.get_herbal_ingredient_children()
+            non_herbal_ingredients = self.get_ingredients_children()
+
+            if not isinstance(herbal_ingredients, (list, QuerySet)) or not isinstance(non_herbal_ingredients, (list, QuerySet)):
+                raise ValueError("Los métodos auxiliares deben devolver listas o QuerySets.")
+
+            # Calcular el costo total de ingredientes herbales
+            total_herbal = sum(
+                getattr(ingrediente, 'get_total', lambda: 0)() for ingrediente in herbal_ingredients
+            )
+
+            # Calcular el costo total de ingredientes no herbales
+            total_no_herbal = sum(
+                getattr(ingrediente, 'get_costo', lambda: 0)() for ingrediente in non_herbal_ingredients
+            )
+
+            # Sumar ambos totales y redondear el resultado final
+            total_receta = total_herbal + total_no_herbal
+            return round(total_receta, 2)
+
+        except (AttributeError, TypeError, ValueError) as e:
+            # Manejar errores y devolver None si ocurre algún problema
+            print(f"Error al calcular el costo total de la receta: {e}")
+            return None
     
     @property
     def get_sobre_rojo(self):
@@ -92,9 +124,21 @@ class Receta(Model):
     def get_ingredients_children(self):
         return self.recetaingrediente_set.all() #type: ignore
 
-    def get_herbal_ingredient_children(self):
-        return self.recetaingredienteherbal_set.all() #type: ignore
+    def get_herbal_ingredient_children(self) -> QuerySet:
+        """
+        Devuelve todos los ingredientes herbales relacionados con esta receta.
 
+        Returns:
+            QuerySet: Un QuerySet que contiene todos los objetos RecetaIngredienteHerbal
+                      relacionados con esta receta.
+        """
+        try:
+            # Acceder a la relación inversa para obtener los ingredientes herbales
+            return self.recetaingredienteherbal_set.all()
+        except AttributeError as e:
+            print(f"Error al acceder a los ingredientes herbales: {e}")
+            return []
+ 
     def __str__(self):
         return self.nombre
     
@@ -107,8 +151,6 @@ class Ingrediente(Model):
     def __str__(self):
         return self.nombre
 
-
-    
 class RecetaIngrediente(Model):
     receta = ForeignKey(Receta, on_delete=CASCADE)
     ingrediente = ForeignKey(Ingrediente, on_delete=CASCADE, null=True)
@@ -153,9 +195,6 @@ class RecetaIngrediente(Model):
     def __str__(self):
         return str(self.ingrediente)
     
-
-
-
 class CostoIngrediente(Model):
     # ingrediente = ForeignKey(RecetaIngrediente, on_delete=SET_NULL, null=True)
     ingrediente = ForeignKey(Ingrediente, on_delete=CASCADE, null=True)
@@ -205,26 +244,69 @@ class RecetaIngredienteHerbal(Model):
 
     def get_total(self):
         # sumatoria de ingredientes herbales segun su precio al publico
-        precio = round(self.categoria.porcion.precio * self.cantidad_decimal / self.categoria.porcion.cantidad_decimal, 2)  # type: ignore
+        precio = self.get_costo(nivel='Cliente')  # type: ignore
+        # precio = round(self.categoria.porcion.precio * self.cantidad_decimal / self.categoria.porcion.cantidad_decimal, 2)  # type: ignore
         return precio
+    
 
-    def get_costo(self, nivel='Mayorista'):
+    def get_costo(self, nivel: str = 'Mayorista') -> Optional[float]:
+        """
+        Calcula el costo basado en el nivel de distribución especificado.
 
-        obj = PrecioDistribuidor.objects.filter(categoria=self.categoria, activo=True).first()
+        Args:
+            nivel (str): El nivel de distribución ('Mayorista', 'Productor Calificado', etc.).
+
+        Returns:
+            float: El costo calculado, redondeado a dos decimales.
+            None: Si no se puede calcular debido a datos insuficientes.
+        """
         
-        if nivel == 'Mayorista':
-            precio = obj.mayorista #type: ignore
-        elif nivel == 'Productor Calificado':
-            precio = obj.productor_calificado #type: ignore
-        elif nivel == 'Consultor Mayor':
-            precio = obj.consultor_mayor #type: ignore
-        elif nivel == 'Distribuidor':
-            precio = obj.distribuidor #type: ignore
+        if nivel == 'Cliente':
+            obj = PrecioClientePreferente.objects.filter(
+                categoria=self.categoria, activo=True
+                ).order_by("-inserted_on").first()
+            nivel_precio_map = {
+                'Cliente': obj.cliente,
+            }
+        else:
+            # Obtener el registro más reciente de precios para la categoría
+            obj = PrecioDistribuidor.objects.filter(
+                categoria=self.categoria, activo=True
+            ).order_by("-inserted_on").first()
 
-        cant_total = Detalles.objects.filter(categoria=self.categoria).first().cantidad_decimal #type: ignore
+            # Mapeo de niveles a campos de precios
+            nivel_precio_map = {
+                'Mayorista': obj.mayorista,
+                'Productor Calificado': obj.productor_calificado,
+                'Consultor Mayor': obj.consultor_mayor,
+                'Distribuidor': obj.distribuidor,
+            }
 
-        costo = round(precio * self.cantidad_decimal / cant_total, 2) #type: ignore
-        return costo
+        if not obj:
+                # No se encontró un registro de precios activo
+                return None
+
+        # Obtener el precio correspondiente al nivel
+        precio = nivel_precio_map.get(nivel)
+        if precio is None:
+            # Nivel no válido
+            return None
+
+        # Obtener la cantidad total desde Detalles
+        detalle = Detalles.objects.filter(categoria=self.categoria).first()
+        if not detalle or detalle.cantidad_decimal == 0:
+            # No se encontraron detalles válidos o cantidad_decimal es cero
+            return None
+
+        cant_total = detalle.cantidad_decimal
+
+        # Calcular el costo
+        try:
+            costo = round(precio * self.cantidad_decimal / cant_total, 2)
+            return costo
+        except (TypeError, ZeroDivisionError):
+            # Manejar errores de tipo o división por cero
+            return None
 
     def _kwargs(self):
         return {

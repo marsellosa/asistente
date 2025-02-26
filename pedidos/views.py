@@ -146,7 +146,7 @@ def list_pedidos_by_operador(request, id_operador=None):
     context, template = {}, 'apps/pedidos/list.html'
     operador = get_object_or_404(Operador, pk=id_operador)
     # operador = Operador.objects.get(id=id_operador)
-    pedidos = operador.pedido_set.all().order_by('-timestamp') #type: ignore
+    pedidos = operador.pedido_set.filter(status__in=['e', 'p']).order_by('-timestamp') #type: ignore
     if request.htmx:
         pedidos = pedidos[:5]
         template = 'apps/pedidos/partials/list.html'

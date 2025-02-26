@@ -1,42 +1,66 @@
 import csv, io
 from django.http import Http404
+from django.db import transaction
 from django.shortcuts import render
 from django.contrib.admin.views.decorators import staff_member_required
-from productos.models import Categoria, Detalles
+from productos.models import Categoria, Detalles, PrecioDistribuidor
 
 @staff_member_required
 def update_db_view(request):
     page_name = 'apps/registros/productos/update.html'
-    context = {
-        'msg':'Lista cargada exitosamente'
-    }
+    
+    # Initial context
+    context = {'msg': 'Lista cargada exitosamente'}
 
+    # Handle GET request
     if request.method == 'GET':
-        return render(request, page_name, {'msg':'Solo Archivos *.CSV'})
+        context['msg'] = 'Solo Archivos *.CSV'
+        return render(request, page_name, context)
+
+    # Check if a file was uploaded
+    if 'file' not in request.FILES:
+        context['msg'] = 'No se ha proporcionado ningún archivo.'
+        return render(request, page_name, context)
 
     csv_file = request.FILES['file']
+
+    # Validate file extension
     if not csv_file.name.endswith('.csv'):
-        return render(request, page_name, {'msg':'Formato de Archivo NO VALIDO'})
-        
-    file = io.TextIOWrapper(csv_file)
-    productos = csv.DictReader(file)
+        context['msg'] = 'Formato de Archivo NO VALIDO. Solo se permiten archivos *.CSV.'
+        return render(request, page_name, context)
 
-    for producto in productos:
-        Categoria.objects.update_or_create(
-            nombre = str(producto['nombre']),
-            defaults={
-                'descripcion' : str(producto['descripcion']),
-                'cantidad' : int(producto['cantidad']),
-                'puntos_volumen' : float(producto['puntos_volumen']),
-                'distribuidor' : float(producto['distribuidor']),
-                'consultor_mayor' : float(producto['consultor_mayor']),
-                'productor_calificado' : float(producto['productor_calificado']),
-                'mayorista' : float(producto['mayorista']),
-                'cliente_bs' : float(producto['cliente_bs']),
-                'cliente_sus' : float(producto['cliente_sus'])
-            }
-        )
+    try:
+        # Decode and read the CSV file
+        decoded_file = io.TextIOWrapper(csv_file.file, encoding='utf-8')
+        reader = csv.DictReader(decoded_file)
 
+        # Process each row in the CSV
+        with transaction.atomic():
+            for row in reader:
+                # Validate required fields
+                required_fields = ['categoria', 'distribuidor', 'consultor_mayor', 'productor_calificado',
+                                   'mayorista']
+                if not all(field in row for field in required_fields):
+                    raise ValueError(f"Faltan campos obligatorios en el archivo CSV: {required_fields}")
+
+                # Update or create the Categoria record
+                precio_ds = PrecioDistribuidor.objects.create(
+                    categoria = Categoria.objects.filter(nombre=str(row['categoria']), activo=True).first(),
+                    distribuidor = float(row['distribuidor']),
+                    consultor_mayor = float(row['consultor_mayor']),
+                    productor_calificado = float(row['productor_calificado']),
+                    mayorista = float(row['mayorista'])
+                )
+                precio_ds.save()
+ 
+
+    except Exception as e:
+        # Handle any errors during processing
+        context['msg'] = f"Error al procesar el archivo: {str(e)}"
+        return render(request, page_name, context)
+
+    # Success message
+    context['msg'] = 'Archivo procesado exitosamente.'
     return render(request, page_name, context)
 
 def hx_sabores_categoria(request, id_categoria=None, id=None):

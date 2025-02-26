@@ -15,10 +15,10 @@ class ReporteDiarioForm(Form):
                 }
 
     fechadesde = DateField(help_text="Fecha de Inicio", widget=DateInput(attrs=new_data))
-    fechahasta = DateField(widget=DateInput(attrs={'class': 'form-control', 'type': 'date' }))
+    # fechahasta = DateField(widget=DateInput(attrs={'class': 'form-control', 'type': 'date' }))
     
     class Meta:
-        fields = ['fechadesde', 'fechahasta']
+        fields = ['fechadesde']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -21,7 +21,8 @@ def search_products(request):
     search = request.GET.get('search')
     products_list = ''
     if search:
-        products_list = Categoria.objects.filter(nombre__icontains=search)
+        products_list = Categoria.objects.search(query=search)
+        # products_list = Categoria.objects.filter(nombre__icontains=search)
     serializer = CategoriaSerializer(products_list, many=True)
     # print(serializer.data)
     return Response(serializer.data)

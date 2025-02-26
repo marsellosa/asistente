@@ -116,7 +116,7 @@ def get_pp_oper(pp_oper):
 def get_cons_oper(consumos):
     transferencias = consumos.filter(transferencia__isnull=False)
     efectivo = consumos.filter(transferencia__isnull=True)
-    # print(f"consumos: {consumos}, transferencias: {transferencias}")
+    # print(f"efectivo: {list(efectivo)}, transferencias: {transferencias}")
     qr_resultado = transferencias.aggregate(total_efectivo=Sum('efectivo'))
     ef_resultado = efectivo.aggregate(total_efectivo=Sum('efectivo'))
     # ef_cons_oper = round(sum([consumo.efectivo for consumo in consumos]), 2)
@@ -127,7 +127,7 @@ def get_cons_oper(consumos):
 
 def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=None):
     context, consumos = {}, []
-        
+    
     rango = (
         fechaDesde is not None and
         fechaHasta is not None
@@ -137,14 +137,17 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
         fechaDesde = get_today()
     
     if rango:
-        consumos = Consumo.objects.by_date_range(fechaDesde, fechaHasta) #type: ignore
-        
+        consumos = Consumo.objects.by_date_range(fechaDesde, fechaHasta)  # type: ignore
         prepagos = Pago.objects.pago_by_date_range(fechaDesde, fechaHasta)
     else:
-        consumos = Consumo.objects.by_date(fechaDesde) # type: ignore
-        
-        # con_trans = consumos.filter(transferencia__isnull=False)
+        consumos = Consumo.objects.by_date(fechaDesde)  # type: ignore
         prepagos = Pago.objects.pago_by_date(fechaDesde)
+    
+    # Listas para separar usuarios por tipo de pago
+    socios_efectivo_consumos = set()
+    socios_transferencia_consumos = set()
+    socios_efectivo_prepagos = set()
+    socios_transferencia_prepagos = set()
     
     if id_operador is not None:
         operador = get_object_or_404(Operador, id=id_operador)
@@ -153,27 +156,40 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
         try:
             cons_user = consumos.by_user(usuario)
             prep_user = prepagos.by_user(usuario)
-            # print(f"fecha: {fechaDesde}, ef_cons_user, qr_cons_user: {get_cons_oper(cons_user)}")
-            # print(f"fecha: {fechaDesde}, ef_prep_user, qr_prep_user: {get_pp_oper(prep_user)}")
         except:
             pass
-        consumos = consumos.by_id_operador(id_operador) # type: ignore
+        consumos = consumos.by_id_operador(id_operador)  # type: ignore
         prepagos = prepagos.filter(prepago__socio__operador=operador)
-        # print(f"pp_oper: {pp_oper}")
     else:
         operador = None
         lista_prepagos = prepagos_list()
 
+    
+    # Separar usuarios por tipo de pago en consumos
+    socios_efectivo_consumos = consumos.filter(transferencia__isnull=True)
+    socios_transferencia_consumos = consumos.filter(transferencia__isnull=False)
+    
+    # Separar usuarios por tipo de pago en prepagos
+    socios_efectivo_prepagos = prepagos.filter(transferenciapp__isnull=True)
+    socios_transferencia_prepagos = prepagos.filter(transferenciapp__isnull=False)
+    
+    # Calcular totales
     pagos = get_cons_oper(consumos)
     ppagos = get_pp_oper(prepagos)
     pagos_totales = round(sum(pagos + ppagos), 2)
 
+    # print(f'socios_efectivo_consumos: {list(socios_efectivo_consumos)}')
+    # print(f"socios_transferencia_consumos: {list(socios_transferencia_consumos)}")
+    # print(f'socios_efectivo_prepagos: {list(socios_efectivo_prepagos)}')
+    # print(f"socios_transferencia_prepagos: {list(socios_transferencia_prepagos)}")
+    
+    # Agregar listas al contexto
     context = {
-        'prepagos' : lista_prepagos,
+        'prepagos': lista_prepagos,
         'operador': operador,
         'consumos': consumos,
         'hoy': fechaDesde,
-        'nro_sem' : obtener_semana_iso(fechaDesde)[1],
+        'nro_sem': obtener_semana_iso(fechaDesde)[1],
         'totales': {
             'total': consumos.count(),
             'sobre_rojo': round(sum([item.sobre_rojo for item in consumos]), 2),
@@ -184,13 +200,16 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
             'sobre_verde': round(sum([item.sobre_verde for item in consumos]), 2),
             'efectivo': round(sum([item.efectivo for item in consumos]), 2),
             'pp_oper': round(sum([item.monto for item in prepagos]), 2),
-            'efectivo_consumos': round(sum([item.efectivo for item in consumos]), 2),
             'pagos_ef': pagos[0],
             'pagos_qr': pagos[1],
             'ppagos_ef': ppagos[0],
             'ppagos_qr': ppagos[1],
             'total_pagos': pagos_totales,
         },
+        'socios_efectivo_consumos': list(socios_efectivo_consumos),
+        'socios_transferencia_consumos': list(socios_transferencia_consumos),
+        'socios_efectivo_prepagos': list(socios_efectivo_prepagos),
+        'socios_transferencia_prepagos': list(socios_transferencia_prepagos),
     }
     
     return context
