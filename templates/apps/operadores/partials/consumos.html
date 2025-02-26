@@ -1,5 +1,5 @@
   
-  <div class="row mb-3">
+  {% comment %} <div class="row mb-3">
     <form class="row" hx-post="{% url 'reportes:by-operador' id_operador=operador.id %}" hx-target="#consumo-results" hx-select="#tablas-resultados">
       {% csrf_token %}
       {% for field in form %}
@@ -12,8 +12,8 @@
           <i class="fas fa-search"></i>
         </button>
       </div>
-    </form>
-  </div>
+    </form> 
+  </div> {% endcomment %}
   <div id="consumo-results">
     <div class="row" id="tablas-resultados">
       <p class="lead mb-0">{{ hoy }} ({{ nro_sem }})</p>
@@ -25,39 +25,91 @@
         </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr data-widget="expandable-table" aria-expanded="false">
             <td>
               Total
             </td>
             <td>{{ totales.total_pagos }}</td>
           </tr>
-          <tr>
-        <tr>
-          <td>
-            Pagos Efectivo
-          </td>
-          <td>{{ totales.pagos_ef}}</td>
-        </tr>
-        <tr>
-          <td>
-            Pagos Transfer
-          </td>
-          <td><span class="badge bg-info">{{ totales.pagos_qr }}</span></td>
-        </tr>
-        <tr>
-          <td>
-            PrePagos Efectivo
-          </td>
-          <td>{{ totales.ppagos_ef }}</td>
-        </tr>
-        <tr>
-          <td>
-            PrePagos Transfer
-          </td>
-          <td><span class="badge bg-info">{{ totales.ppagos_qr }}</span></td>
-        </tr>
+          <tr class="expandable-body d-none">
+            <td colspan="2">
+              <p style="display: none;">
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+              </p>
+            </td>
+          </tr>
+          <tr data-widget="expandable-table" aria-expanded="false">
+            <td>
+              Consumo Efectivo
+            </td>
+            <td>{{ totales.pagos_ef}}</td>
+          </tr>
+          <tr class="expandable-body d-none">
+            <td colspan="2">
+              <ul style="display: none;">
+                {% for consumo in socios_efectivo_consumos %}
+                <li>{{ consumo.comanda.socio }} - {{ consumo.efectivo }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          <tr data-widget="expandable-table" aria-expanded="false">
+            <td >
+              Consumos Transfer
+            </td>
+            <td><span class="badge bg-info">{{ totales.pagos_qr }}</span></td>
+          </tr>
+          <tr class="expandable-body d-none p-0">
+            <td colspan="2">
+              
+                <table style="display: none;" class="table">
+                  <thead>
+                    <tr>
+                      <th>Socio</th>
+                      <th>Pagado</th>
+                    </tr>
+                  </thead>
+                  <tbody >
+                    <tr>
+                      {% for consumo in socios_efectivo_consumos %}
+                        <td>{{ consumo.comanda.socio }}</td>
+                        <td>{{ consumo.efectivo }}</td>
+                      {% endfor %}
+                    </tr>
+                  </tbody>
+                </table>
+                  
+            </td>
+          </tr>
+          <tr data-widget="expandable-table" aria-expanded="false">
+            <td >
+              PrePagos Efectivo
+            </td>
+            <td>{{ totales.ppagos_ef }}</td>
+          </tr>
+          <tr class="expandable-body d-none">
+            <td colspan="2">
+              <p style="display: none;">
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+              </p>
+            </td>
+          </tr>
+          <tr data-widget="expandable-table" aria-expanded="false">
+            <td >
+              PrePagos Transfer
+            </td>
+            <td><span class="badge bg-info">{{ totales.ppagos_qr }}</span></td>
+          </tr>
+          <tr class="expandable-body d-none">
+            <td colspan="2">
+              <p style="display: none;">
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+              </p>
+            </td>
+          </tr>
         </tbody>
       </table>
+      <h4 class="mt-3">Consumos</h4>
       <div class="table-responsive">
         <table class="table table-hover text-nowrap">
           <thead>
@@ -65,16 +117,32 @@
               <th>Día</th>
               <th>Fecha</th>
               <th>Socio</th>
+              <th>Pagado</th>
               <th>Rojo</th>
               <th>Mayoreo</th>
               <th>Insumos</th>
-              <th>Puntos</th>
               <th>Verde</th>
-              <th>Pagado</th>
+              <th>Puntos</th>
               </tr>
           </thead>
           <tbody >
               {% include 'apps/reportes/partials/results.html' %}
+          </tbody>
+        </table>
+      </div>
+      <h4 class="mt-3">PrePagos</h4>
+      <div class="table-responsive">
+        <table class="table table-hover text-nowrap">
+          <thead>
+              <tr>
+              <th>Día</th>
+              <th>Fecha</th>
+              <th>Socio</th>
+              <th>Monto</th>
+              </tr>
+          </thead>
+          <tbody >
+              {% comment %} {% include 'apps/reportes/partials/results.html' %} {% endcomment %}
           </tbody>
         </table>
       </div>

@@ -141,19 +141,52 @@ def pedidoitem_crud_view(request, pedido_id=None, item_id=None):
             
     return render(request, template, context)
 
+class PedidoStatus:
+    PENDIENTE = 'p'
+    ENTREGADO = 'e'
+
 @allowed_users(['admin', 'operadores'])
 def list_pedidos_by_operador(request, id_operador=None):
     context, template = {}, 'apps/pedidos/list.html'
     operador = get_object_or_404(Operador, pk=id_operador)
-    # operador = Operador.objects.get(id=id_operador)
-    pedidos = operador.pedido_set.filter(status__in=['e', 'p']).order_by('-timestamp') #type: ignore
+    
+    # Filter and order pedidos
+    pedidos = operador.pedido_set.filter(
+        status__in=[PedidoStatus.PENDIENTE, PedidoStatus.ENTREGADO]
+    ).order_by('-timestamp')
+
+    # Handle HTMX requests
     if request.htmx:
         pedidos = pedidos[:5]
         template = 'apps/pedidos/partials/list.html'
+
+    # Safely retrieve bot_user_id
+    bot_user_id = (
+        operador.licencia.persona.get_bot_id
+        if operador.licencia and operador.licencia.persona
+        else None
+    )
+
+    # Build context
     context = {
         'obj_list': pedidos,
         'operador': operador,
-        'bot_user_id': operador.licencia.persona.get_bot_id, #type: ignore
-        }
+        'bot_user_id': bot_user_id,
+    }
 
     return render(request, template, context)
+# def list_pedidos_by_operador(request, id_operador=None):
+#     context, template = {}, 'apps/pedidos/list.html'
+#     operador = get_object_or_404(Operador, pk=id_operador)
+#     # operador = Operador.objects.get(id=id_operador)
+#     pedidos = operador.pedido_set.filter(status__in=['e', 'p']).order_by('-timestamp') #type: ignore
+#     if request.htmx:
+#         pedidos = pedidos[:5]
+#         template = 'apps/pedidos/partials/list.html'
+#     context = {
+#         'obj_list': pedidos,
+#         'operador': operador,
+#         'bot_user_id': operador.licencia.persona.get_bot_id, #type: ignore
+#         }
+
+#     return render(request, template, context)
