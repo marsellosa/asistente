@@ -2,6 +2,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404
 from home.decorators import allowed_users
+from icecream import ic
 from pedidos.forms import *
 from pedidos.models import *
 
@@ -154,10 +155,11 @@ def list_pedidos_by_operador(request, id_operador=None):
     pedidos = operador.pedido_set.filter(
         status__in=[PedidoStatus.PENDIENTE, PedidoStatus.ENTREGADO]
     ).order_by('-timestamp')
-
+    
     # Handle HTMX requests
     if request.htmx:
         pedidos = pedidos[:5]
+        ic(pedidos)
         template = 'apps/pedidos/partials/list.html'
 
     # Safely retrieve bot_user_id
@@ -166,14 +168,14 @@ def list_pedidos_by_operador(request, id_operador=None):
         if operador.licencia and operador.licencia.persona
         else None
     )
-
+    ic(bot_user_id)
     # Build context
     context = {
         'obj_list': pedidos,
         'operador': operador,
         'bot_user_id': bot_user_id,
     }
-
+    ic(context)
     return render(request, template, context)
 # def list_pedidos_by_operador(request, id_operador=None):
 #     context, template = {}, 'apps/pedidos/list.html'
