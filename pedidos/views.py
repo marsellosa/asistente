@@ -159,7 +159,7 @@ def list_pedidos_by_operador(request, id_operador=None):
     # Handle HTMX requests
     if request.htmx:
         pedidos = pedidos[:5]
-        ic(pedidos)
+        print(pedidos)
         template = 'apps/pedidos/partials/list.html'
 
     # Safely retrieve bot_user_id
@@ -168,14 +168,14 @@ def list_pedidos_by_operador(request, id_operador=None):
         if operador.licencia and operador.licencia.persona
         else None
     )
-    ic(bot_user_id)
+    print(bot_user_id)
     # Build context
     context = {
         'obj_list': pedidos,
         'operador': operador,
         'bot_user_id': bot_user_id,
     }
-    ic(context)
+    print(context)
     return render(request, template, context)
 # def list_pedidos_by_operador(request, id_operador=None):
 #     context, template = {}, 'apps/pedidos/list.html'
