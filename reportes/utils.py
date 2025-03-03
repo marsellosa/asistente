@@ -7,7 +7,8 @@ from prepagos.models import Pago, Prepago
 from operadores.models import Operador
 from main.utils import get_today
 from datetime import datetime, timedelta
-
+from icecream import ic
+ic.disable()
 def day_of_year_to_date(year, day_of_year):
     # Crear una fecha que corresponde al primer día del año
     start_of_year = datetime(year, 1, 1)
@@ -168,6 +169,7 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     # Separar usuarios por tipo de pago en consumos
     socios_efectivo_consumos = consumos.filter(transferencia__isnull=True)
     socios_transferencia_consumos = consumos.filter(transferencia__isnull=False)
+    total_efectivo_consumos = round(sum([item.efectivo for item in consumos]), 2)
     
     # Separar usuarios por tipo de pago en prepagos
     socios_efectivo_prepagos = prepagos.filter(transferenciapp__isnull=True)
@@ -177,6 +179,10 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     pagos = get_cons_oper(consumos)
     ppagos = get_pp_oper(prepagos)
     pagos_totales = round(sum(pagos + ppagos), 2)
+    total_efectivo = round(sum([pagos[0], ppagos[0]]), 2)
+    total_transferencia = round(sum([pagos[1], ppagos[1]]), 2)
+    ic(total_efectivo)
+    ic(total_transferencia)
 
     # print(f'socios_efectivo_consumos: {list(socios_efectivo_consumos)}')
     # print(f"socios_transferencia_consumos: {list(socios_transferencia_consumos)}")
@@ -205,6 +211,8 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
             'ppagos_ef': ppagos[0],
             'ppagos_qr': ppagos[1],
             'total_pagos': pagos_totales,
+            'total_efectivo': total_efectivo,
+            'total_transferencia': total_transferencia,
         },
         'socios_efectivo_consumos': list(socios_efectivo_consumos),
         'socios_transferencia_consumos': list(socios_transferencia_consumos),

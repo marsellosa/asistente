@@ -29,33 +29,27 @@
             <tbody>
                 <tr>
                 <td>
-                    Total
+                    Total Ingresos
                 </td>
                 <td>{{ totales.total_pagos }}</td>
                 </tr>
                 <tr>
                 <td>
-                    Consumo Efectivo
+                    Total Efectivo
                 </td>
-                <td>{{ totales.pagos_ef}}</td>
+                <td>{{ totales.total_efectivo}}</td>
                 </tr>
                 <tr>
                 <td >
-                    Consumos Transfer
+                    Total Transfer
                 </td>
-                <td><span class="badge bg-info">{{ totales.pagos_qr }}</span></td>
+                <td><span class="badge bg-info">{{ totales.total_transferencia }}</span></td>
                 </tr>
                 <tr>
                 <td >
-                    PrePagos Efectivo
+                   Consumos
                 </td>
-                <td>{{ totales.ppagos_ef }}</td>
-                </tr>
-                <tr>
-                <td >
-                    PrePagos Transfer
-                </td>
-                <td><span class="badge bg-info">{{ totales.ppagos_qr }}</span></td>
+                <td>{{ totales.total }}</td>
                 </tr>
             </tbody>
             </table>
@@ -94,8 +88,40 @@
                 <tbody >
                     <tr>
                         <td colspan="3"><strong> Total efectivo PrePagos</strong></td>
-                        <td colspan="6"><strong> {{ totales.pp_oper }}</strong></td>
+                        <td colspan="6"><strong> {{ totales.ppagos_ef }}</strong></td>
                     </tr>
+                    {% for pago in socios_efectivo_prepagos %}
+                        <tr>
+                            <td> {{ pago.fecha | date:'D' }}</td>
+                            <td> {{ pago.fecha | date:'d M Y' }}</td>
+                            <td> {{ pago.prepago.socio }}</td>
+                            <td> {{ pago }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td>{{ hoy | date:'D' }}</td>
+                            <td>{{ hoy | date:'d M Y' }}</td>
+                            <td></td>
+                            <td></td>
+                          </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="3"><strong> Total tranferencia PrePagos</strong></td>
+                        <td colspan="6"><span class="badge bg-info"><strong> {{ totales.ppagos_qr }}</span></strong></td>
+                    </tr>
+                    {% for pago in socios_transferencia_prepagos %}
+                        <tr>
+                            <td> {{ pago.fecha | date:'D' }}</td>
+                            <td> {{ pago.fecha | date:'d M Y' }}</td>
+                            <td> {{ pago.prepago.socio }}</td>
+                            <td> <span class="badge bg-info">{{ pago }}</span></td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3">{{ hoy | date:'D' }}</td>
+                            <td colspan="6">{{ hoy | date:'d M Y' }}</td>
+                          </tr>
+                    {% endfor %}
                     {% comment %} {% include 'apps/reportes/partials/results.html' %} {% endcomment %}
                 </tbody>
             </table>
