@@ -43,17 +43,18 @@ class ConsumoManager(Manager):
 
 class Consumo(Model):
     comanda = OneToOneField(Comanda, on_delete=CASCADE, null=True, blank=True)
-    total_consumido = FloatField(default=0)
-    sobre_rojo = FloatField(default=0)
-    mayoreo = FloatField(default=0)
-    insumos = FloatField(default=0)
-    descuento = FloatField(default=0)
-    sobre_verde = FloatField(default=0)
-    efectivo = FloatField(default=0)
-    puntos_volumen = FloatField(default=0)
+    total_consumido = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
+    sobre_rojo = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
+    mayoreo = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
+    insumos = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
+    descuento = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
+    sobre_verde = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
+    efectivo = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
+    puntos_volumen = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
     inserted_on = DateField(auto_now_add=True)
     edited_on = DateField(auto_now=True)
 
+    
     objects = ConsumoManager()
 
     def __str__(self):

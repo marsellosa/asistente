@@ -22,13 +22,13 @@ class PrepagoManager(Manager):
 class Prepago(Model):
     socio       = ForeignKey(Socio, on_delete=CASCADE)
     cantidad    = IntegerField(default=10)
-    descuento   = FloatField(default=10)
-    valor       = FloatField()
     pagado      = BooleanField(default=False)
     activo      = BooleanField(default=True)
+    descuento   = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
+    valor       = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
+    descuento_decimal = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
     created     = DateTimeField(auto_now_add=True)
     edited      = DateTimeField(auto_now=True)
-    descuento_decimal = FloatField()
 
     objects     = PrepagoManager()
 
@@ -97,10 +97,12 @@ class PagoManager(Manager):
 
 class Pago(Model):
     prepago = ForeignKey(Prepago, on_delete=CASCADE)
-    monto = FloatField()
+    monto = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
     fecha = DateTimeField(default=get_today)
     usuario = ForeignKey(User, on_delete=CASCADE)
     timestamp = DateTimeField(auto_now_add=True)
+
+    
 
     objects = PagoManager()
 

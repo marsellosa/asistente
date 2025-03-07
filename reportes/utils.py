@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.db.models import Sum
+from django.db.models import Sum, DecimalField
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from consumos.models import Consumo, Transferencia
@@ -7,8 +7,9 @@ from prepagos.models import Pago, Prepago
 from operadores.models import Operador
 from main.utils import get_today
 from datetime import datetime, timedelta
+from decimal import Decimal
 from icecream import ic
-ic.disable()
+# ic.disable()
 def day_of_year_to_date(year, day_of_year):
     # Crear una fecha que corresponde al primer día del año
     start_of_year = datetime(year, 1, 1)
@@ -104,27 +105,41 @@ def prepagos_list(id_operador=None, activo=True):
     return ppagos
 
 def get_pp_oper(pp_oper):
-    transferencias = pp_oper.filter(transferenciapp__isnull=False)
-    efectivo = pp_oper.filter(transferenciapp__isnull=True)
-    qr_resultado = transferencias.aggregate(total_efectivo=Sum('monto'))
-    ef_resultado = efectivo.aggregate(total_efectivo=Sum('monto'))
-    ef_pp_oper = round(ef_resultado['total_efectivo'], 2) if ef_resultado['total_efectivo'] is not None else 0.0
-    qr_pp_oper = round(qr_resultado['total_efectivo'], 2) if qr_resultado['total_efectivo'] is not None else 0.0
-    return ef_pp_oper, qr_pp_oper
+    # Cálculo para transferencias
+    total_transferencias = pp_oper.filter(
+        transferenciapp__isnull=False
+    ).aggregate(
+        total=Sum('monto', output_field=DecimalField())
+    )['total'] or Decimal('0')
+    total_transferencias = total_transferencias.quantize(Decimal('0.00'))
 
+    # Cálculo para efectivo
+    total_efectivo = pp_oper.filter(
+        transferenciapp__isnull=True
+    ).aggregate(
+        total=Sum('monto', output_field=DecimalField())
+    )['total'] or Decimal('0')
+    total_efectivo = total_efectivo.quantize(Decimal('0.00'))
+
+    return total_efectivo, total_transferencias
 
 
 def get_cons_oper(consumos):
+    # Transferencias (registros con transferencia)
     transferencias = consumos.filter(transferencia__isnull=False)
-    efectivo = consumos.filter(transferencia__isnull=True)
-    # print(f"efectivo: {list(efectivo)}, transferencias: {transferencias}")
-    qr_resultado = transferencias.aggregate(total_efectivo=Sum('efectivo'))
-    ef_resultado = efectivo.aggregate(total_efectivo=Sum('efectivo'))
-    # ef_cons_oper = round(sum([consumo.efectivo for consumo in consumos]), 2)
-    ef_cons_oper = round(ef_resultado['total_efectivo'], 2) if ef_resultado['total_efectivo'] is not None else 0.0
-    qr_cons_oper = round(qr_resultado['total_efectivo'], 2) if qr_resultado['total_efectivo'] is not None else 0.0
+    total_transferencias = transferencias.aggregate(
+        total=Sum('efectivo', output_field=DecimalField())
+    )['total'] or Decimal('0')
+    total_transferencias = total_transferencias.quantize(Decimal('0.00'))
 
-    return ef_cons_oper, qr_cons_oper
+    # Efectivo (registros sin transferencia)
+    efectivo = consumos.filter(transferencia__isnull=True)
+    total_efectivo = efectivo.aggregate(
+        total=Sum('efectivo', output_field=DecimalField())
+    )['total'] or Decimal('0')
+    total_efectivo = total_efectivo.quantize(Decimal('0.00'))
+
+    return total_efectivo, total_transferencias
 
 def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=None):
     context, consumos = {}, []
@@ -176,14 +191,15 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     socios_transferencia_prepagos = prepagos.filter(transferenciapp__isnull=False)
     
     # Calcular totales
+    
     pagos = get_cons_oper(consumos)
     ppagos = get_pp_oper(prepagos)
+    
+
     pagos_totales = round(sum(pagos + ppagos), 2)
     total_efectivo = round(sum([pagos[0], ppagos[0]]), 2)
     total_transferencia = round(sum([pagos[1], ppagos[1]]), 2)
-    ic(total_efectivo)
-    ic(total_transferencia)
-
+    
     # print(f'socios_efectivo_consumos: {list(socios_efectivo_consumos)}')
     # print(f"socios_transferencia_consumos: {list(socios_transferencia_consumos)}")
     # print(f'socios_efectivo_prepagos: {list(socios_efectivo_prepagos)}')

@@ -58,7 +58,7 @@ class Categoria(Model):
     descripcion = CharField(max_length=255, blank=True, null=True)
     detalle = TextField(blank=True, null=True, default=default_detail)
     cantidad = IntegerField(default=1)
-    puntos_volumen = FloatField(max_length=10)
+    puntos_volumen = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
     activo = BooleanField(default=True)
     inserted_on = DateField(auto_now_add=True)
     edited_on = DateField(auto_now=True)
@@ -89,23 +89,24 @@ class Categoria(Model):
 
 class PrecioDistribuidor(Model):
     categoria = ForeignKey(Categoria, on_delete=CASCADE)
-    distribuidor = FloatField(max_length=10)
-    consultor_mayor = FloatField(max_length=10)
-    productor_calificado = FloatField(max_length=10)
-    mayorista = FloatField(max_length=10)
+    distribuidor = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
+    consultor_mayor = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
+    productor_calificado = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
+    mayorista = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
     activo = BooleanField(default=True)
     inserted_on = DateField(auto_now_add=True)
     edited_on = DateField(auto_now=True)
 
+    
     def __str__(self):
         return str(self.categoria.nombre)
 
 class PrecioClientePreferente(Model):
     categoria = ForeignKey(Categoria, on_delete=CASCADE)
-    oro = FloatField(max_length=10)
-    plata = FloatField(max_length=10)
-    bronce = FloatField(max_length=10)
-    cliente = FloatField(max_length=10)
+    oro = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
+    plata = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
+    bronce = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
+    cliente = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
     activo = BooleanField(default=True)
     inserted_on = DateField(auto_now_add=True)
     edited_on = DateField(auto_now=True)
@@ -165,8 +166,10 @@ class Detalles(Model):
     codigo_barras = CharField(max_length=16, blank=True, null=True)
     activo = BooleanField(default=True)
     cantidad = CharField(max_length=50)
-    cantidad_decimal = FloatField(blank=True, null=True)
+    cantidad_decimal = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
     unidad = CharField(max_length=50, validators=[validar_unidad_de_medida])
+
+    
 
     objects = DetallesManager()
     
@@ -187,12 +190,11 @@ class Detalles(Model):
 class Porcion(Model):
 
     categoria = OneToOneField(Categoria, on_delete=CASCADE)    
-    precio = FloatField()
+    precio = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
     cantidad = CharField(max_length=50)
-    cantidad_decimal = FloatField(blank=True, null=True)
+    cantidad_decimal = DecimalField(blank=True, decimal_places=2, max_digits=10, null=True)
     unidad = CharField(max_length=50, validators=[validar_unidad_de_medida])
-    
-    
+
     def get_costo_porcion(self, nivel='Mayorista'):
         if nivel == 'Mayorista':
             precio = PrecioDistribuidor.objects.filter(categoria=self.categoria).first().mayorista #type: ignore
