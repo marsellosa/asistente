@@ -5,7 +5,7 @@ from home.decorators import allowed_users
 from icecream import ic
 from pedidos.forms import *
 from pedidos.models import *
-
+ic.disable()
 def lista_pedidos(request):
     context, template = {}, 'apps/pedidos/list.html'
     obj_list = Pedido.objects.all().order_by('-timestamp')
@@ -177,18 +177,4 @@ def list_pedidos_by_operador(request, id_operador=None):
     }
     ic(context)
     return render(request, template, context)
-# def list_pedidos_by_operador(request, id_operador=None):
-#     context, template = {}, 'apps/pedidos/list.html'
-#     operador = get_object_or_404(Operador, pk=id_operador)
-#     # operador = Operador.objects.get(id=id_operador)
-#     pedidos = operador.pedido_set.filter(status__in=['e', 'p']).order_by('-timestamp') #type: ignore
-#     if request.htmx:
-#         pedidos = pedidos[:5]
-#         template = 'apps/pedidos/partials/list.html'
-#     context = {
-#         'obj_list': pedidos,
-#         'operador': operador,
-#         'bot_user_id': operador.licencia.persona.get_bot_id, #type: ignore
-#         }
 
-#     return render(request, template, context)
