@@ -4,6 +4,9 @@ from prepagos.models import Prepago, Pago
 class PrepagoForm(ModelForm):
 
     required_css_class = "required-field"
+
+    descuento = CharField(required=True, initial=10)
+
     class Meta:
         model = Prepago
         fields = ['valor', 'cantidad', 'descuento']
