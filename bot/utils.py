@@ -13,8 +13,7 @@ def generar_numero_aleatorio(longitud=6):
         numero += str(digito)
     return int(numero)
 
-def generar_codigo_alfanumerico(longitud=15):
-    caracteres = string.ascii_letters + string.digits
-    codigo = ''.join(random.choice(caracteres) for _ in range(longitud))
-    return codigo
+def generar_codigo_alfanumerico():
+    """Genera un código alfanumérico único de 15 caracteres."""
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=15))
 

@@ -1,10 +1,14 @@
-from typing import List, Optional
-from django.db.models import * #type: ignore
 from django.conf import settings
+from django.core.cache import cache
+from django.db.models import * #type: ignore
 from django.urls import reverse
 from productos.models import Categoria, Detalles, PrecioDistribuidor, PrecioClientePreferente
 from recetas.validators import validar_unidad_de_medida, todo_a_gramos
-from recetas.utils import get_float_for_save
+from recetas.utils import get_decimal_for_save
+from typing import List, Optional
+
+import logging
+
 
 class RecetaQuerySet(QuerySet):
     def search(self, query=None):
@@ -44,11 +48,26 @@ class Receta(Model):
 
     @property
     def get_cart_points(self):
-        total_puntos = self.get_herbal_ingredient_children().aggregate(
-            total=Sum(self.get_vol_points())
-        )['total'] or 0
-        return round(total_puntos, 2)
-
+        """
+        Calcula la suma total de los puntos de todos los ingredientes herbales asociados a la receta.
+        
+        Returns:
+            float: La suma total de puntos redondeada a dos decimales.
+        """
+        try:
+            # Usar un generador para evitar crear una lista intermedia
+            total_puntos = sum(
+                ing_herb.get_vol_points
+                for ing_herb in self.get_herbal_ingredient_children()
+                if ing_herb.get_vol_points is not None  # Filtrar valores inválidos
+            )
+            # Redondear el resultado a dos decimales
+            return round(total_puntos, 2)
+        except Exception as e:
+            # Registrar el error
+            logging.error(f"Error al calcular puntos totales: {e}")
+            return 0.0  # Devolver un valor predeterminado en caso de error
+        
     @property
     def get_total_receta(self) -> Optional[float]:
         """
@@ -187,7 +206,7 @@ class RecetaIngrediente(Model):
         return reverse('recetas:hx-ingredient-detail', kwargs=self._kwargs())
 
     def save(self, *args, **kwargs):
-        valor = get_float_for_save(self.cantidad)
+        valor = get_decimal_for_save(self.cantidad)
         self.cantidad_decimal, self.unidad = todo_a_gramos(valor, self.unidad)
         self.cantidad = self.cantidad_decimal
         super().save(*args, **kwargs)
@@ -208,7 +227,7 @@ class CostoIngrediente(Model):
     active = BooleanField(default=True)
 
     def save(self, *args, **kwargs):
-        valor = get_float_for_save(self.cantidad)
+        valor = get_decimal_for_save(self.cantidad)
         self.cantidad_decimal, self.unidad = todo_a_gramos(valor, self.unidad)
         self.cantidad = self.cantidad_decimal
         super().save(*args, **kwargs)
@@ -232,15 +251,61 @@ class RecetaIngredienteHerbal(Model):
         return self.categoria
 
     def save(self, *args, **kwargs):
-        valor = get_float_for_save(self.cantidad)
+        valor = get_decimal_for_save(self.cantidad)
         self.cantidad_decimal, self.unidad = todo_a_gramos(valor, self.unidad)
         self.cantidad = self.cantidad_decimal
         super().save(*args, **kwargs)
 
+    def get_peso_total_cache(self):
+        """
+        Obtiene el peso total desde la caché o la base de datos.
+        
+        Returns:
+            Decimal: El peso total.
+            None: Si no se encuentra un valor válido.
+        """
+        cache_key = f"peso_total_{self.categoria.id}"
+        peso_total = cache.get(cache_key)
+        if peso_total is None:
+            detalle = Detalles.objects.filter(categoria=self.categoria, activo=True).first()
+            if detalle and detalle.cantidad_decimal is not None:
+                peso_total = detalle.cantidad_decimal
+                cache.set(cache_key, peso_total, timeout=3600)  # Almacenar por 1 hora
+        return peso_total
+    @property
     def get_vol_points(self):
-        peso_total = Detalles.objects.filter(categoria=self.categoria, activo=True).first().cantidad_decimal #type: ignore
-        puntos = round(self.categoria.puntos_volumen * self.cantidad_decimal / peso_total, 2)  # type: ignore
-        return puntos
+        """
+        Calcula los puntos basados en el volumen de un ingrediente.
+        
+        Returns:
+            float: Los puntos calculados redondeados a dos decimales.
+            None: Si no se puede calcular debido a datos insuficientes.
+        """
+        try:
+            # Obtener el peso total usando la caché
+            peso_total = self.get_peso_total_cache()
+            if peso_total is None:
+                raise ValueError("No se encontró un peso total válido.")
+
+            # Validar que los atributos necesarios estén presentes
+            if self.categoria is None or self.categoria.puntos_volumen is None:
+                raise ValueError("La categoría o sus puntos de volumen no están definidos.")
+            if self.cantidad_decimal is None:
+                raise ValueError("La cantidad decimal del ingrediente no está definida.")
+
+            # Calcular los puntos
+            puntos = round(self.categoria.puntos_volumen * self.cantidad_decimal / peso_total, 2)
+            return puntos
+
+        except Exception as e:
+            # Registrar el error
+            logging.error(f"Error al calcular puntos de volumen: {e}")
+            return None
+
+    # def get_vol_points(self):
+    #     peso_total = Detalles.objects.filter(categoria=self.categoria, activo=True).first().cantidad_decimal #type: ignore
+    #     puntos = round(self.categoria.puntos_volumen * self.cantidad_decimal / peso_total, 2)  # type: ignore
+    #     return puntos
 
     def get_total(self):
         # sumatoria de ingredientes herbales segun su precio al publico

@@ -1,15 +1,13 @@
 from django.contrib.auth.models import User
 from django.db.models import Sum, DecimalField
 from django.shortcuts import get_object_or_404
-from django.core.exceptions import ValidationError
 from consumos.models import Consumo, Transferencia
 from prepagos.models import Pago, Prepago
 from operadores.models import Operador
 from main.utils import get_today
 from datetime import datetime, timedelta
 from decimal import Decimal
-from icecream import ic
-# ic.disable()
+
 def day_of_year_to_date(year, day_of_year):
     # Crear una fecha que corresponde al primer día del año
     start_of_year = datetime(year, 1, 1)
@@ -17,72 +15,47 @@ def day_of_year_to_date(year, day_of_year):
     target_date = start_of_year + timedelta(days=day_of_year - 1)
     return target_date
 
+def get_first_day_of_iso_year(year):
+    """Calcula el primer día (lunes) de la primera semana ISO del año."""
+    jan4 = datetime(year, 1, 4)  # Enero 4 siempre está en la primera semana ISO
+    return jan4 - timedelta(days=jan4.weekday())
+
 def obtener_fecha_inicio_fin_semana(anio, numero_semana):
     """
-    Devuelve la fecha del primer y último día de una semana específica en un año dado,
-    asegurándose de que el número de semana sea válido.
+    Devuelve el rango de fechas para una semana ISO específica.
     
     Args:
-        numero_semana (int): Número de la semana (1-53).
-        anio (int): Año al que pertenece la semana.
+        anio (int): Año ISO.
+        numero_semana (int): Número de semana ISO (1-53).
     
     Returns:
-        tuple: Fecha del primer día (lunes) y del último día (domingo) en formato datetime.date.
-    
-    Raises:
-        ValueError: Si el número de semana no es válido para el año dado.
+        tuple: (inicio_semana, fin_semana) como datetime.date.
     """
-    # Validar el número máximo de semanas en el año ISO
-    ultimo_dia_anio = datetime(anio, 12, 31)
-    
-    # Aseguramos que el último día pertenece al año actual y calculamos semanas
-    if ultimo_dia_anio.isocalendar()[0] != anio:
-        # Si el último día no pertenece al año ISO actual, retrocedemos para calcular el límite correcto
-        ultimo_dia_anio -= timedelta(days=ultimo_dia_anio.weekday() + 1)
-    semanas_en_anio = ultimo_dia_anio.isocalendar()[1]
-    
-    if numero_semana < 1 or numero_semana > semanas_en_anio:
-        raise ValueError(f"El número de semana {numero_semana} no es válido para el año {anio}. "
-                         f"Debe estar entre 1 y {semanas_en_anio}.")
-    
-    # Calcula el primer día del año
-    primer_dia_anio = datetime(anio, 1, 1)
-    
-    # Encuentra el primer lunes del año (semana ISO inicia en lunes)
-    primer_lunes = primer_dia_anio + timedelta(days=(7 - primer_dia_anio.weekday()) % 7)
-    
-    # Calcula el inicio de la semana deseada
-    inicio_semana = primer_lunes + timedelta(weeks=numero_semana - 1)
-    
-    # Verifica que el inicio de la semana no exceda el año
-    if inicio_semana.year != anio:
-        raise ValueError(f"La semana {numero_semana} no corresponde al año {anio}.")
-    
-    # Fin de la semana (domingo)
+    primer_dia_iso = get_first_day_of_iso_year(anio)
+    inicio_semana = primer_dia_iso + timedelta(weeks=numero_semana - 1)
     fin_semana = inicio_semana + timedelta(days=6)
-    
     return inicio_semana.date(), fin_semana.date()
 
-
 def obtener_semana_iso(fecha):
+    """Devuelve el año y semana ISO de una fecha."""
+    if isinstance(fecha, str):
+        fecha = datetime.strptime(fecha, '%Y-%m-%d').date()
+    anio_iso, numero_semana, _ = fecha.isocalendar()
+    return anio_iso, numero_semana
+
+def obtener_rango_semana_a_partir_de_fecha(fecha):
     """
-    Devuelve el año y número de semana ISO de una fecha dada.
+    Devuelve la semana ISO y su rango de fechas (lunes-domingo).
     
     Args:
-        fecha (str): Fecha en formato 'YYYY-MM-DD'.
+        fecha (str o datetime.date): Fecha en formato 'YYYY-MM-DD' o date.
     
     Returns:
-        tuple: Año ISO y número de semana ISO.
+        tuple: (numero_semana, inicio_semana, fin_semana).
     """
-    # Convertir la fecha a objeto datetime
-    if isinstance(fecha, str):
-        # Convierte la fecha de string a datetime
-        fecha = datetime.strptime(fecha, '%Y-%m-%d').date()
-    
-    # Obtener el año ISO y el número de semana
-    anio_iso, numero_semana, _ = fecha.isocalendar()
-    
-    return anio_iso, numero_semana
+    anio_iso, numero_semana = obtener_semana_iso(fecha)
+    inicio, fin = obtener_fecha_inicio_fin_semana(anio_iso, numero_semana)
+    return numero_semana, inicio, fin
 
 def prepagos_list(id_operador=None, activo=True):
 
@@ -238,3 +211,27 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     
     return context
 
+def reporte_semanal(fecha=None, id_operador=None):
+    """
+    Devuelve el número de semana ISO, el lunes y el domingo correspondientes a una fecha dada.
+    
+    Args:
+        fecha (str o datetime.date): Fecha en formato 'YYYY-MM-DD' o como objeto datetime.date/datetime.datetime.
+    
+    Returns:
+        tuple: (número_semana_ISO, fecha_lunes, fecha_domingo) como (int, datetime.date, datetime.date).
+    """
+    if fecha is None:
+        fecha = get_today()
+        
+    # print(f"fecha: {fecha}")
+    # Obtener año ISO y número de semana
+    anio_iso, numero_semana = obtener_semana_iso(fecha)
+    # print(anio_iso, numero_semana)
+    # Obtener fechas de inicio y fin de la semana
+    inicio_semana, fin_semana = obtener_fecha_inicio_fin_semana(anio_iso, numero_semana)
+    # print(inicio_semana, fin_semana)
+
+    context = reporte_consumos(id_operador=id_operador, fechaDesde=inicio_semana, fechaHasta=fin_semana)
+    
+    return context

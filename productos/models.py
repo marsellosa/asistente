@@ -1,7 +1,7 @@
 
 from django.db.models import * #type: ignore
 from recetas.validators import validar_unidad_de_medida, todo_a_gramos
-from recetas.utils import get_float_for_save
+from recetas.utils import get_decimal_for_save
 
 class CategoriaQuerySet(QuerySet):
     def search(self, query=None):
@@ -174,7 +174,7 @@ class Detalles(Model):
     objects = DetallesManager()
     
     def save(self, *args, **kwargs):
-        valor = get_float_for_save(self.cantidad)
+        valor = get_decimal_for_save(self.cantidad)
         self.cantidad_decimal, self.unidad = todo_a_gramos(valor, self.unidad)
         self.cantidad = self.cantidad_decimal
         super().save(*args, **kwargs)
@@ -210,7 +210,7 @@ class Porcion(Model):
         return costo
     
     def save(self, *args, **kwargs):
-        valor = get_float_for_save(self.cantidad)
+        valor = get_decimal_for_save(self.cantidad)
         self.cantidad_decimal, self.unidad = todo_a_gramos(valor, self.unidad)
         self.cantidad = self.cantidad_decimal
         super().save(*args, **kwargs)
