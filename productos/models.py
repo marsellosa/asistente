@@ -72,13 +72,13 @@ class Categoria(Model):
 
     @property
     def precios_distribuidor(self):
-        qs = self.preciodistribuidor_set.filter(activo=True).first() #type: ignore
+        qs = self.preciodistribuidor_set.filter(activo=True).order_by('-inserted_on').first() #type: ignore
         # print(f"qs: {qs}")
         return qs
     
     @property
     def precios_cliente(self):
-        qs = self.precioclientepreferente_set.filter(activo=True).first() #type:ignore
+        qs = self.precioclientepreferente_set.filter(activo=True).order_by('-inserted_on').first() #type:ignore
         return qs
 
     def __str__(self):
