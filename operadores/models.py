@@ -1,9 +1,12 @@
 from django.db.models import * #type:ignore
 from django.urls import reverse
 from persona.models import Licencia
+import uuid
+
 
 class Operador(Model):
     licencia = OneToOneField(Licencia, verbose_name=("Operador Club"), on_delete=CASCADE)
+    codigo_operador = UUIDField(unique=True, default=uuid.uuid4, editable=False)
     timestamp = DateTimeField(auto_now_add=True)
     updated = DateTimeField(auto_now=True)
 
@@ -27,6 +30,10 @@ class Operador(Model):
     
     def get_profile_picture(self):
         return self.licencia.persona.get_profile_pic_url()
+    
+    class Meta:
+        verbose_name = "Operador"
+        verbose_name_plural = "Operadores"
 
     def __str__(self):
         return str(self.licencia)

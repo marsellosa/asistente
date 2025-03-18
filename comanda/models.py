@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db.models import *
 from django.conf import settings
 from django.urls import reverse
@@ -9,6 +10,7 @@ from main.models import Settings
 from recetas.models import Receta
 from socios.models import Socio
 from prepagos.models import Prepago
+import logging
 
 User = settings.AUTH_USER_MODEL
 
@@ -92,13 +94,41 @@ class Comanda(Model):
     @property
     def get_cart_prepagos(self):
         return self.prepago.all()
-
+    
     @property
-    def get_sobre_rojo(self):
-        costos = sum(item.get_sobre_rojo for item in self.get_all_items())
-        porciento = get_setting_value('inversion', 10)
-        re_inversion = self.porcentaje(costos, porciento)
-        return round(costos + re_inversion, 2)
+    def get_sobre_rojo(self) -> Decimal:
+        """
+        Calcula el costo total de los ingredientes herbales de todas las recetas
+        asociadas a la comanda, considerando el nivel del operador.
+        Returns:
+            Decimal: El costo total redondeado a dos decimales.
+        """
+        try:
+            # Determinar el nivel del operador
+            nivel_operador = self.socio.operador.get_nivel_licencia  
+            # Calcular el costo total de los ingredientes herbales
+            costo_total = Decimal('0.00')
+            for item in self.comandaitem_set.all():
+                receta = item.receta
+                for ing_herb in receta.get_herbal_ingredient_children():
+                    costo_ingrediente = ing_herb.get_costo(nivel=nivel_operador)
+                    if costo_ingrediente is not None:
+                        costo_total += Decimal(costo_ingrediente)
+
+            # Obtener el porcentaje de reinversión desde Settings
+            porciento_inversion = Decimal(get_setting_value('inversion', 10))
+
+            # Calcular la reinversión
+            re_inversion = self.porcentaje(costo_total, porciento_inversion)
+
+            # Sumar el costo total y la reinversión
+            sobre_rojo_final = (costo_total + re_inversion).quantize(Decimal('0.00'))
+
+            return sobre_rojo_final
+        except Exception as e:
+            # Registrar el error
+            logging.error(f"Error al calcular get_sobre_rojo: {e}")
+            return Decimal('0.00')
 
     @property
     def get_cart_total(self):
@@ -137,10 +167,28 @@ class Comanda(Model):
 
     @property
     def get_sobre_verde(self):
+        """
+        Calcula el valor de 'sobre verde' restando los costos totales del total del carrito.
+        Returns:
+            Decimal: El valor de 'sobre verde', redondeado a dos decimales.
+        """
         if self.is_operador():
-            return 0
-        costos = round(sum([self.get_sobre_rojo, self.get_total_descuento, self.get_insumos, self.get_mantenimiento]), 2)
-        return round(self.get_cart_total - costos, 2)
+            return Decimal('0.00')
+
+    # Convertir todos los valores a Decimal y manejar valores nulos
+        sobre_rojo = Decimal(getattr(self.get_sobre_rojo, 'quantize', lambda x: self.get_sobre_rojo)(Decimal('0.00')))
+        total_descuento = Decimal(getattr(self.get_total_descuento, 'quantize', lambda x: self.get_total_descuento)(Decimal('0.00')))
+        insumos = Decimal(getattr(self.get_insumos, 'quantize', lambda x: self.get_insumos)(Decimal('0.00')))
+        mantenimiento = Decimal(getattr(self.get_mantenimiento, 'quantize', lambda x: self.get_mantenimiento)(Decimal('0.00')))
+
+        # Calcular la suma de costos
+        costos = (sobre_rojo + total_descuento + insumos + mantenimiento).quantize(Decimal('0.00'))
+
+        # Calcular el valor de 'sobre verde'
+        cart_total = Decimal(getattr(self.get_cart_total, 'quantize', lambda x: self.get_cart_total)(Decimal('0.00')))
+        sobre_verde = (cart_total - costos).quantize(Decimal('0.00'))
+
+        return sobre_verde
 
     def is_operador(self):
         try:
@@ -151,8 +199,19 @@ class Comanda(Model):
     def get_all_items(self):
         return self.comandaitem_set.all()
 
-    def porcentaje(self, total, porciento):
-        return total * porciento / 100
+    def porcentaje(self, total: Decimal, porciento: float) -> Decimal:
+        """
+        Calcula el porcentaje de un valor dado.
+        Args:
+            total (Decimal): El valor base.
+            porciento (float): El porcentaje a calcular.
+        Returns:
+            Decimal: El resultado del cálculo, redondeado a dos decimales.
+        """
+        return (total * Decimal(porciento) / 100).quantize(Decimal('0.00'))
+
+    # def porcentaje(self, total, porciento):
+    #     return total * porciento / 100
 
     def __str__(self):
         return str(self.socio)
