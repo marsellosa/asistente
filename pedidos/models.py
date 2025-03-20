@@ -1,9 +1,11 @@
+from decimal import Decimal
 from django.db.models import * # type: ignore
 from django.conf import settings
 from django.urls import reverse
 from productos.models import Categoria, Detalles, PrecioDistribuidor, PrecioClientePreferente
 from socios.models import Operador
 import datetime
+import logging
 
 User = settings.AUTH_USER_MODEL
 
@@ -68,11 +70,34 @@ class Pedido(Model):
     def get_all_items(self):
         return self.pedidoitem_set.all() # type: ignore
 
+    # @property
+    # def get_cart_total(self):
+    #     pedidoitems = self.pedidoitem_set.all() # type: ignore
+    #     total = round(sum([item.get_total(self.operador.get_nivel_licencia) for item in pedidoitems]), 2)
+    #     return total
+
     @property
-    def get_cart_total(self):
-        pedidoitems = self.pedidoitem_set.all() # type: ignore
-        total = round(sum([item.get_total(self.operador.get_nivel_licencia) for item in pedidoitems]), 2)
-        return total
+    def get_cart_total(self) -> Decimal:
+        """
+        Calcula el costo total de todos los productos
+        asociados al pedido, considerando el nivel del operador.
+        Returns:
+            Decimal: El costo total redondeado a dos decimales.
+        """
+        try:
+            # Determinar el nivel del operador
+            nivel_operador = self.operador.get_nivel_licencia  
+            # Calcular el costo total de los ingredientes herbales
+            costo_total = Decimal('0.00')
+            for item in self.get_all_items():
+                costo_producto = item.get_total(nivel=nivel_operador)
+                if costo_producto is not None:
+                    costo_total += Decimal(costo_producto)
+            return costo_total
+        except Exception as e:
+            # Registrar el error
+            logging.error(f"Error al calcular get_sobre_rojo: {e}")
+            return Decimal('0.00')
 
     @property
     def get_cart_items(self):
@@ -108,29 +133,68 @@ class PedidoItem(Model):
     updated = DateTimeField(auto_now=True)
 
     def get_total(self, nivel='Mayorista'):
-        precio_dist = PrecioDistribuidor.objects.filter(categoria=self.categoria, activo=True).order_by('-inserted_on').first()
-        precio_clip = PrecioClientePreferente.objects.filter(categoria=self.categoria, activo=True).order_by('-inserted_on').first()
+        nivel_to_atributo = {
+            'Mayorista': ('PrecioDistribuidor', 'mayorista'),
+            'Productor Calificado': ('PrecioDistribuidor', 'productor_calificado'),
+            'Consultor Mayor': ('PrecioDistribuidor', 'consultor_mayor'),
+            'Distribuidor': ('PrecioDistribuidor', 'distribuidor'),
+            'Oro': ('PrecioClientePreferente', 'oro'),
+            'Plata': ('PrecioClientePreferente', 'plata'),
+            'Bronce': ('PrecioClientePreferente', 'bronce'),
+            'Cliente': ('PrecioClientePreferente', 'cliente'),
+        }
 
-        if nivel == 'Mayorista':
-            precio = precio_dist.mayorista # type: ignore
-        elif nivel == 'Productor Calificado':
-            precio = precio_dist.productor_calificado # type: ignore
-        elif nivel == 'Consultor Mayor':
-            precio = precio_dist.consultor_mayor # type: ignore
-        elif nivel == 'Distribuidor':
-            precio = precio_dist.distribuidor # type: ignore
-        elif nivel == 'Oro':
-            precio = precio_clip.oro # type: ignore
-        elif nivel == 'Plata':
-            precio = precio_clip.plata # type: ignore
-        elif nivel == 'Bronce':
-            precio = precio_clip.bronce # type: ignore
-        elif nivel == 'Cliente':
-            precio = precio_clip.cliente # type: ignore
+        nivel = self.pedido.operador.get_nivel_licencia
 
-        total = precio * self.cantidad # type: ignore
+        if nivel not in nivel_to_atributo:
+            raise ValueError(f"Nivel '{nivel}' no es válido.")
+
+        modelo, atributo = nivel_to_atributo[nivel]
+
+        if modelo == 'PrecioDistribuidor':
+            precio_obj = PrecioDistribuidor.objects.filter(
+                categoria=self.categoria, activo=True
+            ).order_by('-inserted_on').first()
+        elif modelo == 'PrecioClientePreferente':
+            precio_obj = PrecioClientePreferente.objects.filter(
+                categoria=self.categoria, activo=True
+            ).order_by('-inserted_on').first()
+
+        if not precio_obj:
+            raise ValueError(f"No se encontró un precio activo para la categoría '{self.categoria}' y nivel '{nivel}'.")
+
+        precio = getattr(precio_obj, atributo, None)
+        if precio is None:
+            raise ValueError(f"El atributo '{atributo}' no existe o es nulo para el nivel '{nivel}'.")
+
+        total = precio * self.cantidad
 
         return total
+
+    # def get_total(self, nivel='Mayorista'):
+    #     precio_dist = PrecioDistribuidor.objects.filter(categoria=self.categoria, activo=True).order_by('-inserted_on').first()
+    #     precio_clip = PrecioClientePreferente.objects.filter(categoria=self.categoria, activo=True).order_by('-inserted_on').first()
+
+    #     if nivel == 'Mayorista':
+    #         precio = precio_dist.mayorista # type: ignore
+    #     elif nivel == 'Productor Calificado':
+    #         precio = precio_dist.productor_calificado # type: ignore
+    #     elif nivel == 'Consultor Mayor':
+    #         precio = precio_dist.consultor_mayor # type: ignore
+    #     elif nivel == 'Distribuidor':
+    #         precio = precio_dist.distribuidor # type: ignore
+    #     elif nivel == 'Oro':
+    #         precio = precio_clip.oro # type: ignore
+    #     elif nivel == 'Plata':
+    #         precio = precio_clip.plata # type: ignore
+    #     elif nivel == 'Bronce':
+    #         precio = precio_clip.bronce # type: ignore
+    #     elif nivel == 'Cliente':
+    #         precio = precio_clip.cliente # type: ignore
+
+    #     total = precio * self.cantidad # type: ignore
+
+    #     return total
 
     @property
     def get_vol_points(self):
