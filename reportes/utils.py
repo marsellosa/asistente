@@ -128,6 +128,9 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     
     if fechaDesde is None:
         fechaDesde = get_today()
+    elif isinstance(fechaDesde, str):
+        # Convertir el string a un objeto datetime
+        fechaDesde = datetime.strptime(fechaDesde, '%Y-%m-%d')
     
     if rango:
         consumos = Consumo.objects.by_date_range(fechaDesde, fechaHasta)  # type: ignore
