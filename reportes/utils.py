@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.db.models import Sum, DecimalField
+from django.db.models import Sum, Case, When, DecimalField, Value
 from django.shortcuts import get_object_or_404
 from consumos.models import Consumo, Transferencia
 from prepagos.models import Pago, Prepago
@@ -77,42 +77,46 @@ def prepagos_list(id_operador=None, activo=True):
     
     return ppagos
 
-def get_pp_oper(pp_oper):
-    # Cálculo para transferencias
-    total_transferencias = pp_oper.filter(
-        transferenciapp__isnull=False
-    ).aggregate(
-        total=Sum('monto', output_field=DecimalField())
-    )['total'] or Decimal('0')
-    total_transferencias = total_transferencias.quantize(Decimal('0.00'))
+def calcular_totales(queryset, campo_monto, campo_filtro):
+    """
+    Función auxiliar para calcular totales basados en un filtro específico.
+    """
+    total = queryset.aggregate(
+        efectivo_=Sum(
+            Case(
+                When(**{f"{campo_filtro}__isnull": True}, then=campo_monto),
+                default=Value(0),
+                output_field=DecimalField(),
+            )
+        ),
+        transferencias=Sum(
+            Case(
+                When(**{f"{campo_filtro}__isnull": False}, then=campo_monto),
+                default=Value(0),
+                output_field=DecimalField(),
+            )
+        ),
+    )
 
-    # Cálculo para efectivo
-    total_efectivo = pp_oper.filter(
-        transferenciapp__isnull=True
-    ).aggregate(
-        total=Sum('monto', output_field=DecimalField())
-    )['total'] or Decimal('0')
-    total_efectivo = total_efectivo.quantize(Decimal('0.00'))
+    # Redondear los resultados a 2 decimales
+    total_efectivo = (total['efectivo_'] or Decimal('0')).quantize(Decimal('0.00'))
+    total_transferencias = (total['transferencias'] or Decimal('0')).quantize(Decimal('0.00'))
 
     return total_efectivo, total_transferencias
+
+
+def get_pp_oper(pp_oper):
+    """
+    Calcula los totales de prepagos por tipo de pago (efectivo y transferencia).
+    """
+    return calcular_totales(pp_oper, 'monto', 'transferenciapp')
 
 
 def get_cons_oper(consumos):
-    # Transferencias (registros con transferencia)
-    transferencias = consumos.filter(transferencia__isnull=False)
-    total_transferencias = transferencias.aggregate(
-        total=Sum('efectivo', output_field=DecimalField())
-    )['total'] or Decimal('0')
-    total_transferencias = total_transferencias.quantize(Decimal('0.00'))
-
-    # Efectivo (registros sin transferencia)
-    efectivo = consumos.filter(transferencia__isnull=True)
-    total_efectivo = efectivo.aggregate(
-        total=Sum('efectivo', output_field=DecimalField())
-    )['total'] or Decimal('0')
-    total_efectivo = total_efectivo.quantize(Decimal('0.00'))
-
-    return total_efectivo, total_transferencias
+    """
+    Calcula los totales de consumos por tipo de pago (efectivo y transferencia).
+    """
+    return calcular_totales(consumos, 'efectivo', 'transferencia')
 
 def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=None):
     context, consumos = {}, []
@@ -128,9 +132,11 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     if rango:
         consumos = Consumo.objects.by_date_range(fechaDesde, fechaHasta)  # type: ignore
         prepagos = Pago.objects.pago_by_date_range(fechaDesde, fechaHasta)
+        fecha = f"{fechaDesde.strftime('%Y-%m-%d')}/{fechaHasta.strftime('%Y-%m-%d')}"
     else:
         consumos = Consumo.objects.by_date(fechaDesde)  # type: ignore
         prepagos = Pago.objects.pago_by_date(fechaDesde)
+        fecha = f"{fechaDesde.strftime('%Y-%m-%d')}"
     
     # Listas para separar usuarios por tipo de pago
     socios_efectivo_consumos = set()
@@ -183,7 +189,7 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
         'prepagos': lista_prepagos,
         'operador': operador,
         'consumos': consumos,
-        'hoy': fechaDesde,
+        'hoy': fecha,
         'nro_sem': obtener_semana_iso(fechaDesde)[1],
         'totales': {
             'total': consumos.count(),

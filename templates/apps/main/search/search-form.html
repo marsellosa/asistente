@@ -3,7 +3,8 @@
     <div class="input-group input-group-sm">
      <input 
         hx-target="#typeahead-results"  
-        hx-get="{% url "main:search" %}" 
+        hx-get="{% url "main:search" %}"
+        hx-swap="innerHTML show:window:top"
         hx-trigger="keyup changed delay:200ms" 
         hx-include="[name='type']"
         name="q" 

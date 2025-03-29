@@ -70,12 +70,6 @@ class Pedido(Model):
     def get_all_items(self):
         return self.pedidoitem_set.all() # type: ignore
 
-    # @property
-    # def get_cart_total(self):
-    #     pedidoitems = self.pedidoitem_set.all() # type: ignore
-    #     total = round(sum([item.get_total(self.operador.get_nivel_licencia) for item in pedidoitems]), 2)
-    #     return total
-
     @property
     def get_cart_total(self) -> Decimal:
         """
@@ -143,8 +137,10 @@ class PedidoItem(Model):
             'Bronce': ('PrecioClientePreferente', 'bronce'),
             'Cliente': ('PrecioClientePreferente', 'cliente'),
         }
-
-        nivel = self.pedido.operador.get_nivel_licencia
+        try:
+            nivel = self.pedido.operador.get_nivel_licencia
+        except:
+            pass
 
         if nivel not in nivel_to_atributo:
             raise ValueError(f"Nivel '{nivel}' no es válido.")
@@ -170,31 +166,6 @@ class PedidoItem(Model):
         total = precio * self.cantidad
 
         return total
-
-    # def get_total(self, nivel='Mayorista'):
-    #     precio_dist = PrecioDistribuidor.objects.filter(categoria=self.categoria, activo=True).order_by('-inserted_on').first()
-    #     precio_clip = PrecioClientePreferente.objects.filter(categoria=self.categoria, activo=True).order_by('-inserted_on').first()
-
-    #     if nivel == 'Mayorista':
-    #         precio = precio_dist.mayorista # type: ignore
-    #     elif nivel == 'Productor Calificado':
-    #         precio = precio_dist.productor_calificado # type: ignore
-    #     elif nivel == 'Consultor Mayor':
-    #         precio = precio_dist.consultor_mayor # type: ignore
-    #     elif nivel == 'Distribuidor':
-    #         precio = precio_dist.distribuidor # type: ignore
-    #     elif nivel == 'Oro':
-    #         precio = precio_clip.oro # type: ignore
-    #     elif nivel == 'Plata':
-    #         precio = precio_clip.plata # type: ignore
-    #     elif nivel == 'Bronce':
-    #         precio = precio_clip.bronce # type: ignore
-    #     elif nivel == 'Cliente':
-    #         precio = precio_clip.cliente # type: ignore
-
-    #     total = precio * self.cantidad # type: ignore
-
-    #     return total
 
     @property
     def get_vol_points(self):

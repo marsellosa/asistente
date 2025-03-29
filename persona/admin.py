@@ -13,8 +13,9 @@ class LicenciaInline(StackedInline):
 
 class PersonaAdmin(ModelAdmin):
     inlines = [SocioInline, LicenciaInline]
+    search_fields = ['nombre', 'apellido']
 
 site.register(Persona, PersonaAdmin)
 site.register(Licencia)
 site.register(Contacto)
-# Register your models here.
+
