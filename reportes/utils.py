@@ -127,19 +127,16 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     )
     
     if fechaDesde is None:
-        fechaDesde = get_today()
-    elif isinstance(fechaDesde, str):
-        # Convertir el string a un objeto datetime
-        fechaDesde = datetime.strptime(fechaDesde, '%Y-%m-%d')
+        fechaDesde = get_today().strftime('%Y-%m-%d')
     
     if rango:
         consumos = Consumo.objects.by_date_range(fechaDesde, fechaHasta)  # type: ignore
         prepagos = Pago.objects.pago_by_date_range(fechaDesde, fechaHasta)
-        fecha = f"{fechaDesde.strftime('%Y-%m-%d')}/{fechaHasta.strftime('%Y-%m-%d')}"
+        fecha = f"{fechaDesde}/{fechaHasta}"
     else:
         consumos = Consumo.objects.by_date(fechaDesde)  # type: ignore
         prepagos = Pago.objects.pago_by_date(fechaDesde)
-        fecha = f"{fechaDesde.strftime('%Y-%m-%d')}"
+        fecha = f"{fechaDesde}"
     
     # Listas para separar usuarios por tipo de pago
     socios_efectivo_consumos = set()
