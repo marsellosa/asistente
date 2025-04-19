@@ -109,12 +109,13 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # MEDIA_URL = 'AdminLTE/dist/img/'
 # MEDIA_ROOT = BASE_DIR / "staticfiles" / "AdminLTE" / "dist" / "img"
 
 STATICFILES_DIRS = [
-    (BASE_DIR / "static"),
+    BASE_DIR / "static",
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
