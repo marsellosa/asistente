@@ -11,14 +11,36 @@ def create_consumo(sender, instance, created, **kwargs):
         Consumo.objects.create(comanda=instance)
     else:
         update_consumo(instance)
-
+        
 @receiver(post_save, sender=ComandaItem)
 def create_comanda_item(sender, instance, created, **kwargs):
     update_consumo(instance.comanda)
 
 @receiver(post_delete, sender=ComandaItem)
 def delete_comanda_item(sender, instance, **kwargs):
-    update_consumo(instance.comanda)
+    """
+    Se ejecuta después de eliminar un ComandaItem.
+    Actualiza el consumo asociado a la comanda y limpia los prepagos si no quedan items.
+    """
+    try:
+        # Obtener la comanda asociada al item eliminado
+        comanda = instance.comanda
+
+        # Verificar si la comanda tiene items restantes
+        if not comanda.get_all_items().exists():
+            # Obtener los prepagos asociados a la comanda
+            prepagos = comanda.get_cart_prepagos
+
+            # Remover todos los prepagos asociados a la comanda
+            if prepagos.exists():
+                comanda.prepago.clear()
+
+        # Actualizar el consumo asociado a la comanda
+        update_consumo(comanda)
+
+    except Exception as e:
+        # Registrar cualquier error inesperado
+        print(f"Error al procesar la eliminación de ComandaItem: {e}")
 
 def update_consumo(instance):
     # ins = instance.comanda

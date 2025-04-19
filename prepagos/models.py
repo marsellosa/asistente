@@ -40,7 +40,7 @@ class Prepago(Model):
     
     def get_uses_list(self):
         return self.comanda_set.all().order_by('-fecha') #type:ignore
-
+    
     def get_acumulado(self):
         return round(sum([pago.monto for pago in self.get_total_pagos()]), 1)
     
@@ -57,7 +57,7 @@ class Prepago(Model):
 
     def get_alert(self) -> bool:
         return (not self.pagado and 
-                (self.gasto_neto() > self.get_acumulado() or len(self.get_uses_list()) > 5))
+                (self.gasto_neto() + self.valor > self.get_acumulado() or len(self.get_uses_list()) > 5))
 
     def __str__(self):
         return str(self.valor)

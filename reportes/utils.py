@@ -1,7 +1,7 @@
-from django.contrib.auth.models import User
-from django.db.models import Sum, Case, When, DecimalField, Value
+from django.db.models import Sum, Case, When, DecimalField, Value, Count
+from django.db.models.functions import Coalesce
 from django.shortcuts import get_object_or_404
-from consumos.models import Consumo, Transferencia
+from consumos.models import Consumo
 from prepagos.models import Pago, Prepago
 from operadores.models import Operador
 from main.utils import get_today
@@ -54,28 +54,26 @@ def obtener_rango_semana_a_partir_de_fecha(fecha):
         tuple: (numero_semana, inicio_semana, fin_semana).
     """
     anio_iso, numero_semana = obtener_semana_iso(fecha)
-    inicio, fin = obtener_fecha_inicio_fin_semana(anio_iso, numero_semana)
-    return numero_semana, inicio, fin
+    inicio_semana, fin_semana = obtener_fecha_inicio_fin_semana(anio_iso, numero_semana)
+    return anio_iso, numero_semana, inicio_semana, fin_semana
 
-def prepagos_list(id_operador=None, activo=True):
+def prepagos_list(codigo_operador=None, activo=True):
+    queryset = Prepago.objects.filter(activo=activo).order_by('-created')
+    if codigo_operador:
+        queryset = queryset.filter(socio__operador__codigo_operador=codigo_operador)
 
-    if id_operador is not None:
-        prepagos = Prepago.objects.filter(socio__operador__id=id_operador, activo=activo).order_by('-created')
-    else:
-        prepagos = Prepago.objects.filter(activo=activo).order_by('-created')
-        
-    acumulado = round(sum([prepago.get_acumulado() for prepago in prepagos]), 2)
-    gastado = round(sum([prepago.total_gastado() for prepago in prepagos]), 2)
+    acumulado = sum(prepago.get_acumulado() for prepago in queryset)
+    # Calcular gastado iterando sobre los objetos (ya que total_gastado es un método)
+    gastado = sum(prepago.total_gastado() for prepago in queryset)
+    saldo = acumulado - gastado
 
-    ppagos = {
-        'lista': prepagos,
-        'acumulado' : acumulado,
-        'saldo' : round(sum([prepago.get_saldo() for prepago in prepagos]), 2),
-        'gastado' : gastado,
-        'disponible' : round(acumulado - gastado, 2)
+    return {
+        'lista': queryset,
+        'acumulado': round(acumulado, 2),
+        'saldo': round(saldo, 2),
+        'gastado': round(gastado, 2),
+        'disponible': round(acumulado - gastado, 2),
     }
-    
-    return ppagos
 
 def calcular_totales(queryset, campo_monto, campo_filtro):
     """
@@ -118,96 +116,98 @@ def get_cons_oper(consumos):
     """
     return calcular_totales(consumos, 'efectivo', 'transferencia')
 
-def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=None):
-    context, consumos = {}, []
+def reporte_consumos_diario(codigo_operador=None, fechaDesde=None, fechaHasta=None, user=None):
+    context = {}
     
-    rango = (
-        fechaDesde is not None and
-        fechaHasta is not None
-    )
-    
+    # Manejo de fechas
     if fechaDesde is None:
         fechaDesde = get_today().strftime('%Y-%m-%d')
     
-    if rango:
-        consumos = Consumo.objects.by_date_range(fechaDesde, fechaHasta)  # type: ignore
-        prepagos = Pago.objects.pago_by_date_range(fechaDesde, fechaHasta)
-        fecha = f"{fechaDesde}/{fechaHasta}"
-    else:
-        consumos = Consumo.objects.by_date(fechaDesde)  # type: ignore
-        prepagos = Pago.objects.pago_by_date(fechaDesde)
-        fecha = f"{fechaDesde}"
+    rango = fechaDesde and fechaHasta  # Determina si se trabaja con un rango o una sola fecha
     
-    # Listas para separar usuarios por tipo de pago
-    socios_efectivo_consumos = set()
-    socios_transferencia_consumos = set()
-    socios_efectivo_prepagos = set()
-    socios_transferencia_prepagos = set()
+    # Filtrar consumos y prepagos según el rango de fechas
+    consumos = (
+        Consumo.objects.by_date_range(fechaDesde, fechaHasta) if rango
+        else Consumo.objects.by_date(fechaDesde)
+    )
+    prepagos = (
+        Pago.objects.pago_by_date_range(fechaDesde, fechaHasta) if rango
+        else Pago.objects.pago_by_date(fechaDesde)
+    )
     
-    if id_operador is not None:
-        operador = get_object_or_404(Operador, id=id_operador)
-        lista_prepagos = prepagos_list(id_operador=id_operador)
-        usuario = operador.licencia.persona.usuario
-        try:
-            cons_user = consumos.by_user(usuario)
-            prep_user = prepagos.by_user(usuario)
-        except:
-            pass
-        consumos = consumos.by_id_operador(id_operador)  # type: ignore
+    # Filtrar por operador si se proporciona el código
+    if codigo_operador:
+        operador = get_object_or_404(Operador, codigo_operador=codigo_operador)
+        # usuario = operador.licencia.persona.usuario
+        consumos = consumos.by_operador(operador=operador)
         prepagos = prepagos.filter(prepago__socio__operador=operador)
     else:
         operador = None
-        lista_prepagos = prepagos_list()
-
     
-    # Separar usuarios por tipo de pago en consumos
+    # Separar usuarios por tipo de pago (en consumos y prepagos)
     socios_efectivo_consumos = consumos.filter(transferencia__isnull=True)
     socios_transferencia_consumos = consumos.filter(transferencia__isnull=False)
-    total_efectivo_consumos = round(sum([item.efectivo for item in consumos]), 2)
-    
-    # Separar usuarios por tipo de pago en prepagos
     socios_efectivo_prepagos = prepagos.filter(transferenciapp__isnull=True)
     socios_transferencia_prepagos = prepagos.filter(transferenciapp__isnull=False)
     
-    # Calcular totales
-    
-    pagos = get_cons_oper(consumos)
-    ppagos = get_pp_oper(prepagos)
-    
+    # Agregar valores predeterminados a las sumas y contar
+    totales_consumos = consumos.aggregate(
+        total=Count('id'),
+        sobre_rojo=Coalesce(Sum('sobre_rojo'), Value(0), output_field=DecimalField()),
+        mayoreo=Coalesce(Sum('mayoreo'), Value(0), output_field=DecimalField()),
+        insumos=Coalesce(Sum('insumos'), Value(0), output_field=DecimalField()),
+        descuento=Coalesce(Sum('descuento'), Value(0), output_field=DecimalField()),
+        puntos_volumen=Coalesce(Sum('puntos_volumen'), Value(0), output_field=DecimalField()),
+        sobre_verde=Coalesce(Sum('sobre_verde'), Value(0), output_field=DecimalField()),
+        efectivo=Coalesce(Sum('efectivo'), Value(0), output_field=DecimalField()),
+    )
 
-    pagos_totales = round(sum(pagos + ppagos), 2)
-    total_efectivo = round(sum([pagos[0], ppagos[0]]), 2)
-    total_transferencia = round(sum([pagos[1], ppagos[1]]), 2)
+    totales_prepagos = prepagos.aggregate(
+        pp_oper=Coalesce(Sum('monto'), Value(0), output_field=DecimalField()),
+    )
+
+    # Redondear valores numéricos y convertirlos a Decimal
+    for key, value in totales_consumos.items():
+        if isinstance(value, (int, float, Decimal)):
+            totales_consumos[key] = Decimal(value).quantize(Decimal('0.00'))
     
-    # print(f'socios_efectivo_consumos: {list(socios_efectivo_consumos)}')
-    # print(f"socios_transferencia_consumos: {list(socios_transferencia_consumos)}")
-    # print(f'socios_efectivo_prepagos: {list(socios_efectivo_prepagos)}')
-    # print(f"socios_transferencia_prepagos: {list(socios_transferencia_prepagos)}")
+    if totales_prepagos['pp_oper'] is not None:
+        totales_prepagos['pp_oper'] = round(totales_prepagos['pp_oper'], 2)
     
-    # Agregar listas al contexto
+    # Calcular pagos totales (efectivo y transferencia)
+    pagos_efectivo = sum([
+        socios_efectivo_consumos.aggregate(total=Sum('efectivo'))['total'] or 0,
+        socios_efectivo_prepagos.aggregate(total=Sum('monto'))['total'] or 0
+    ])
+    
+    pagos_transferencia = sum([
+        socios_transferencia_consumos.aggregate(total=Sum('efectivo'))['total'] or 0,
+        socios_transferencia_prepagos.aggregate(total=Sum('monto'))['total'] or 0
+    ])
+    
+    total_pagos = round(pagos_efectivo + pagos_transferencia, 2)
+    # print(f"pagos_efectivo: {pagos_efectivo}, pagos_transferencia: {pagos_transferencia} total_pagos: {total_pagos}")
+    # Calcular pagos totales (efectivo y transferencia)
+    pagos = calcular_totales(consumos, 'efectivo', 'transferencia')
+    ppagos = calcular_totales(prepagos, 'monto', 'transferenciapp')
+    
+    # Construir el contexto
     context = {
-        'prepagos': lista_prepagos,
+        'prepagos': prepagos_list(codigo_operador=codigo_operador),
         'operador': operador,
         'consumos': consumos,
-        'hoy': fecha,
+        'hoy': f"{fechaDesde}/{fechaHasta}" if rango else f"{fechaDesde}",
         'nro_sem': obtener_semana_iso(fechaDesde)[1],
         'totales': {
-            'total': consumos.count(),
-            'sobre_rojo': round(sum([item.sobre_rojo for item in consumos]), 2),
-            'mayoreo': round(sum([item.mayoreo for item in consumos]), 2),
-            'insumos': round(sum([item.insumos for item in consumos]), 2),
-            'descuento': round(sum([item.descuento for item in consumos]), 2),
-            'puntos_volumen': round(sum([item.puntos_volumen for item in consumos]), 2),
-            'sobre_verde': round(sum([item.sobre_verde for item in consumos]), 2),
-            'efectivo': round(sum([item.efectivo for item in consumos]), 2),
-            'pp_oper': round(sum([item.monto for item in prepagos]), 2),
+            **totales_consumos,
+            **totales_prepagos,
             'pagos_ef': pagos[0],
             'pagos_qr': pagos[1],
             'ppagos_ef': ppagos[0],
             'ppagos_qr': ppagos[1],
-            'total_pagos': pagos_totales,
-            'total_efectivo': total_efectivo,
-            'total_transferencia': total_transferencia,
+            'total_pagos': total_pagos,
+            'total_efectivo': pagos_efectivo,
+            'total_transferencia': pagos_transferencia,
         },
         'socios_efectivo_consumos': list(socios_efectivo_consumos),
         'socios_transferencia_consumos': list(socios_transferencia_consumos),
@@ -217,7 +217,7 @@ def reporte_consumos(id_operador=None, fechaDesde=None, fechaHasta=None, user=No
     
     return context
 
-def reporte_semanal(fecha=None, id_operador=None):
+def reporte_semanal(fecha=None, codigo_operador=None):
     """
     Devuelve el número de semana ISO, el lunes y el domingo correspondientes a una fecha dada.
     
@@ -238,6 +238,6 @@ def reporte_semanal(fecha=None, id_operador=None):
     inicio_semana, fin_semana = obtener_fecha_inicio_fin_semana(anio_iso, numero_semana)
     # print(inicio_semana, fin_semana)
 
-    context = reporte_consumos(id_operador=id_operador, fechaDesde=inicio_semana, fechaHasta=fin_semana)
+    context = reporte_consumos_diario(codigo_operador=codigo_operador, fechaDesde=inicio_semana, fechaHasta=fin_semana)
     
     return context

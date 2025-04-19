@@ -4,8 +4,8 @@ from django.conf import settings
 from django.urls import reverse
 from django.core.cache import cache
 from django.utils.timezone import now
-from django.db.models import Sum, F, ExpressionWrapper, DecimalField, Q
-from itertools import chain
+from django.db.models import Sum, F, Q
+from django.db.models.functions import Coalesce
 from main.models import Settings
 from recetas.models import Receta
 from socios.models import Socio
@@ -130,11 +130,17 @@ class Comanda(Model):
             logging.error(f"Error al calcular get_sobre_rojo: {e}")
             return Decimal('0.00')
 
+    # @property
+    # def get_cart_total(self):
+    #     return self.get_all_items().aggregate(
+    #         total=Sum(F('cantidad') * F('receta__precio_publico'))
+    #     )['total'] or 0
+
     @property
     def get_cart_total(self):
         return self.get_all_items().aggregate(
-            total=Sum(F('cantidad') * F('receta__precio_publico'))
-        )['total'] or 0
+            total=Coalesce(Sum(F('cantidad') * F('receta__precio_publico')), Decimal('0.00'))
+        )['total']
 
     @property
     def get_mantenimiento(self):
@@ -143,15 +149,20 @@ class Comanda(Model):
 
     @property
     def get_insumos(self):
-        total = sum(item.get_insumos for item in self.get_all_items())
-        insumos = get_setting_value('insumos', 1)
-        return total + insumos
+        items = self.get_all_items()
+        total = sum(item.get_insumos for item in items) if items else 0
+
+        # Obtener el valor de insumos desde Settings
+        insumos = get_setting_value('insumos', 0) if items else 0
+        total += insumos
+
+        return Decimal(total).quantize(Decimal('0.00'))
 
     @property
     def get_cart_count_items(self):
         return self.get_all_items().aggregate(
-            total=Sum('cantidad')
-        )['total'] or 0
+            total=Coalesce(Sum('cantidad'), 0)
+        )['total']
 
     @property
     def get_cart_points(self):
@@ -163,7 +174,7 @@ class Comanda(Model):
             efectivo = round(self.get_mantenimiento + self.get_insumos + self.get_sobre_rojo, 2)
         else:
             efectivo = self.get_cart_total - sum(prepago.valor for prepago in self.prepago.all())
-        return max(efectivo, 0)
+        return max(Decimal(efectivo).quantize(Decimal('0.00')), Decimal('0.00'))
 
     @property
     def get_sobre_verde(self):
@@ -175,17 +186,17 @@ class Comanda(Model):
         if self.is_operador():
             return Decimal('0.00')
 
-    # Convertir todos los valores a Decimal y manejar valores nulos
-        sobre_rojo = Decimal(getattr(self.get_sobre_rojo, 'quantize', lambda x: self.get_sobre_rojo)(Decimal('0.00')))
-        total_descuento = Decimal(getattr(self.get_total_descuento, 'quantize', lambda x: self.get_total_descuento)(Decimal('0.00')))
-        insumos = Decimal(getattr(self.get_insumos, 'quantize', lambda x: self.get_insumos)(Decimal('0.00')))
-        mantenimiento = Decimal(getattr(self.get_mantenimiento, 'quantize', lambda x: self.get_mantenimiento)(Decimal('0.00')))
-
+        # Convertir todos los valores a Decimal y manejar valores nulos
+        sobre_rojo = Decimal(self.get_sobre_rojo).quantize(Decimal('0.00'))
+        total_descuento = Decimal(self.get_total_descuento).quantize(Decimal('0.00'))
+        insumos = Decimal(self.get_insumos).quantize(Decimal('0.00'))
+        mantenimiento = Decimal(self.get_mantenimiento).quantize(Decimal('0.00'))
+        print(f"Sobre rojo: {sobre_rojo}, Total descuento: {total_descuento}, Insumos: {insumos}, Mantenimiento: {mantenimiento}")
         # Calcular la suma de costos
         costos = (sobre_rojo + total_descuento + insumos + mantenimiento).quantize(Decimal('0.00'))
 
         # Calcular el valor de 'sobre verde'
-        cart_total = Decimal(getattr(self.get_cart_total, 'quantize', lambda x: self.get_cart_total)(Decimal('0.00')))
+        cart_total = Decimal(self.get_cart_total).quantize(Decimal('0.00'))
         sobre_verde = (cart_total - costos).quantize(Decimal('0.00'))
 
         return sobre_verde

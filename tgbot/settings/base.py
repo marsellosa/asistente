@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'bot',
     'comanda',
     'consumos',
+    'finanzas',
     'home',
     'main',
     'operadores',

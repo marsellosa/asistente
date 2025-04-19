@@ -17,7 +17,7 @@ def comanda_view(request):
     prod = get_object_or_404(Categoria, nombre='BATIDO')
     context = {'prod': prod}
     return render(request, template, context)
-    # return HttpResponse(prod)
+    
 @allowed_users(['admin', 'operadores'])
 def hx_create_comanda_view(request, id_socio=None):
     context, template = {}, 'apps/comanda/partials/comanda-pendiente.html'
@@ -27,7 +27,7 @@ def hx_create_comanda_view(request, id_socio=None):
 
     if request.method == 'POST':
         socio = Socio.objects.get(id=id_socio)
-        # parent_obj = Comanda.objects.create(usuario=request.user, socio=socio)
+        # Verificar si el socio ya tiene una comanda pendiente
         parent_obj = Comanda.objects.get_or_create(
             socio=socio,
             status=ComandaStatus.PENDIENTE,  # Ajusta 'estado' según el campo de tu modelo
@@ -39,85 +39,106 @@ def hx_create_comanda_view(request, id_socio=None):
             }
     
     return render(request, template, context)
+
 @allowed_users(['admin', 'operadores'])
 def hx_crud_comandaitem_view(request, id_comanda=None, id_receta=None):
-    # add/delete item for Comanda
-    context, template = {}, 'apps/comanda/partials/table-form.html'
-    
+    # Validar si la solicitud es HTMX
     if not request.htmx:
-        raise Http404
+        raise Http404("Solicitud no válida")
 
-    comanda = Comanda.objects.get(id=id_comanda)
+    # Obtener la comanda o lanzar un error 404 si no existe
+    comanda = get_object_or_404(Comanda, id=id_comanda)
+
+    # Inicializar contexto y plantilla por defecto
+    context = {'parent_obj': comanda}
+    template = 'apps/comanda/partials/table-form.html'
     form = ComandaItemForm(request.POST or None)
+
+    # Manejo de solicitudes POST (Agregar/Actualizar cantidad)
     if request.method == 'POST':
         if form.is_valid():
             receta_id = request.POST.get('receta')
+            cantidad = int(request.POST.get('cantidad', 0))
+
+            # Crear o actualizar el item de la comanda
             obj, created = ComandaItem.objects.get_or_create(
-                comanda=comanda, 
-                receta__id=receta_id,
-                defaults=form.cleaned_data
-                )
+                comanda=comanda,
+                receta_id=receta_id,
+                defaults={'cantidad': cantidad}
+            )
+
             if not created:
-                cant = request.POST.get('cantidad')
-                obj.cantidad += int(cant) #type:ignore
+                obj.cantidad += cantidad
                 obj.save()
 
+            # Reiniciar el formulario
             form = ComandaItemForm()
 
-    if request.method == 'PUT':
-        comandaitem = ComandaItem.objects.get(id=id_receta, comanda__id=id_comanda)
-        args = {'receta': comandaitem.receta, 'cantidad': comandaitem.cantidad}
-        form = ComandaItemForm(args)
+    # Manejo de solicitudes PUT (Editar item)
+    elif request.method == 'PUT':
+        comandaitem = get_object_or_404(ComandaItem, id=id_receta, comanda=comanda)
+        form = ComandaItemForm(instance=comandaitem)
         template = 'apps/comanda/partials/edit-form.html'
         context['obj'] = comandaitem
-    
-    if request.method == 'PATCH':
+
+    # Manejo de solicitudes PATCH (Actualizar item)
+    elif request.method == 'PATCH':
         if form.is_valid():
-            if int(form.cleaned_data['cantidad']) > 0:
-                
-                obj, created = ComandaItem.objects.update_or_create(
-                    id=id_receta, comanda=comanda,
+            cantidad = int(form.cleaned_data['cantidad'])
+            if cantidad > 0:
+                ComandaItem.objects.update_or_create(
+                    id=id_receta,
+                    comanda=comanda,
                     defaults={
-                        'receta' : form.cleaned_data['receta'],
-                        'cantidad' : form.cleaned_data['cantidad'],
+                        'receta': form.cleaned_data['receta'],
+                        'cantidad': cantidad,
                     }
                 )
             form = ComandaItemForm()
 
-    if request.method == 'DELETE':
-        obj = ComandaItem.objects.get(id=id_receta, comanda__id=id_comanda)
-        obj.delete()
-        messages.success(request, "Receta Eliminada Correctamente")
-    
-    context['parent_obj'] = comanda
+    # Manejo de solicitudes DELETE (Eliminar item)
+    elif request.method == 'DELETE':
+        comandaitem = get_object_or_404(ComandaItem, id=id_receta, comanda=comanda)
+        comandaitem.delete()
+        messages.success(request, "Receta eliminada correctamente")
+
+    # Agregar el formulario al contexto
     context['comanda_item_form'] = form
 
-    # context = {
-    #     'parent_obj': comanda,
-    #     'form': form,
-    #     'msg': msg
-    # }
     return render(request, template, context)
+
 @allowed_users(['admin', 'operadores'])
 def hx_add_prepago_view(request, id_comanda=None, id_prepago=None):
-    context, template = {}, 'apps/comanda/partials/total.html'
-    
-    comanda = Comanda.objects.get(id=id_comanda, status='p')
-    prepago = Prepago.objects.get(id=id_prepago)
+    """
+    Vista para agregar o quitar un prepago de una comanda.
+    """
+    context = {}
+    template = 'apps/comanda/partials/total.html'
+
+    # Obtener la comanda y el prepago usando get_object_or_404
+    comanda = get_object_or_404(Comanda, id=id_comanda, status='p')
+    prepago = get_object_or_404(Prepago, id=id_prepago)
+
+    # Verificar si el prepago ya está asociado a la comanda
     if prepago in comanda.prepago.all():
         comanda.prepago.remove(prepago)
     else:
-        # TODO: verficar si su saldo alcanza
-        comanda.prepago.add(prepago)
+        # Verificar si el saldo del prepago es suficiente
         if prepago.get_alert():
-            comanda.prepago.remove(prepago)
-            messages.error(request, "No puede usar este prepago")
-    comanda.save()
-    
-    prepago.activo = True if prepago.get_uses_list().count() < prepago.cantidad else False
+            messages.error(request, "No puede usar este prepago: alerta activa.")
+        else:
+            comanda.prepago.add(prepago)
+
+    # Actualizar el estado del prepago
+    prepago.activo = prepago.get_uses_list().count() < prepago.cantidad
     prepago.save()
+
+    # Guardar la comanda y preparar el contexto
+    comanda.save()
     context = {'parent_obj': comanda}
+
     return render(request, template, context)
+
 @allowed_users(['admin', 'operadores'])
 def comanda_item_edit_view(request, id_comanda_item):
     context, template = {}, 'apps/comanda/partials/comanda-item.html'
@@ -163,14 +184,27 @@ def hx_update_status(request, id_comanda):
 
 @allowed_users(['admin'])
 def hx_admin_update_status(request, id_comanda):
-    context, template = {}, 'apps/main/partials/status.html'
+
+    template = 'apps/main/partials/status.html'
+
+    # Obtiene la comanda o devuelve un error 404 si no existe
     comanda = get_object_or_404(Comanda, id=id_comanda)
-    if comanda.status == 'p':
-        status = 'e'
-    elif comanda.status == 'e':
-        status = 'p' 
-    comanda.status = status
-    comanda.save()
-    context.update({'comanda': comanda})
     
+    # Mapeo de estados: define cómo cambia el estado usando ComandaStatus
+    status_map = {
+        ComandaStatus.PENDIENTE: ComandaStatus.ENTREGADO,
+        ComandaStatus.ENTREGADO: ComandaStatus.PENDIENTE,
+    }
+    
+    # Verifica si el estado actual está en el mapeo
+    if comanda.status in status_map:
+        comanda.status = status_map[comanda.status]
+        comanda.save()
+    else:
+        # Maneja el caso de un estado inesperado
+        return render(request, template, {'message': 'Estado de comanda inválido.'})
+    
+    # Renderiza la plantilla con el contexto actualizado
+    context = {'comanda': comanda}
     return render(request, template, context)
+

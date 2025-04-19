@@ -1,80 +1,77 @@
-# Created by .ignore support plugin (hsz.mobi)
-### Python template
-# Byte-compiled / optimized / DLL files
-tgbot/settings/local.py
-local.py
-tests.py
-set_webhook.py
+# Django static & media
+/staticfiles/
+/media/
+# Django migrations
+migrations/
+# Django management
+management/
 
+# Editor & env
+.env
+.vscode/
+.idea/
+
+# Python compiled
 __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
+# Virtual envs
 env/
-build/
-develop-eggs/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-migrations/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
+venv/
+.Python
+
+# Django settings
+tgbot/settings/local.py
+local.py
+
+# Django DB
+*.sqlite3
+db.sqlite3
+
+# Logs
+*.log
+logs/
+
+# Packages
 *.egg
+*.egg-info/
+.eggs/
+dist/
+build/
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
-
-# Installer logs
+# Installer stuff
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Unit test / coverage reports
-htmlcov/
+# Coverage / testing
+.coverage*
 .tox/
-.coverage
-.coverage.*
-.cache
+.noseids
+htmlcov/
+*,cover
 nosetests.xml
 coverage.xml
-*,cover
+tests.py
 
-# Translations
-*.mo
-*.pot
+# Misc
+*.bak
+*.sql
+whatsapp.py
+set_webhook.py
+set_webhook.sh
+backup_db.py
 
-# Django stuff:
-*.log
-
-# Sphinx documentation
-docs/_build/
+# PyInstaller
+*.spec
+*.manifest
 
 # PyBuilder
 target/
-*.sql
-*.json
-db.sqlite3
-*.sqlite3
-.idea/
-.env
-*.bak
-logs/*.log
-set_webhook.sh
-Pipfile
-Pipfile.lock
-whatsapp.py
-bin
-.vscode
-static/
+
+# Sphinx docs
+docs/_build/
+
+# OS generated
+.DS_Store
+Thumbs.db

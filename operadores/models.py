@@ -26,7 +26,7 @@ class Operador(Model):
         return reverse('operadores:profile_admin', kwargs={'id_operador': self.id})
 
     def get_absolute_url(self):
-        return reverse("operadores:profile", kwargs={"id": self.pk})
+        return reverse("operadores:profile", kwargs={"codigo_operador": self.codigo_operador})
     
     def get_profile_picture(self):
         return self.licencia.persona.get_profile_pic_url()

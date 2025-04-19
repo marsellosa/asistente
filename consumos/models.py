@@ -19,15 +19,15 @@ class ConsumoQuerySet(QuerySet):
     def by_date(self, fecha):
         return self.filter(comanda__fecha=fecha).order_by('-inserted_on')
 
-    def by_id_operador(self, id_operador):
-        return self.filter(comanda__socio__operador__id=id_operador).order_by('-comanda__fecha')
+    def by_operador(self, operador):
+        return self.filter(comanda__socio__operador=operador).order_by('-comanda__fecha')
 
 class ConsumoManager(Manager):
     def get_queryset(self):
         return ConsumoQuerySet(self.model, using=self.db)
         
-    def by_id_operador(self, id_operador):
-        return self.get_queryset().by_id_operador(id_operador)
+    def by_operador(self, operador):
+        return self.get_queryset().by_operador(operador)
     
     def by_user(self, usuario):
         return self.get_queryset().by_user(usuario)

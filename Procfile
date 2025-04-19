@@ -1,1 +1,2 @@
-web: gunicorn tgbot.wsgi --log-file -
+web: bash entrypoint.sh
+

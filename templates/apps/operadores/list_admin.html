@@ -32,7 +32,7 @@
                 <div class="user-block">
                   <img class="img-circle" src="{% static operador.get_profile_picture %}" alt="User Image">
                   
-                  <span class="username"><a href="{{ operador.get_admin_url }}">{{operador}}</a></span>
+                  <span class="username"><a href="{{ operador.get_absolute_url }}">{{operador}}</a></span>
                   <span class="description">{{ operador.get_nivel_licencia }}</span>
                 </div>
                 <!-- /.user-block -->

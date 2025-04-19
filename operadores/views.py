@@ -1,10 +1,8 @@
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
 from operadores.models import *
-from pedidos.models import Pedido
-from prepagos.models import Pago
 from reportes.forms import ReporteDiarioForm
-from reportes.utils import reporte_consumos
+from reportes.utils import reporte_consumos_diario, reporte_semanal
 from socios.models import Socio
 from home.decorators import allowed_users
 
@@ -25,14 +23,19 @@ def list_view(request):
     return render(request, template, context)
 
 @allowed_users(['admin', 'operadores'])
-def profile_view(request, id=None):
+def profile_view(request, codigo_operador):
     context, template = {}, 'apps/operadores/profile.html'
+    # Obtener el nombre de la URL que hizo la solicitud
+    url_name = request.resolver_match.url_name
+    
+    if url_name == 'profile_admin':
+        template = 'apps/operadores/profile-admin.html'
+
+    fechaDesde = request.GET.get('fechadesde')
         
-    if request.htmx:
-        template = 'apps/reportes/reporte_card.html'
-        
-    context = reporte_consumos(id_operador=id, user=request.user)
-    context['form']= ReporteDiarioForm({'id': id})
+    # context = reporte_consumos_diario(codigo_operador=codigo_operador, fechaDesde=fechaDesde, user=request.user)
+    context = reporte_semanal(codigo_operador=codigo_operador, fecha=fechaDesde)
+    context['form']= ReporteDiarioForm({'codigo_operador': codigo_operador})
     
     return render(request, template, context)
 
@@ -67,7 +70,7 @@ def list_admin_view(request):
 def profile_admin_view(request, id_operador):
     context, template = {}, 'apps/operadores/profile-admin.html'
 
-    context = reporte_consumos(id_operador=id_operador, user=request.user)
+    context = reporte_consumos_diario(id_operador=id_operador, user=request.user)
     context['form']= ReporteDiarioForm({'id': id_operador})
 
     return render(request, template, context)

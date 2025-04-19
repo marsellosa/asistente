@@ -1,4 +1,4 @@
 from django.contrib import admin
-from reportes.models import Ingreso
+from reportes.models import Semana
 
-admin.site.register(Ingreso)
+admin.site.register(Semana)
