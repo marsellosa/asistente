@@ -116,7 +116,7 @@
           <ul class="users-list clearfix">
             {% for socio in latest %}
             <li>
-              <img src="{% static socio.persona.get_profile_pic_url %}" alt="User Image">
+              <img src="{{ socio.persona.get_profile_pic_url }}" alt="User Image">
               <a class="users-list-name" href="{{ socio.get_absolute_url }}">{{ socio.persona.nombre }} {{ socio.persona.apellido }}</a>
               <span class="users-list-date">{{ socio.persona.created_on }}</span>
             </li>

@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.templatetags.static import static
 from django.db.models import * #type:ignore
 from django.urls import reverse
 from django.utils.timezone import now
@@ -74,12 +75,12 @@ class Persona(Model):
             bot_id = None
         return bot_id
     
+    
     def get_profile_pic_url(self):
         if self.genero == 'M':
-            profile_pic = '/AdminLTE/dist/img/user3-128x128.jpg'
-        else:
-            profile_pic = '/AdminLTE/dist/img/user1-128x128.jpg'
-        return profile_pic
+            return static('AdminLTE/dist/img/user3-128x128.jpg')
+        return static('AdminLTE/dist/img/user1-128x128.jpg')
+
 
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
