@@ -3,8 +3,8 @@ const urlsToCache = [
     '/',
     '/static/AdminLTE/dist/css/adminlte.css',
     '/static/AdminLTE/dist/js/adminlte.js',
-    '/static/AdminLTE/dist/img/favicon/web-app-manifest-192x192.png',
-    '/static/AdminLTE/dist/img/favicon/web-app-manifest-512x512.png'
+    '/static/web-app-manifest-192x192.png',
+    '/static/web-app-manifest-512x512.png'
     // Agrega otros archivos estáticos esenciales
 ];
 
