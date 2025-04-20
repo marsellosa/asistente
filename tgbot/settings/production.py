@@ -42,6 +42,6 @@ try:
 except:
     pass
 
-
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
