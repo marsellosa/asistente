@@ -27,14 +27,15 @@ def profile_view(request, codigo_operador):
     context, template = {}, 'apps/operadores/profile.html'
     # Obtener el nombre de la URL que hizo la solicitud
     url_name = request.resolver_match.url_name
+
+    fechaDesde = request.GET.get('fechadesde')
     
     if url_name == 'profile_admin':
         template = 'apps/operadores/profile-admin.html'
-
-    fechaDesde = request.GET.get('fechadesde')
-        
-    # context = reporte_consumos_diario(codigo_operador=codigo_operador, fechaDesde=fechaDesde, user=request.user)
-    context = reporte_semanal(codigo_operador=codigo_operador, fecha=fechaDesde)
+        context = reporte_semanal(codigo_operador=codigo_operador, fecha=fechaDesde)
+    else:
+        context = reporte_consumos_diario(codigo_operador=codigo_operador, fechaDesde=fechaDesde, user=request.user)
+    
     context['form']= ReporteDiarioForm({'codigo_operador': codigo_operador})
     
     return render(request, template, context)
