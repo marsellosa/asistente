@@ -27,9 +27,19 @@ class PorcionAdmin(ModelAdmin):
     list_display = ['categoria', 'precio', 'cantidad', 'unidad']
     readonly_fields = ['cantidad_decimal']
 
+class PrecioDistribuidorAdmin(ModelAdmin):
+    list_display = ['categoria', 'distribuidor', 'consultor_mayor', 'productor_calificado', 'mayorista', 'inserted_on', 'edited_on']
+    search_fields = ['categoria__nombre']
+    list_filter = ['categoria']
+
+class PrecioClientePreferenteAdmin(ModelAdmin):
+    list_display = ['categoria', 'bronce', 'plata', 'oro', 'cliente', 'inserted_on', 'edited_on']
+    search_fields = ['categoria__nombre']
+    list_filter = ['categoria']
+
 site.register(Categoria, CategoriaAdmin)
-site.register(PrecioDistribuidor)
-site.register(PrecioClientePreferente)
+site.register(PrecioDistribuidor, PrecioDistribuidorAdmin)
+site.register(PrecioClientePreferente, PrecioClientePreferenteAdmin)
 site.register(Pais)
 site.register(Detalles, DetallesAdmin)
 site.register(Porcion, PorcionAdmin)
