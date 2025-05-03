@@ -114,7 +114,7 @@ class Comanda(Model):
             nivel_operador = self.socio.operador.get_nivel_licencia  
             # Calcular el costo total de los ingredientes herbales
             costo_total = Decimal('0.00')
-            for item in self.comandaitem_set.all():
+            for item in self.comandaitem_set.select_related('receta').all():
                 receta = item.receta
                 for ing_herb in receta.get_herbal_ingredient_children():
                     costo_ingrediente = ing_herb.get_costo(nivel=nivel_operador)
