@@ -104,6 +104,12 @@ class Comanda(Model):
             Decimal: El costo total redondeado a dos decimales.
         """
         try:
+            # Verificar si el socio tiene un operador asociado
+            # y si el operador tiene un nivel de licencia
+            # Si no hay operador o no tiene nivel, retornar 0
+            if not hasattr(self, 'socio') or not hasattr(self.socio, 'operador'):
+                return Decimal('0.00')
+            
             # Determinar el nivel del operador
             nivel_operador = self.socio.operador.get_nivel_licencia  
             # Calcular el costo total de los ingredientes herbales
