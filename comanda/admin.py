@@ -12,10 +12,17 @@ class ComandaItemAdmin(ModelAdmin):
 
 class ComandaAdmin(ModelAdmin):
     inlines = [ComandaItemInline]
-    list_display = ['socio', 'usuario', 'fecha', 'get_cart_total', 'get_sobre_rojo']
+    list_display = ['socio', 'usuario', 'fecha', 'cart_total', 'sobre_rojo']
     readonly_fields = ['timestamp', 'updated']
     raw_id_fields = ['usuario']
-    # search_fields = ['socio']
+    
+    def sobre_rojo(self, obj):
+        return obj.get_sobre_rojo
+    sobre_rojo.short_description = 'Sobre Rojo'
+
+    def cart_total(self, obj):
+        return obj.get_cart_total
+    cart_total.short_description = 'Total'
 
 site.register(Comanda, ComandaAdmin)
 site.register(ComandaItem, ComandaItemAdmin)
