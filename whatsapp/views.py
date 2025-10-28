@@ -39,14 +39,14 @@ def response_message_view(request):
             to=sender_number
         )
 
-        return HttpResponse(status_code=200, content=f"Message sent with SID: {message.sid}")
+        return HttpResponse(status=200)
 
     return render(request, 'whatsapp/send_message.html')
 
 
 def send_message_view(request):
     if request.method == 'POST':
-        
+        # print(f"Received POST request with data: {request.POST}")
         to_number = request.POST.get('to_number')
         message_body = request.POST.get('message_body')
         # Your Twilio credentials
