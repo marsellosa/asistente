@@ -39,8 +39,9 @@ def delete_comanda_item(sender, instance, **kwargs):
         update_consumo(comanda)
 
     except Exception as e:
+        pass
         # Registrar cualquier error inesperado
-        print(f"Error al procesar la eliminación de ComandaItem: {e}")
+        # print(f"Error al procesar la eliminación de ComandaItem: {e}")
 
 def update_consumo(instance):
     # ins = instance.comanda

@@ -227,7 +227,7 @@ class PalabrasClaveQuerySet(QuerySet):
         lookups = (
             Q(palabra__icontains=query)
         )
-        print(lookups)
+        # print(lookups)
         return self.filter(lookups)
 
 class PalabrasClaveManager(Manager):

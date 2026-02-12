@@ -101,7 +101,7 @@ class Receta(Model):
 
         except (AttributeError, TypeError, ValueError) as e:
             # Manejar errores y devolver None si ocurre algún problema
-            print(f"Error al calcular el costo total de la receta: {e}")
+            # print(f"Error al calcular el costo total de la receta: {e}")
             return None
     
     @property
@@ -155,7 +155,7 @@ class Receta(Model):
             # Acceder a la relación inversa para obtener los ingredientes herbales
             return self.recetaingredienteherbal_set.all()
         except AttributeError as e:
-            print(f"Error al acceder a los ingredientes herbales: {e}")
+            # print(f"Error al acceder a los ingredientes herbales: {e}")
             return []
  
     def __str__(self):

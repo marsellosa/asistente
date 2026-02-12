@@ -197,7 +197,7 @@ class Comanda(Model):
         total_descuento = Decimal(self.get_total_descuento).quantize(Decimal('0.00'))
         insumos = Decimal(self.get_insumos).quantize(Decimal('0.00'))
         mantenimiento = Decimal(self.get_mantenimiento).quantize(Decimal('0.00'))
-        print(f"Sobre rojo: {sobre_rojo}, Total descuento: {total_descuento}, Insumos: {insumos}, Mantenimiento: {mantenimiento}")
+        # print(f"Sobre rojo: {sobre_rojo}, Total descuento: {total_descuento}, Insumos: {insumos}, Mantenimiento: {mantenimiento}")
         # Calcular la suma de costos
         costos = (sobre_rojo + total_descuento + insumos + mantenimiento).quantize(Decimal('0.00'))
 

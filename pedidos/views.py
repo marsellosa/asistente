@@ -81,10 +81,10 @@ def crear_pedido(request):
     pedido_item_form = PedidoItemModelForm(request.POST or None)
     context['pedido_item_form'] = pedido_item_form
     
-    if form.is_valid():
-        print(f"form: {form}")
-    if pedido_item_form.is_valid():
-        print(f"pedido_item_form: {pedido_item_form}")
+    # if form.is_valid():
+    #     print(f"form: {form}")
+    # if pedido_item_form.is_valid():
+    #     print(f"pedido_item_form: {pedido_item_form}")
     return render(request, template, context)
 
 

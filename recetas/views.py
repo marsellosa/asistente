@@ -13,7 +13,7 @@ def search_view(request):
     qs = Receta.objects.search(query=query)
     if not qs:
         qs = Receta.objects.all()
-        print(f"No search results found")
+        # print(f"No search results found")
     context['objects_list'] = qs
 
     return render(request, template, context)
