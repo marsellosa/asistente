@@ -1,2 +1,1 @@
 web: bash entrypoint.sh
-
