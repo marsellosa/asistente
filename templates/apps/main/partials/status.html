@@ -1,10 +1,5 @@
-<td id="statusTag-{{ comanda.id}}" 
-    {% if user.is_staff %}
-        hx-get="{% url "comanda:hx-admin-update-status" comanda.id %}"
-        hx-target="#statusTag-{{ comanda.id}}"
-        hx-swap="outerHTML"
-    {% endif %}
-    >
+<td id="statusTag-{{ comanda.id}}" {% if user.is_staff %} hx-get="{% url 'comanda:hx-admin-update-status' comanda.id %}"
+    hx-target="#statusTag-{{ comanda.id}}" hx-swap="outerHTML" {% endif %}>
     {% if comanda.status == 'p' %}
     <span class="badge badge-warning">Pendiente</span>
     {% elif comanda.status == 'e' %}

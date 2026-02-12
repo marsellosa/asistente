@@ -20,10 +20,10 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     #
-    # 'allauth',
-    # 'allauth.account',
-    # 'allauth.socialaccount',
-    # 'allauth.socialaccount.providers.google',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     #
     'rest_framework',
     'django_htmx',
@@ -59,7 +59,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_htmx.middleware.HtmxMiddleware',
-    # 'allauth.account.middleware.AccountMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'tgbot.urls'
@@ -110,7 +110,7 @@ TIME_ZONE = 'America/La_Paz'
 
 USE_I18N = True
 
-USE_L10N = True
+
 
 USE_TZ = True
 
@@ -138,18 +138,17 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-SITE_ID = 2
+SITE_ID = 1
 
 ACCOUNT_FORMS = {
     'signup': 'home.forms.CustomSignupForm',
 }
   
 # Configuración de correo
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # o "optional"
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = "optional"  # o "optional"
+ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 LOGIN_REDIRECT_URL = '/main/'
 LOGOUT_REDIRECT_URL = '/'
 
@@ -177,6 +176,9 @@ try:
     DEFAULT_FROM_EMAIL  = EMAIL_HOST_USER
 except:
     pass
+
+if EMAIL_BACKEND is None:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 EMAIL_READY = (
     EMAIL_BACKEND is not None and

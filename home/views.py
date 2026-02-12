@@ -4,48 +4,42 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from home.forms import CreateUserForm
 from home.decorators import unauthenticated_user
+from allauth.account.views import (
+    LoginView as AllauthLoginView, 
+    SignupView as AllauthSignupView, 
+    LogoutView as AllauthLogoutView,
+    PasswordResetView as AllauthPasswordResetView,
+    PasswordResetDoneView as AllauthPasswordResetDoneView,
+    PasswordResetFromKeyView as AllauthPasswordResetFromKeyView,
+    PasswordResetFromKeyDoneView as AllauthPasswordResetFromKeyDoneView
+)
+
+class LoginView(AllauthLoginView):
+    template_name = 'apps/home/login.html'
+
+class SignupView(AllauthSignupView):
+    template_name = 'apps/home/register.html'
+
+class LogoutView(AllauthLogoutView):
+    pass
+
+class PasswordResetView(AllauthPasswordResetView):
+    template_name = 'apps/home/forgot_password.html'
+
+class PasswordResetDoneView(AllauthPasswordResetDoneView):
+    template_name = 'apps/home/password_reset_done.html'
+
+class PasswordResetFromKeyView(AllauthPasswordResetFromKeyView):
+    template_name = 'apps/home/password_reset_confirm.html'
+
+class PasswordResetFromKeyDoneView(AllauthPasswordResetFromKeyDoneView):
+    template_name = 'apps/home/password_reset_complete.html'
 
 def home_view(request):
-    context, template  = {}, 'apps/home/home.html'
-    return render(request, template, context)
+    if request.user.is_authenticated:
+        return redirect('main:inicio')
+    return render(request, 'apps/home/login.html') # Redirect to login if not authenticated
 
-@unauthenticated_user
-def login_view(request):
-    context, template  = {}, 'apps/home/login.html'
-    if request.method == 'POST':
-        
-        user = authenticate(
-            request, 
-            username = request.POST.get('username'),
-            password = request.POST.get('password')
-            )
-
-        if user is not None:
-            login(request, user)
-            return redirect('main:inicio')
-        else:
-            messages.info(request, f"Username or Password is incorrect")
-    return render(request, template, context)
-
-@unauthenticated_user
-def register_view(request):
-    context, template = {}, 'apps/home/register.html'
-    form = CreateUserForm()
-    if request.method == 'POST':
-        form = CreateUserForm(request.POST)
-        
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('email')
-            messages.success(request, f"Se creó la cuenta para {username}")
-            return redirect('login')
-
-    context['form'] = form
-    return render(request, template, context)
-
-def logout_view(request):
-    logout(request)
-    return redirect('login')
 
 def check_password_match(request):
     context, template = {}, 'apps/home/partials/password_input.html'

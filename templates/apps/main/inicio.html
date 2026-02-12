@@ -2,26 +2,26 @@
 {% load static %}
 
 {% block nombre %}
-  Marcelo Llosa
+Marcelo Llosa
 {% endblock nombre %}
 {% block page %}Escritorio{% endblock page %}
 
 {% block content-header %}
 <!-- Content Header (Page header) -->
-    <div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Escritorio</h1>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item active">Inicio</li>
-            </ol>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </div><!-- /.content-header -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark">Escritorio</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item active">Inicio</li>
+        </ol>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div><!-- /.content-header -->
 
 {% endblock content-header %}
 
@@ -38,13 +38,9 @@
           <button type="button" class="btn btn-tool" data-card-widget="collapse">
             <i class="fas fa-minus"></i>
           </button>
-          <button type="button" class="btn btn-tool" 
-            hx-get="{% url 'main:inicio' %}" 
-            hx-select="#cardConsumos"
-            hx-trigger="click"
-            _="on htmx:beforeRequest put 'flex' into #loadingOverlay.style.display
-              on htmx:afterRequest put 'none' into #loadingOverlay.style.display"
-            >
+          <button type="button" class="btn btn-tool" hx-get="{% url 'main:inicio' %}" hx-select="#cardConsumos"
+            hx-trigger="click" _="on htmx:beforeRequest put 'flex' into #loadingOverlay.style.display
+              on htmx:afterRequest put 'none' into #loadingOverlay.style.display">
             <i class="fas fa-sync-alt"></i>
           </button>
         </div>
@@ -54,36 +50,36 @@
         <div class="table-responsive" id="consumosDiarios">
           <table class="table m-0" id="tablaConsumos">
             <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Estado</th>
-              <th>Total</th>
-              <th>Detalle</th>
-            </tr>
+              <tr>
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Total</th>
+                <th>Detalle</th>
+              </tr>
             </thead>
             <tbody>
-            {% for comanda in comandas %}
-            <tr>
-              <td><a href={{ comanda.socio.get_absolute_url }}>{{ comanda.socio }}</a></td>
-              {% include "apps/main/partials/status.html" %}
-              <td>{{ comanda.get_cart_total }}</td>
-              <td>
+              {% for comanda in comandas %}
+              <tr>
+                <td><a href={{ comanda.socio.get_absolute_url }}>{{ comanda.socio }}</a></td>
+                {% include "apps/main/partials/status.html" %}
+                <td>{{ comanda.get_cart_total }}</td>
+                <td>
                   <div class="sparkbar" data-color="#f39c12" data-height="20">
-                  {% for item in comanda.get_all_items %}  
-                      {% if forloop.last %}
-                      {{item}}
-                      {% else %}
-                      {{item}},
-                      {% endif %}
-                  {% endfor %}
+                    {% for item in comanda.get_all_items %}
+                    {% if forloop.last %}
+                    {{item}}
+                    {% else %}
+                    {{item}},
+                    {% endif %}
+                    {% endfor %}
                   </div>
-              </td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="2">No hay Ordenes</td>
-            </tr>
-            {% endfor %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="2">No hay Ordenes</td>
+              </tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -98,45 +94,46 @@
   </div>
   <div class="col-lg-4">
     <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">Registros Recientes</h3>
+      <div class="card-header">
+        <h3 class="card-title">Registros Recientes</h3>
 
-          <div class="card-tools">
-            <span class="badge badge-danger">8 Recientes</span>
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
+        <div class="card-tools">
+          <span class="badge badge-danger">8 Recientes</span>
+          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+            <i class="fas fa-minus"></i>
+          </button>
+          <button type="button" class="btn btn-tool" data-card-widget="remove">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        <!-- /.card-header -->
-        <div class="card-body p-0">
-          <ul class="users-list clearfix">
-            {% for socio in latest %}
-            <li>
-              <img src="{{ socio.persona.get_profile_pic_url }}" alt="User Image">
-              <a class="users-list-name" href="{{ socio.get_absolute_url }}">{{ socio.persona.nombre }} {{ socio.persona.apellido }}</a>
-              <span class="users-list-date">{{ socio.persona.created_on }}</span>
-            </li>
-            {% endfor %}
-            
-          </ul>
-          <!-- /.users-list -->
-        </div>
-        <!-- /.card-body -->
-        <div class="card-footer text-center">
-          <a href=" {% url 'socios:list' %}">Todos los Socios</a>
-        </div>
-        <!-- /.card-footer -->
       </div>
+      <!-- /.card-header -->
+      <div class="card-body p-0">
+        <ul class="users-list clearfix">
+          {% for socio in latest %}
+          <li>
+            <img src="{{ socio.persona.get_profile_pic_url }}" alt="User Image">
+            <a class="users-list-name" href="{{ socio.get_absolute_url }}">{{ socio.persona.nombre }} {{
+              socio.persona.apellido }}</a>
+            <span class="users-list-date">{{ socio.persona.created_on }}</span>
+          </li>
+          {% endfor %}
+
+        </ul>
+        <!-- /.users-list -->
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer text-center">
+        <a href=" {% url 'socios:list' %}">Todos los Socios</a>
+      </div>
+      <!-- /.card-footer -->
+    </div>
   </div>
 </div>
 {% endblock main-content %}
 {% block js %}
 <script>
-  function outputMessage(error){
+  function outputMessage(error) {
     Swal.fire({
       icon: 'warning',
       title: error,

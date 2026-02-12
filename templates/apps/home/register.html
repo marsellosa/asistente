@@ -12,7 +12,7 @@
     <div class="card-body register-card-body">
       <p class="login-box-msg">Registrar nueva membresia</p>
 
-      <form action="" method="post">{% csrf_token %}
+      <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">{% csrf_token %}
         {% comment %} <div class="input-group mb-3">
           <input type="text" class="form-control" name="username" placeholder="Username">
           <div class="input-group-append">
@@ -50,7 +50,7 @@
             {% comment %} <div class="icheck-primary">
               <input type="checkbox" id="agreeTerms" name="terms" value="agree">
               <label for="agreeTerms">
-               I agree to the <a href="#">terms</a>
+                I agree to the <a href="#">terms</a>
               </label>
             </div> {% endcomment %}
           </div>
@@ -82,23 +82,23 @@
         </div>
         <!-- /.card-body -->
       </div>
-        {% endif %}
+      {% endif %}
 
-        {% comment %} <p>- OR -</p>
-        <a href="#" class="btn btn-block btn-primary">
-          <i class="fab fa-facebook mr-2"></i>
-          Sign up using Facebook
-        </a>
-        <a href="#" class="btn btn-block btn-danger">
-          <i class="fab fa-google-plus mr-2"></i>
-          Sign up using Google+
-        </a>
-      </div> {% endcomment %}
+      {% comment %} <p>- OR -</p>
+      <a href="#" class="btn btn-block btn-primary">
+        <i class="fab fa-facebook mr-2"></i>
+        Sign up using Facebook
+      </a>
+      <a href="#" class="btn btn-block btn-danger">
+        <i class="fab fa-google-plus mr-2"></i>
+        Sign up using Google+
+      </a>
+    </div> {% endcomment %}
 
-      <a href="{% url 'login' %}" class="text-center">Ya tengo una cuenta</a>
-    </div>
-    <!-- /.form-box -->
-  </div><!-- /.card -->
+    <a href="{% url 'account_login' %}" class="text-center">Ya tengo una cuenta</a>
+  </div>
+  <!-- /.form-box -->
+</div><!-- /.card -->
 </div>
 <!-- /.register-box -->
 

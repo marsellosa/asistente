@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,17 +11,17 @@
   <title>Mi Asistente Herbalife</title>
 
   <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="{% static 'AdminLTE/plugins/fontawesome-free/css/all.min.css' %}"/>
+  <link rel="stylesheet" href="{% static 'AdminLTE/plugins/fontawesome-free/css/all.min.css' %}" />
   <!-- Theme style -->
-  <link rel="stylesheet" href="{% static 'AdminLTE/dist/css/adminlte.css' %}"/>
+  <link rel="stylesheet" href="{% static 'AdminLTE/dist/css/adminlte.css' %}" />
   <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
 
-  
+
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  
+
   <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
 
   <script type="module" src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons/ionicons.esm.js"></script>
@@ -29,194 +30,201 @@
   <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
 
   {% comment %} HTMX cdn {% endcomment %}
-  <script src="{% static "AdminLTE/dist/js/htmx.min.js" %}"></script>
-  
+  <script src="{% static 'AdminLTE/dist/js/htmx.min.js' %}"></script>
+
   <!-- SweetAlert2 -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css" integrity="sha256-aUL5sUzmON2yonFVjFCojGULVNIOaPxlH648oUtA/ng=" crossorigin="anonymous">
-  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css"
+    integrity="sha256-aUL5sUzmON2yonFVjFCojGULVNIOaPxlH648oUtA/ng=" crossorigin="anonymous">
+
   <link rel="manifest" href="{% static 'manifest.json' %}">
   <meta name="theme-color" content="#4CAF50">
 
 </head>
+
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
-<div class="wrapper">
+  <div class="wrapper">
 
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-    <!-- Left navbar links -->
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="{% url "main:inicio" %}" class="nav-link">Inicio</a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="{% url "reportes:list" %}" class="nav-link">Reporte</a>
-      </li>
-    </ul>
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+      <!-- Left navbar links -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+          <a href="{% url 'main:inicio' %}" class="nav-link">Inicio</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+          <a href="{% url 'reportes:list' %}" class="nav-link">Reporte</a>
+        </li>
+      </ul>
 
-    <!-- SEARCH FORM -->
-    {% include 'apps/main/search/search-form.html' %}
+      <!-- SEARCH FORM -->
+      {% include 'apps/main/search/search-form.html' %}
 
-    <!-- Right navbar links -->
-    <ul class="navbar-nav ml-auto">
-      <!-- Messages Dropdown Menu -->
-      <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-comments"></i>
-          {% if comments %}<span class="badge badge-danger navbar-badge">{{ comments.count }}</span>{% endif %}
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          {% for comment in comments %}
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="{% static 'AdminLTE/dist/img/user1-128x128.jpg' %}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Brad Diesel
-                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">Call me whenever you can...</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-            <!-- Message End -->
+      <!-- Right navbar links -->
+      <ul class="navbar-nav ml-auto">
+        <!-- Messages Dropdown Menu -->
+        <li class="nav-item dropdown">
+          <a class="nav-link" data-toggle="dropdown" href="#">
+            <i class="far fa-comments"></i>
+            {% if comments %}<span class="badge badge-danger navbar-badge">{{ comments.count }}</span>{% endif %}
           </a>
-          <div class="dropdown-divider"></div>
-          {% empty %}
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="{% static 'AdminLTE/dist/img/user8-128x128.jpg' %}" alt="User Avatar" class="img-size-50 img-circle mr-3">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Nada aún
-                  <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">Acá aparecerán tus notificationes</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i>..</p>
+          <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            {% for comment in comments %}
+            <a href="#" class="dropdown-item">
+              <!-- Message Start -->
+              <div class="media">
+                <img src="{% static 'AdminLTE/dist/img/user1-128x128.jpg' %}" alt="User Avatar"
+                  class="img-size-50 mr-3 img-circle">
+                <div class="media-body">
+                  <h3 class="dropdown-item-title">
+                    Brad Diesel
+                    <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                  </h3>
+                  <p class="text-sm">Call me whenever you can...</p>
+                  <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                </div>
               </div>
-            </div>
-            <!-- Message End -->
-          </a>
-          <div class="dropdown-divider"></div>
-          {% endfor %}
-          <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
-        </div>
-      </li>
-      <!-- Notifications Dropdown Menu -->
-      <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-bell"></i>
-          {% if notification %}
+              <!-- Message End -->
+            </a>
+            <div class="dropdown-divider"></div>
+            {% empty %}
+            <a href="#" class="dropdown-item">
+              <!-- Message Start -->
+              <div class="media">
+                <img src="{% static 'AdminLTE/dist/img/user8-128x128.jpg' %}" alt="User Avatar"
+                  class="img-size-50 img-circle mr-3">
+                <div class="media-body">
+                  <h3 class="dropdown-item-title">
+                    Nada aún
+                    <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
+                  </h3>
+                  <p class="text-sm">Acá aparecerán tus notificationes</p>
+                  <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i>..</p>
+                </div>
+              </div>
+              <!-- Message End -->
+            </a>
+            <div class="dropdown-divider"></div>
+            {% endfor %}
+            <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+          </div>
+        </li>
+        <!-- Notifications Dropdown Menu -->
+        <li class="nav-item dropdown">
+          <a class="nav-link" data-toggle="dropdown" href="#">
+            <i class="far fa-bell"></i>
+            {% if notification %}
             <span class="badge badge-warning navbar-badge">
               {{ notifications.count }}
             </span>
-          {% endif %}
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-item dropdown-header">{{ notifications.count }} Notificaciones</span>
-          <div class="dropdown-divider"></div>
-          {% for notification in notifications %}
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-envelope mr-2"></i> 4 new messages
-            <span class="float-right text-muted text-sm">3 mins</span>
+            {% endif %}
           </a>
-          <div class="dropdown-divider"></div>
-          {% empty %}
-          {% endfor %}
-          <a href="#" class="dropdown-item dropdown-footer">Ver todas</a>
+          <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            <span class="dropdown-item dropdown-header">{{ notifications.count }} Notificaciones</span>
+            <div class="dropdown-divider"></div>
+            {% for notification in notifications %}
+            <a href="#" class="dropdown-item">
+              <i class="fas fa-envelope mr-2"></i> 4 new messages
+              <span class="float-right text-muted text-sm">3 mins</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            {% empty %}
+            {% endfor %}
+            <a href="#" class="dropdown-item dropdown-footer">Ver todas</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#">
+            <i class="fas fa-th-large"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+      <!-- Brand Logo -->
+      <a href="{% url 'main:inicio' %}" class="brand-link">
+        <img src="{% static 'AdminLTE/dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo"
+          class="brand-image img-circle elevation-3" style="opacity: .8">
+        <span class="brand-text font-weight-light">Admin Club</span>
+      </a>
+
+      {% include 'sidebar.html' %}
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      {% block content-header %}{% endblock content-header %}
+      <section class="content" id="typeahead-results"></section>
+      <div class="content">
+        <div class="container-fluid">
+
+          {% block main-content %}{% endblock main-content %}
         </div>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#">
-          <i class="fas fa-th-large"></i>
-        </a>
-      </li>
-    </ul>
-  </nav>
-
-  <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
-    <a href="{% url 'main:inicio' %}" class="brand-link">
-      <img src="{% static 'AdminLTE/dist/img/AdminLTELogo.png' %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
-           style="opacity: .8">
-      <span class="brand-text font-weight-light">Admin Club</span>
-    </a>
-
-    {% include 'sidebar.html' %}
-  </aside>
-
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    {% block content-header %}{% endblock content-header %}
-    <section class="content" id="typeahead-results"></section>
-    <div class="content">
-      <div class="container-fluid">
-        
-        {% block main-content %}{% endblock main-content %}
       </div>
-    </div>
-  </div><!-- /.content-wrapper -->
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-    <div class="p-3">
-      <h5>Reporte</h5>
-      <p>Pronto estará disponible</p>
-    </div>
-  </aside>
-  <!-- /.control-sidebar -->
-  <footer class="main-footer">
-    <strong>Copyright © 2014-2023 <a href="{% url 'main:inicio' %}">marsellosa</a>.</strong>
-    All rights reserved.
-    <div class="float-right d-none d-sm-inline-block">
-      <ion-icon name="heart"></ion-icon>
-      <b>Version</b> 3.0.0-rc.1
-    </div>
-  </footer>
-  <!-- Main Footer -->
-  {% comment %} <footer class="main-footer">
-    <!-- To the right -->
-    <div class="float-right d-none d-sm-inline">
-      Anything you want
-    </div>
-    <!-- Default to the left -->
-    <strong>Copyright &copy; 2014-2019 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
-  </footer> {% endcomment %}
-</div>
-<!-- ./wrapper -->
+    </div><!-- /.content-wrapper -->
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+      <!-- Control sidebar content goes here -->
+      <div class="p-3">
+        <h5>Reporte</h5>
+        <p>Pronto estará disponible</p>
+      </div>
+    </aside>
+    <!-- /.control-sidebar -->
+    <footer class="main-footer">
+      <strong>Copyright © 2014-2023 <a href="{% url 'main:inicio' %}">marsellosa</a>.</strong>
+      All rights reserved.
+      <div class="float-right d-none d-sm-inline-block">
+        <ion-icon name="heart"></ion-icon>
+        <b>Version</b> 3.0.0-rc.1
+      </div>
+    </footer>
+    <!-- Main Footer -->
+    {% comment %} <footer class="main-footer">
+      <!-- To the right -->
+      <div class="float-right d-none d-sm-inline">
+        Anything you want
+      </div>
+      <!-- Default to the left -->
+      <strong>Copyright &copy; 2014-2019 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+    </footer> {% endcomment %}
+  </div>
+  <!-- ./wrapper -->
 
-<!-- REQUIRED SCRIPTS -->
+  <!-- REQUIRED SCRIPTS -->
 
 
-<!-- jQuery -->
-<script src="{% static 'AdminLTE/plugins/jquery/jquery.min.js' %}"></script>
-<!-- Bootstrap 4 -->
-<script src="{% static 'AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-<!-- AdminLTE App -->
-<script src="{% static 'AdminLTE/dist/js/adminlte.min.js' %}"></script>
-<!-- java especifico de cada pagina -->
-{% block js %}{% endblock js %}
-<script>
+  <!-- jQuery -->
+  <script src="{% static 'AdminLTE/plugins/jquery/jquery.min.js' %}"></script>
+  <!-- Bootstrap 4 -->
+  <script src="{% static 'AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <!-- AdminLTE App -->
+  <script src="{% static 'AdminLTE/dist/js/adminlte.min.js' %}"></script>
+  <!-- java especifico de cada pagina -->
+  {% block js %}{% endblock js %}
+  <script>
     document.body.addEventListener('htmx:configRequest', (event) => {
-        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+      event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
     })
-</script>
+  </script>
 
-{% comment %} <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script> {% endcomment %}
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js" integrity="sha256-9AtIfusxXi0j4zXdSxRiZFn0g22OBdlTO4Bdsc2z/tY=" crossorigin="anonymous"></script>
+  {% comment %}
+  <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script> {% endcomment %}
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"
+    integrity="sha256-9AtIfusxXi0j4zXdSxRiZFn0g22OBdlTO4Bdsc2z/tY=" crossorigin="anonymous"></script>
 
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register("{% static 'service-worker.js' %}")
-      .then(reg => console.log("Service worker registrado"))
-      .catch(err => console.error("Error al registrar service worker:", err));
-  }
-</script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register("/service-worker.js")
+        .then(reg => console.log("Service worker registrado"))
+        .catch(err => console.error("Error al registrar service worker:", err));
+    }
+  </script>
 
 </body>
+
 </html>

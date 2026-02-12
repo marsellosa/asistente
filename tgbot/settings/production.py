@@ -9,7 +9,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 
-CSRF_TRUSTED_ORIGINS =  config('ALLOWED_HOSTS', cast=Csv())
+CSRF_TRUSTED_ORIGINS =  config('CSRF_TRUSTED_ORIGINS', cast=Csv())
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
