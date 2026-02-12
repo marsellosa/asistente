@@ -116,13 +116,14 @@ class Comanda(Model):
             costo_total = Decimal('0.00')
             for item in self.comandaitem_set.select_related('receta').all():
                 receta = item.receta
+                cantidad_item = Decimal(item.cantidad) if item.cantidad else Decimal(1)
                 for ing_herb in receta.get_herbal_ingredient_children():
                     costo_ingrediente = ing_herb.get_costo(nivel=nivel_operador)
                     if costo_ingrediente is not None:
-                        costo_total += Decimal(costo_ingrediente)
+                        costo_total += Decimal(costo_ingrediente) * cantidad_item
 
             # Obtener el porcentaje de reinversión desde Settings
-            porciento_inversion = Decimal(get_setting_value('inversion', 10))
+            porciento_inversion = get_setting_value('inversion', 10)
 
             # Calcular la reinversión
             re_inversion = self.porcentaje(costo_total, porciento_inversion)
